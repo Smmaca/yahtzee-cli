@@ -1,47 +1,65 @@
-import Prompt from "enquirer/lib/prompt";
 import Table from "cli-table";
+import { YahtzeeScore, YahtzeeScoreCategory } from "../types";
 
-export interface YatzeeScore {
-  ones: number;
-  twos: number;
-  threes: number;
-  fours: number;
-  fives: number;
-  sixes: number;
-  threeOfAKind: number;
-  fourOfAKind: number;
-  fullHouse: number;
-  smallStraight: number;
-  largeStraight: number;
-  yahtzee: number;
-  chance: number;
-  bonusYahtzees: number;
-}
+export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
+  [YahtzeeScoreCategory.Ones]: "Aces",
+  [YahtzeeScoreCategory.Twos]: "Twos",
+  [YahtzeeScoreCategory.Threes]: "Threes",
+  [YahtzeeScoreCategory.Fours]: "Fours",
+  [YahtzeeScoreCategory.Fives]: "Fives",
+  [YahtzeeScoreCategory.Sixes]: "Sixes",
+  [YahtzeeScoreCategory.ThreeOfAKind]: "Three of a Kind",
+  [YahtzeeScoreCategory.FourOfAKind]: "Four of a Kind",
+  [YahtzeeScoreCategory.FullHouse]: "Full House",
+  [YahtzeeScoreCategory.SmallStraight]: "Small Straight",
+  [YahtzeeScoreCategory.LargeStraight]: "Large Straight",
+  [YahtzeeScoreCategory.Yahtzee]: "Yahtzee",
+  [YahtzeeScoreCategory.Chance]: "Chance",
+  [YahtzeeScoreCategory.BonusYahtzees]: "Bonus Yahtzees",
+};
 
-export default class ScoreSheet {
+export default class Scoresheet {
   diceRoll: number[];
-  yahtzeeScore: YatzeeScore;
+  score: YahtzeeScore;
 
-  constructor(options) {
+  constructor(options: { diceRoll: number[], score: YahtzeeScore }) {
     this.diceRoll = options.diceRoll;
-    this.yahtzeeScore = options.yahtzeeScore;
+    this.score = options.score;
   }
 
   scoreTopSection() {
-    return this.yahtzeeScore.ones
-        + this.yahtzeeScore.twos
-        + this.yahtzeeScore.threes
-        + this.yahtzeeScore.fours
-        + this.yahtzeeScore.fives
-        + this.yahtzeeScore.sixes;
+    return (this.score.ones || 0)
+        + (this.score.twos || 0)
+        + (this.score.threes || 0)
+        + (this.score.fours || 0)
+        + (this.score.fives || 0)
+        + (this.score.sixes || 0);
   }
 
   scoreTopSectionBonus(topSectionScore: number) {
     return topSectionScore >= 63 ? 35 : 0;
   }
 
-  render() {
+  scoreBottomSection() {
+    return (this.score.threeOfAKind || 0)
+        + (this.score.fourOfAKind || 0)
+        + (this.score.fullHouse || 0)
+        + (this.score.smallStraight || 0)
+        + (this.score.largeStraight || 0)
+        + (this.score.yahtzee || 0)
+        + (this.score.chance || 0)
+        + (this.score.bonusYahtzees || 0);
+  }
 
+  renderScore(score: number) {
+    if (score === null) {
+      return ""
+    } else {
+      return score;
+    }
+  }
+
+  render() {
     const table = new Table({
       chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
          , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
@@ -50,15 +68,30 @@ export default class ScoreSheet {
     });
 
     table.push(
-      ["Aces", this.yahtzeeScore.ones],
-      ["Twos", this.yahtzeeScore.twos],
-      ["Threes", this.yahtzeeScore.threes],
-      ["Fours", this.yahtzeeScore.fours],
-      ["Fives", this.yahtzeeScore.fives],
-      ["Sixes", this.yahtzeeScore.sixes],
-      ["Total score", this.scoreTopSection()],
-      ["Bonus", this.scoreTopSectionBonus(this.scoreTopSection())],
-      ["Total", this.scoreTopSection() + this.scoreTopSectionBonus(this.scoreTopSection())],
+      [scoreLabels[YahtzeeScoreCategory.Ones], this.renderScore(this.score.ones), "", scoreLabels[YahtzeeScoreCategory.ThreeOfAKind], this.renderScore(this.score.threeOfAKind)],
+      [scoreLabels[YahtzeeScoreCategory.Twos], this.renderScore(this.score.twos), "", scoreLabels[YahtzeeScoreCategory.FourOfAKind], this.renderScore(this.score.fourOfAKind)],
+      [scoreLabels[YahtzeeScoreCategory.Threes], this.renderScore(this.score.threes), "", scoreLabels[YahtzeeScoreCategory.FullHouse], this.renderScore(this.score.fullHouse)],
+      [scoreLabels[YahtzeeScoreCategory.Fours], this.renderScore(this.score.fours), "", scoreLabels[YahtzeeScoreCategory.SmallStraight], this.renderScore(this.score.smallStraight)],
+      [scoreLabels[YahtzeeScoreCategory.Fives], this.renderScore(this.score.fives), "", scoreLabels[YahtzeeScoreCategory.LargeStraight], this.renderScore(this.score.largeStraight)],
+      [scoreLabels[YahtzeeScoreCategory.Sixes], this.renderScore(this.score.sixes), "", scoreLabels[YahtzeeScoreCategory.Yahtzee], this.renderScore(this.score.yahtzee)],
+      ["Total score", this.scoreTopSection(), "", scoreLabels[YahtzeeScoreCategory.Chance], this.renderScore(this.score.chance)],
+      ["Bonus", this.scoreTopSectionBonus(this.scoreTopSection()), "", scoreLabels[YahtzeeScoreCategory.BonusYahtzees], this.score.bonusYahtzees],
+      ["Total", this.scoreTopSection() + this.scoreTopSectionBonus(this.scoreTopSection()), "", "Total", this.scoreBottomSection()],
     );
+
+    console.log(table.toString());
+
+    const grandTotal = new Table({
+      chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
+          , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+          , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
+          , 'right': '║' , 'right-mid': '╢' , 'middle': '│' },
+    });
+
+    grandTotal.push(
+      ["Grand total", this.scoreTopSection() + this.scoreTopSectionBonus(this.scoreTopSection()) + this.scoreBottomSection()],
+    );
+
+    console.log(grandTotal.toString() + "\n");
   }
 }

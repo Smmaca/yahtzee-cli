@@ -1,33 +1,41 @@
 import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import config from "./config";
 import { GameMode, IGame } from "./types";
+import { drawDiceValues, drawTurnStats } from "./utils/draw";
 
-export default function handleDiceLockMode(game: IGame, loop: (game: IGame) => void) {
+export function resetDiceLock(game: IGame) {
+  game.diceLock = game.diceRoll.map(() => false);
+}
+
+export default async function handleDiceLockMode(game: IGame): Promise<IGame> {
+  const _game = { ...game };
+
+  drawTurnStats(game);
+  drawDiceValues(game);
+
+  const choices = _game.diceRoll.map((value, index) => ({
+    name: `Dice ${index + 1}`,
+    hint: value,
+    value: index,
+    enabled: _game.diceLock[index],
+  }));
+
   const prompt = new MultiSelect({
-    name: "diceLock",
-    message: "Which dice do you want to lock?",
+    name: "diceLockMenu",
+    message: config.messages.diceLockPrompt,
     limit: config.diceCount,
-    choices: game.diceRoll.map((_, index) => ({
-      name: `Dice ${index + 1}`,
-      value: index,
-    })),
+    choices,
+    initial: choices.filter((choice) => choice.enabled).map((choice) => choice.name),
     result(names) {
       return this.map(names);
     }
   });
 
-  prompt.run().then((answer) => {
-    console.log(answer);
-    game.diceLock = [];
+  return prompt.run().then((answer) => {
+    resetDiceLock(_game);
     const indicesToLock = Object.keys(answer).map(key => answer[key]);
-    game.diceRoll.forEach((_, i) => {
-      if (indicesToLock.includes(i)) {
-        game.diceLock.push(true);
-      } else {
-        game.diceLock.push(false);
-      }
-    });
-    game.mode = GameMode.ROLL;
-    return loop(game);
+    _game.diceLock = _game.diceLock.map((_, i) => indicesToLock.includes(i));
+    _game.mode = GameMode.ROLL;
+    return _game;
   });
 }

@@ -1,66 +1,79 @@
 import figlet from "figlet";
+import config from "../config";
+import { isYahtzee } from "../handleScoreDice";
+import { IGame } from "../types";
 
 export function drawTitle() {
   console.log(figlet.textSync("Yahtzee", { horizontalLayout: "full" }));
 }
 
-export function drawTurnStats(game) {
-  console.log(`Turn: ${game.turn + 1}     Rolls left: ${3 - game.rollNumber}`);
+export function drawTurnStats(game: IGame) {
+  console.log(`Turn: ${game.turn + 1}     Rolls left: ${
+    config.rollsPerTurn - game.rollNumber}     ${
+      isYahtzee(game.diceRoll) ? "Yahtzee!" : ""}`);
 }
 
-export function drawDiceValues(game) {
-  let row1 = "";
-  let row2 = "";
-  let row3 = "";
-  let row4 = "";
-  let row6 = "";
+export function drawDiceValues(game: IGame) {
+  if (!game.diceRoll.length || !game.diceRoll.filter(d => d).length) {
+    console.log("\n");
+    return;
+  }
+
+  const rows = ["", "", "", "", "", ""];
   const len = game.diceRoll.length;
-  for(var i = 0; i < len; i += 1) {
-    row1 += " ______  ";
+
+  for (let i = 0; i < len; i += 1) {
     switch(game.diceRoll[i]) {
       case 1:
-        row2 += "|      | ";
-        row3 += "|   0  | ";
-        row4 += "|______| ";
+        rows[0] += " ______  ";
+        rows[1] += "|      | ";
+        rows[2] += "|   0  | ";
+        rows[3] += "|______| ";
         break;
       case 2:
-        row2 += "|    0 | ";
-        row3 += "|      | ";
-        row4 += "|_0____| ";
+        rows[0] += " ______  ";
+        rows[1] += "|    0 | ";
+        rows[2] += "|      | ";
+        rows[3] += "|_0____| ";
         break;
       case 3:
-        row2 += "|    0 | ";
-        row3 += "|   0  | ";
-        row4 += "|_0____| ";
+        rows[0] += " ______  ";
+        rows[1] += "|    0 | ";
+        rows[2] += "|   0  | ";
+        rows[3] += "|_0____| ";
         break;
       case 4:
-        row2 += "| 0  0 | ";
-        row3 += "|      | ";
-        row4 += "|_0__0_| ";
+        rows[0] += " ______  ";
+        rows[1] += "| 0  0 | ";
+        rows[2] += "|      | ";
+        rows[3] += "|_0__0_| ";
         break;
       case 5:
-        row2 += "| 0  0 | ";
-        row3 += "|   0  | ";
-        row4 += "|_0__0_| ";
+        rows[0] += " ______  ";
+        rows[1] += "| 0  0 | ";
+        rows[2] += "|   0  | ";
+        rows[3] += "|_0__0_| ";
         break;
       case 6:
-        row2 += "| 0  0 | ";
-        row3 += "| 0  0 | ";
-        row4 += "|_0__0_| ";
+        rows[0] += " ______  ";
+        rows[1] += "| 0  0 | ";
+        rows[2] += "| 0  0 | ";
+        rows[3] += "|_0__0_| ";
         break;
       default:
-        row2 += "";
-        row3 += "";
-        row4 += "";
+        rows[0] += "";
+        rows[1] += "";
+        rows[2] += "";
+        rows[3] += "";
     }
 
     if (game.diceLock[i]) {
-      row6 += "    L    "
+      rows[5] += "    L    "
     } else {
-      row6 += "         "
+      rows[5] += "         "
     }
   }
-  console.log(row1 + "\n" + row2 + "\n" + row3 + "\n" + row4 + "\n" + "\n" + row6 + "\n");
+  console.log(rows.join("\n") + "\n");
 }
 
 /*
