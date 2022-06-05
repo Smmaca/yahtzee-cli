@@ -2,6 +2,7 @@ import Select from "enquirer/lib/prompts/Select";
 import config from "./config";
 import { GameMode, IGame } from "./types";
 import { drawDiceValues, drawTurnStats } from "./utils/draw";
+import { changeMode } from "./utils/modeHelper";
 import Scoresheet from "./utils/Scoresheet";
 
 
@@ -28,10 +29,9 @@ export default async function handleScoresheetMode(game: IGame): Promise<IGame> 
   return prompt.run().then(answer => {
     switch(answer) {
       case "Go back":
-        _game.mode = GameMode.ROLL;
-        return _game;
+        return changeMode(_game, GameMode.ROLL);
       case "Quit":
-        return;
+        return changeMode(_game, GameMode.QUIT_CONFIRM);
       default:
         return _game;
     }

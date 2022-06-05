@@ -3,6 +3,7 @@ import config from "./config";
 import { GameMode, IGame } from "./types";
 import { rollDice } from "./utils/diceRoller";
 import { drawDiceValues, drawTurnStats } from "./utils/draw";
+import { changeMode } from "./utils/modeHelper";
 
 export enum RollModeChoice {
   ROLL_DICE = "Roll dice",
@@ -44,8 +45,7 @@ export default async function handleRollMode(game: IGame): Promise<IGame> {
   return prompt.run().then((answer) => {
     switch(answer) {
       case RollModeChoice.LOCK_DICE:
-        _game.mode = GameMode.DICE_LOCKER;
-        return _game;
+        return changeMode(_game, GameMode.DICE_LOCKER);
       case RollModeChoice.ROLL_DICE:
       case RollModeChoice.ROLL_AGAIN:
         const lockedDice = _game.diceLock.filter((dice) => dice === true).length;
@@ -60,13 +60,11 @@ export default async function handleRollMode(game: IGame): Promise<IGame> {
         _game.rollNumber += 1;
         return _game;
       case RollModeChoice.SEE_SCORESHEET:
-        _game.mode = GameMode.VIEW_SCORE;
-        return _game;
+        return changeMode(_game, GameMode.VIEW_SCORE);
       case RollModeChoice.SCORE_DICE:
-        _game.mode = GameMode.EDIT_SCORE;
-        return _game;
+        return changeMode(_game, GameMode.EDIT_SCORE);
       case RollModeChoice.QUIT:
-        return;
+        return changeMode(_game, GameMode.QUIT_CONFIRM);
       default:
         return _game;
     }

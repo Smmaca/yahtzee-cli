@@ -5,6 +5,7 @@ export enum GameMode {
   VIEW_SCORE = "VIEW_SCORE",
   EDIT_SCORE = "EDIT_SCORE",
   GAME_OVER = "GAME_OVER",
+  QUIT_CONFIRM = "QUIT_CONFIRM",
 }
 
 export enum YahtzeeScoreCategory {
@@ -28,6 +29,7 @@ export type YahtzeeScore = Record<YahtzeeScoreCategory, number>;
 
 export interface IGame {
   mode: GameMode;
+  modeHistory: GameMode[];
   turn: number;
   diceRoll: number[];
   diceLock: boolean[];

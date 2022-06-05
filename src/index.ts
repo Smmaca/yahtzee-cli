@@ -6,6 +6,7 @@ import handleDiceLockMode, { resetDiceLock } from "./handleDiceLockMode";
 import handleScoresheetMode from "./handleScoresheetMode";
 import handleScoreDiceMode, { resetDiceRoll } from "./handleScoreDiceMode";
 import handleGameOver from "./handleGameOver";
+import handleQuitConfirm from "./handleQuitConfirm";
 
 const gameData: IGame = {
   turn: 0,
@@ -13,6 +14,7 @@ const gameData: IGame = {
   diceLock: [],
   rollNumber: 0,
   mode: GameMode.ROLL,
+  modeHistory: [],
   score: {
     ones: null,
     twos: null,
@@ -62,6 +64,10 @@ async function loop(game: IGame) {
 
   if (game.mode === GameMode.GAME_OVER) {
     newGame = await handleGameOver(game);
+  }
+
+  if (game.mode === GameMode.QUIT_CONFIRM) {
+    newGame = await handleQuitConfirm(game);
   }
 
   return newGame ? loop(newGame) : null;

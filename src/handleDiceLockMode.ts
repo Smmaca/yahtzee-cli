@@ -2,6 +2,7 @@ import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import config from "./config";
 import { GameMode, IGame } from "./types";
 import { drawDiceValues, drawTurnStats } from "./utils/draw";
+import { changeMode } from "./utils/modeHelper";
 
 export function resetDiceLock(game: IGame) {
   game.diceLock = game.diceRoll.map(() => false);
@@ -35,7 +36,6 @@ export default async function handleDiceLockMode(game: IGame): Promise<IGame> {
     resetDiceLock(_game);
     const indicesToLock = Object.keys(answer).map(key => answer[key]);
     _game.diceLock = _game.diceLock.map((_, i) => indicesToLock.includes(i));
-    _game.mode = GameMode.ROLL;
-    return _game;
+    return changeMode(_game, GameMode.ROLL);
   });
 }

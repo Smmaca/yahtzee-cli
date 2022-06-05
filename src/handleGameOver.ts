@@ -27,6 +27,7 @@ export function resetScore(game: IGame) {
 
 function resetGame(game: IGame) {
   game.mode = GameMode.ROLL;
+  game.modeHistory = [];
   game.turn = 0;
   game.rollNumber = 0;
   resetScore(game);
@@ -45,7 +46,7 @@ export default function handleGameOver(game: IGame) {
 
   const prompt = new Confirm({
     name: "playAgain",
-    message: config.messages.playAgain,
+    message: config.messages.playAgainPrompt,
   });
 
   return prompt.run().then(playAgain => {

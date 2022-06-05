@@ -4,6 +4,7 @@ import { resetDiceLock } from "./handleDiceLockMode";
 import { GameMode, IGame, YahtzeeScoreCategory } from "./types";
 import { rollDice } from "./utils/diceRoller";
 import { drawDiceValues, drawTurnStats } from "./utils/draw";
+import { changeMode } from "./utils/modeHelper";
 import { scoreLabels } from "./utils/Scoresheet";
 
 export function isYahtzee(_diceRoll: number[]): boolean {
@@ -117,8 +118,7 @@ export default async function handleScoreDiceMode(game: IGame): Promise<IGame> {
 
   return prompt.run().then((answer) => {
     if (answer === "cancel") {
-      _game.mode = GameMode.ROLL;
-      return _game;
+      return changeMode(_game, GameMode.ROLL);
     }
     const category = answer as YahtzeeScoreCategory;
     if (category === YahtzeeScoreCategory.BonusYahtzees
@@ -128,15 +128,13 @@ export default async function handleScoreDiceMode(game: IGame): Promise<IGame> {
       _game.score[category] = calculateScore(category, _game.diceRoll);
     }
     if (_game.turn === 12) {
-      _game.mode = GameMode.GAME_OVER;
-      return _game;
+      return changeMode(_game, GameMode.GAME_OVER);
     } 
     resetDiceLock(_game);
-    _game.mode = GameMode.VIEW_SCORE;
     _game.turn++;
     _game.rollNumber = 0;
     resetDiceRoll(_game);
     resetDiceLock(_game);
-    return _game;
+    return changeMode(_game, GameMode.VIEW_SCORE);
   });
 }
