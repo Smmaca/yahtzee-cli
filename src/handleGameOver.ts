@@ -1,7 +1,7 @@
 import Confirm from "enquirer/lib/prompts/Confirm";
 import config from "./config";
 import { resetDiceLock } from "./handleDiceLockMode";
-import { resetDiceRoll } from "./handleScoreDice";
+import { resetDiceRoll } from "./handleScoreDiceMode";
 import { GameMode, IGame } from "./types";
 import Scoresheet from "./utils/Scoresheet";
 
