@@ -4,7 +4,7 @@ import { GameMode, IGame } from "./types";
 import handleRollMode from "./handleRollMode";
 import handleDiceLockMode, { resetDiceLock } from "./handleDiceLockMode";
 import handleScoresheetMode from "./handleScoresheetMode";
-import handleScoreDice, { resetDiceRoll } from "./handleScoreDice";
+import handleScoreDiceMode, { resetDiceRoll } from "./handleScoreDiceMode";
 import handleGameOver from "./handleGameOver";
 
 const gameData: IGame = {
@@ -57,7 +57,7 @@ async function loop(game: IGame) {
   }
 
   if (game.mode === GameMode.EDIT_SCORE) {
-    newGame = await handleScoreDice(game);
+    newGame = await handleScoreDiceMode(game);
   }
 
   if (game.mode === GameMode.GAME_OVER) {

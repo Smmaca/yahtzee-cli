@@ -103,7 +103,7 @@ export function resetDiceRoll(game: IGame) {
   game.diceRoll = game.diceRoll.map(() => 0);
 }
 
-export default async function handleScoreDice(game: IGame): Promise<IGame> {
+export default async function handleScoreDiceMode(game: IGame): Promise<IGame> {
   const _game = { ...game };
 
   drawTurnStats(game);
