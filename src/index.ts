@@ -1,10 +1,10 @@
 import clear from "clear";
-import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
 import { rollDice } from "./utils/diceRoller";
 import { GameMode, IGame } from "./types";
 import config from "./config";
 import handleRollMode from "./handleRollMode";
+import handleDiceLockMode from "./handleDiceLockMode";
 
 const gameData: IGame = {
   turn: 0,
@@ -33,33 +33,7 @@ function loop(game) {
   }
 
   if (game.mode === GameMode.DICE_LOCKER) {
-    const prompt = new MultiSelect({
-      name: "diceLock",
-      message: "Which dice do you want to lock?",
-      limit: config.diceCount,
-      choices: game.diceRoll.map((_, index) => ({
-        name: `Dice ${index + 1}`,
-        value: index,
-      })),
-      result(names) {
-        return this.map(names);
-      }
-    });
-
-    prompt.run().then((answer) => {
-      console.log(answer);
-      game.diceLock = [];
-      const indicesToLock = Object.keys(answer).map(key => answer[key]);
-      game.diceRoll.forEach((_, i) => {
-        if (indicesToLock.includes(i)) {
-          game.diceLock.push(true);
-        } else {
-          game.diceLock.push(false);
-        }
-      });
-      game.mode = GameMode.ROLL;
-      return loop(game);
-    });
+    handleDiceLockMode(game, loop);
   }
 }
 
