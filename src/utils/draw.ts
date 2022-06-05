@@ -1,6 +1,6 @@
 import figlet from "figlet";
 import config from "../config";
-import { isYahtzee } from "../handleScoreDice";
+import { isYahtzee } from "../handleScoreDiceMode";
 import { IGame } from "../types";
 
 export function drawTitle() {
