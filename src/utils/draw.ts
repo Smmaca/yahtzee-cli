@@ -4,12 +4,12 @@ import { isYahtzee } from "../handleScoreDiceMode";
 import { IGame } from "../types";
 
 export function drawTitle() {
-  console.log(figlet.textSync("Yahtzee", { horizontalLayout: "full" }));
+  console.log(figlet.textSync("Yahtzee", { horizontalLayout: "default" }));
 }
 
 export function drawTurnStats(game: IGame) {
-  console.log(`Turn: ${game.turn + 1}     Rolls left: ${
-    config.rollsPerTurn - game.rollNumber}     ${
+  console.log(`Turn: ${game.turn + 1}       Rolls left: ${
+    config.rollsPerTurn - game.rollNumber}       ${
       isYahtzee(game.diceRoll) ? "Yahtzee!" : ""}`);
 }
 

@@ -4,6 +4,7 @@ export enum GameMode {
   DICE_LOCKER = "DICE_LOCKER",
   VIEW_SCORE = "VIEW_SCORE",
   EDIT_SCORE = "EDIT_SCORE",
+  EDIT_SCORE_JOKER = "EDIT_SCORE_JOKER",
   GAME_OVER = "GAME_OVER",
   QUIT_CONFIRM = "QUIT_CONFIRM",
 }
@@ -36,3 +37,12 @@ export interface IGame {
   rollNumber: number;
   score: YahtzeeScore;
 };
+
+export enum RollModeChoice {
+  ROLL_DICE = "Roll dice",
+  ROLL_AGAIN = "Roll again",
+  LOCK_DICE = "Lock dice",
+  SCORE_DICE = "Score dice",
+  SEE_SCORESHEET = "See scoresheet",
+  QUIT = "Quit",
+}
