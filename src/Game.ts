@@ -2,38 +2,24 @@ import clear from "clear";
 import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import Confirm from "enquirer/lib/prompts/Confirm";
 import Select from "enquirer/lib/prompts/Select";
-import config from "./config";
-import { resetDiceLock } from "./handleDiceLockMode";
-import { resetGame } from "./handleGameOver";
-import { isYahtzee, resetDiceRoll, sumDiceRoll } from "./handleScoreDiceMode";
-import { GameMode, IGame, RollModeChoice, YahtzeeScoreCategory } from "./types";
+import { isYahtzee, sumDiceRoll } from "./handleScoreDiceMode";
+import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "./types";
 import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
-import { changeMode, revertMode } from "./utils/modeHelper";
 import Scoresheet, { scoreLabels } from "./utils/Scoresheet";
 import { rollDice } from "./utils/diceRoller";
+import GameState from "./GameState";
 
 export default class Game {
-  private _data: IGame;
+  config: IConfig;
+  state: GameState;
 
-  constructor(data: IGame) {
-    this._data = data;
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  getDataClone(): IGame {
-    return JSON.parse(JSON.stringify(this.data));
-  }
-
-  setData(data: IGame) {
-    this._data = data;
+  constructor(config: IConfig) {
+    this.config = config;
+    this.state = new GameState(config);
   }
 
   init() {
-    resetDiceRoll(this.data);
-    resetDiceLock(this.data);
+    this.state.init();
   }
 
   async loop() {
@@ -43,7 +29,7 @@ export default class Game {
 
     let continueLoop = true;
 
-    switch(this.data.mode) {
+    switch(this.state.mode) {
       case GameMode.ROLL:
         continueLoop = await this.handleRollMode();
         break;
@@ -73,74 +59,125 @@ export default class Game {
   }
 
   async handleDiceLockMode(): Promise<boolean> {
-    drawTurnStats(this.data);
-    drawDiceValues(this.data);
+    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, isYahtzee(this.state.diceRoll));
+    drawDiceValues(this.state.diceRoll, this.state.diceLock);
   
-    const choices = this.data.diceRoll.map((value, index) => ({
+    const choices = this.state.diceRoll.map((value, index) => ({
       name: `Dice ${index + 1}`,
       hint: value,
       value: index,
       // Enabled property doesn't work but can use it to set initial choices from the prompt
-      enabled: this.data.diceLock[index],
+      enabled: this.state.diceLock[index],
     }));
   
     const prompt = new MultiSelect({
       name: "diceLockMenu",
-      message: config.messages.diceLockPrompt,
-      limit: config.diceCount,
+      message: this.config.messages.diceLockPrompt,
+      limit: this.config.diceCount,
       choices,
       initial: choices.filter((choice) => choice.enabled).map((choice) => choice.name),
       result(names) {
         return this.map(names);
       }
     });
-
-    const data = this.getDataClone();
   
     return prompt.run().then((answer) => {
-      resetDiceLock(data);
+      this.state.resetDiceLock();
       const indicesToLock = Object.keys(answer).map(key => answer[key]);
-      data.diceLock = data.diceLock.map((_, i) => indicesToLock.includes(i));
-      changeMode(data, GameMode.ROLL);
-      this.setData(data);
+      const diceLock = this.state.diceRoll.map((_, i) => indicesToLock.includes(i));
+      this.state.setDiceLock(diceLock);
+      this.state.setMode(GameMode.ROLL);
       return true;
     });
   }
 
-  async handleGameOver(): Promise<boolean> {
-    const scoresheet = new Scoresheet({ diceRoll: this.data.diceRoll, score: this.data.score }); 
-  
-    console.log("Game over!\n");
-  
-    scoresheet.render();
-  
-    const prompt = new Confirm({
-      name: "playAgain",
-      message: config.messages.playAgainPrompt,
-    });
-  
-    return prompt.run().then(playAgain => {
-      if (playAgain) {
-        const data = this.getDataClone();
-        resetGame(data);
-        this.setData(data);
-        return true;
+  getGameOverPromptChoices() {
+    const choices: any[] = [
+      {
+        name: "See final scores",
+        value: "See final scores",
       }
-      return false;
+    ];
+    
+    this.state.players.forEach((player, i) => {
+      choices.push({
+        name: i,
+        value: player.name,
+        message: `See ${player.name}'s scoresheet`,
+      });
     });
+
+    choices.push(
+      { name: "Play again", value: "Play again" },
+      { name: "Quit", value: "Quit" },
+    );
+
+    return choices;
+  }
+
+  async handleGameOver(): Promise<boolean> {
+    if (this.state.players.length === 1) {
+      const player = this.state.players[0];
+
+      console.log("Game over!\n");
+      player.renderScoresheet();
+
+      const prompt = new Confirm({
+        name: "playAgain",
+        message: this.config.messages.playAgainPrompt,
+      });
+    
+      return prompt.run().then(playAgain => {
+        if (playAgain) {
+          this.state.resetGame();
+          return true;
+        }
+        return false;
+      });
+    } else {
+      if (this.state.currentPlayerIndex >= 0) {
+        this.state.currentPlayer.renderScoresheet();
+      } else {
+        console.log(`${this.state.winner.name} wins!`);
+        this.state.renderPlayerScores();
+      }
+
+      const prompt = new Select({
+        name: "gameOverMenu",
+        message: this.config.messages.gameOverPrompt,
+        choices: this.getGameOverPromptChoices(),
+      });
+
+      return prompt.run().then(answer => {
+        if (answer === "Play again") {
+          this.state.resetGame();
+          return true;
+        }
+        
+        if (answer === "Quit") {
+          this.state.setMode(GameMode.QUIT_CONFIRM);
+          return true;
+        }
+
+        if (answer === "See final scores") {
+          this.state.setCurrentPlayer(null);
+        }
+
+        this.state.setCurrentPlayer(answer);
+        return true;
+      });
+    }
   }
 
   handleQuitConfirm(): Promise<boolean> {
     const prompt = new Confirm({
       name: "quitConfirm",
-      message: config.messages.quitConfirmPrompt,
+      message: this.config.messages.quitConfirmPrompt,
     });
   
     return prompt.run().then(quit => {
-      const data = this.getDataClone();
       if (!quit) {
-        revertMode(data);
-        this.setData(data);
+        this.state.revertMode();
         return true;
       } 
       return false;
@@ -149,13 +186,13 @@ export default class Game {
 
   getRollModePromptChoices() {
     const choices = [];
-    if (this.data.rollNumber === 0) {
+    if (this.state.rollNumber === 0) {
       choices.push(RollModeChoice.ROLL_DICE);
     } else {
-      if (this.data.rollNumber > 0 && this.data.rollNumber < config.rollsPerTurn) {
+      if (this.state.rollNumber > 0 && this.state.rollNumber < this.config.rollsPerTurn) {
         choices.push(RollModeChoice.ROLL_AGAIN, RollModeChoice.LOCK_DICE);
       }
-      if (this.data.rollNumber > 0) {
+      if (this.state.rollNumber > 0) {
         choices.push(RollModeChoice.SCORE_DICE);
       }
     }
@@ -164,47 +201,41 @@ export default class Game {
   }
 
  async handleRollMode(): Promise<boolean> {
-    drawTurnStats(this.data);
-    drawDiceValues(this.data);
+    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, isYahtzee(this.state.diceRoll));
+    drawDiceValues(this.state.diceRoll, this.state.diceLock);
   
     const prompt = new Select({
       name: "gameAction",
-      message: config.messages.rollPrompt,
+      message: this.config.messages.rollPrompt,
       choices: this.getRollModePromptChoices(),
     });
   
     return prompt.run().then((answer) => {
-      const data = this.getDataClone();
       switch(answer) {
         case RollModeChoice.LOCK_DICE:
-          changeMode(data, GameMode.DICE_LOCKER)
-          this.setData(data);
+          this.state.setMode(GameMode.DICE_LOCKER)
           return true;
         case RollModeChoice.ROLL_DICE:
         case RollModeChoice.ROLL_AGAIN:
-          const lockedDice = this.data.diceLock.filter((dice) => dice === true).length;
-          const diceRoll = rollDice(config.diceCount - lockedDice);
-          data.diceRoll = this.data.diceRoll.map((oldRoll, i) => {
-            if (this.data.diceLock[i]) {
+          const unlockedDiceRoll = rollDice(this.state.unlockedDiceCount);
+          const diceRoll = this.state.diceRoll.map((oldRoll, i) => {
+            if (this.state.diceLock[i]) {
               return oldRoll;
             } else {
-              return diceRoll.shift();
+              return unlockedDiceRoll.shift();
             }
           });
-          data.rollNumber += 1;
-          this.setData(data);
+          this.state.setDiceRoll(diceRoll);
+          this.state.setRollNumber(this.state.rollNumber + 1);
           return true;
         case RollModeChoice.SEE_SCORESHEET:
-          changeMode(data, GameMode.VIEW_SCORE);
-          this.setData(data);
+          this.state.setMode(GameMode.VIEW_SCORE);
           return true;
         case RollModeChoice.SCORE_DICE:
-          changeMode(data, GameMode.EDIT_SCORE);
-          this.setData(data);
+          this.state.setMode(GameMode.EDIT_SCORE);
           return true;
         case RollModeChoice.QUIT:
-          changeMode(data, GameMode.QUIT_CONFIRM);
-          this.setData(data);
+          this.state.setMode(GameMode.QUIT_CONFIRM);
           return true;
         default:
           return true;
@@ -213,7 +244,7 @@ export default class Game {
   }
 
   calculateScore(category: YahtzeeScoreCategory) {
-    const diceRoll = this.data.diceRoll.slice();
+    const diceRoll = this.state.diceRoll.slice();
     switch (category) {
       case YahtzeeScoreCategory.Ones:
         return 1 * diceRoll.filter(d => d === 1).length;
@@ -236,23 +267,23 @@ export default class Game {
       case YahtzeeScoreCategory.FullHouse:
         return (diceRoll.find(d => diceRoll.filter(dd => dd === d).length === 2)
           && diceRoll.find(d => diceRoll.filter(dd => dd === d).length === 3))
-          ? config.scoreValues[YahtzeeScoreCategory.FullHouse] : 0;
+          ? this.config.scoreValues[YahtzeeScoreCategory.FullHouse] : 0;
       case YahtzeeScoreCategory.SmallStraight:
         return ["12345", "23456", "1234", "2345", "3456", "13456", "12346"]
           .includes(Array.from(new Set(diceRoll)).sort().join(""))
-          ? config.scoreValues[YahtzeeScoreCategory.SmallStraight] : 0;
+          ? this.config.scoreValues[YahtzeeScoreCategory.SmallStraight] : 0;
       case YahtzeeScoreCategory.LargeStraight:
         return ["12345", "23456"]
           .includes(diceRoll.sort().join(""))
-          ? config.scoreValues[YahtzeeScoreCategory.LargeStraight] : 0;
+          ? this.config.scoreValues[YahtzeeScoreCategory.LargeStraight] : 0;
       case YahtzeeScoreCategory.Yahtzee:
         return isYahtzee(diceRoll)
-          ? config.scoreValues[YahtzeeScoreCategory.Yahtzee] : 0;
+          ? this.config.scoreValues[YahtzeeScoreCategory.Yahtzee] : 0;
       case YahtzeeScoreCategory.Chance:
         return sumDiceRoll(diceRoll);
       case YahtzeeScoreCategory.BonusYahtzees:
         return isYahtzee(diceRoll)
-          ? config.scoreValues[YahtzeeScoreCategory.BonusYahtzees] : 0;
+          ? this.config.scoreValues[YahtzeeScoreCategory.BonusYahtzees] : 0;
       default:
         return 0;
     }
@@ -261,17 +292,19 @@ export default class Game {
   getScoreDicePromptChoices() {
     const choices = [];
 
-    Object.keys(this.data.score).forEach(key => {
+    const score = this.state.currentPlayer.score;
+
+    Object.keys(score).forEach(key => {
       const category = key as YahtzeeScoreCategory;
   
       if (category === YahtzeeScoreCategory.BonusYahtzees) {
-        const disabled = this.data.score[YahtzeeScoreCategory.Yahtzee] === null
+        const disabled = !score[YahtzeeScoreCategory.Yahtzee]
           || this.calculateScore(category) === 0;
         choices.push({
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: `[${this.data.score[category]}]${(!disabled &&
+          hint: `[${score[category]}]${(!disabled &&
             category === YahtzeeScoreCategory.BonusYahtzees) ? " + 100" : ""}`,
           disabled,
         });
@@ -280,15 +313,15 @@ export default class Game {
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: this.data.score[category] !== null
-            ? `[${this.data.score[category]}]`
+          hint: score[category] !== null
+            ? `[${score[category]}]`
             : this.calculateScore(category),
-          disabled: this.data.score[category] !== null,
+          disabled: score[category] !== null,
         });
       }
     });
   
-    if (config.rollsPerTurn - this.data.rollNumber > 0) {
+    if (this.config.rollsPerTurn - this.state.rollNumber > 0) {
       choices.push({
         message: "Cancel",
         name: "cancel",
@@ -300,56 +333,47 @@ export default class Game {
   }
 
   async handleScoreDiceMode(): Promise<boolean> {
-    drawTurnStats(this.data);
-    drawDiceValues(this.data);
+    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, isYahtzee(this.state.diceRoll));
+    drawDiceValues(this.state.diceRoll, this.state.diceLock);
   
     const prompt = new Select({
       name: "scoreDiceMenu",
-      message: config.messages.scoreDicePrompt,
+      message: this.config.messages.scoreDicePrompt,
       choices: this.getScoreDicePromptChoices(),
     });
   
     return prompt.run().then((answer) => {
       if (answer === "cancel") {
-        const data = this.getDataClone();
-        changeMode(data, GameMode.ROLL);
-        this.setData(data);
+        this.state.setMode(GameMode.ROLL);
         return true;
       }
   
       const category = answer as YahtzeeScoreCategory;
+
+      const player = this.state.currentPlayer;
   
-      const data = this.getDataClone();
       if (category === YahtzeeScoreCategory.BonusYahtzees
-        && this.data.score[YahtzeeScoreCategory.Yahtzee] !== null
+        && player.score[YahtzeeScoreCategory.Yahtzee] !== null
       ) {
-        data.score[YahtzeeScoreCategory.BonusYahtzees] += this.calculateScore(category);
-        changeMode(data, GameMode.EDIT_SCORE_JOKER);
-        this.setData(data);
+        player.setScore(
+          YahtzeeScoreCategory.BonusYahtzees,
+          player.score[YahtzeeScoreCategory.BonusYahtzees] += this.calculateScore(category),
+        );
+        this.state.setMode(GameMode.EDIT_SCORE_JOKER);
         return true;
       } else {
-        data.score[category] = this.calculateScore(category);
+        player.setScore(category, this.calculateScore(category));
       }
   
-      if (this.data.turn === 12) {
-        changeMode(data, GameMode.GAME_OVER);
-        this.setData(data);
-        return true;
-      } 
-  
-      resetDiceLock(data);
-      data.turn++;
-      data.rollNumber = 0;
-      resetDiceRoll(data);
-      resetDiceLock(data);
-      changeMode(data, GameMode.VIEW_SCORE);
-      this.setData(data);
+      this.state.nextPlayer();
       return true;
     });
   }
 
   getScoreJokerPromptChoices() {
     const choices = [];
+
+    const score = this.state.currentPlayer.score;
 
     [
       YahtzeeScoreCategory.Ones,
@@ -375,7 +399,8 @@ export default class Game {
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: config.scoreValues[category],
+          hint: this.config.scoreValues[category],
+          disabled: score[category] !== null,
         });
       } else {
         choices.push({
@@ -383,6 +408,7 @@ export default class Game {
           name: category,
           value: category,
           hint: this.calculateScore(category),
+          disabled: score[category] !== null,
         });
       }
     });
@@ -391,66 +417,54 @@ export default class Game {
   }
 
   async handleScoreJokerMode(): Promise<boolean> {
-    drawTurnStats(this.data);
-    drawDiceValues(this.data);
+    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, isYahtzee(this.state.diceRoll));
+    drawDiceValues(this.state.diceRoll, this.state.diceLock);
+
+    const score = this.state.currentPlayer.score;
   
     const prompt = new Select({
       name: "scoreDiceMenu",
-      message: config.messages.scoreJokerPrompt,
+      message: this.config.messages.scoreJokerPrompt,
       choices: this.getScoreJokerPromptChoices(),
     });
   
     return prompt.run().then((answer) => {
       const category = answer as YahtzeeScoreCategory;
-      
-      const data = this.getDataClone();
+      const player = this.state.currentPlayer;
+
       if ([
         YahtzeeScoreCategory.FullHouse,
         YahtzeeScoreCategory.SmallStraight,
         YahtzeeScoreCategory.LargeStraight,
       ].includes(category)) {
-        data.score[category] = config.scoreValues[category];
+        player.setScore(category, this.config.scoreValues[category]);
       } else {
-        data.score[category] = this.calculateScore(category);
+        player.setScore(category, this.calculateScore(category));
       }
   
-      if (this.data.turn === 12) {
-        changeMode(data, GameMode.GAME_OVER);
-        this.setData(data);
-        return true;
-      } 
-  
-      resetDiceLock(data);
-      data.turn++;
-      data.rollNumber = 0;
-      resetDiceRoll(data);
-      resetDiceLock(data);
-      changeMode(data, GameMode.VIEW_SCORE);
-      this.setData(data);
+      this.state.nextPlayer();
       return true;
     });
   }
 
   async handleScoresheetMode(): Promise<boolean> {
-    drawTurnStats(this.data);
-    drawDiceValues(this.data);
+    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, isYahtzee(this.state.diceRoll));
+    drawDiceValues(this.state.diceRoll, this.state.diceLock);
+
+    const player = this.state.currentPlayer;
   
-    const scoresheet = new Scoresheet({ diceRoll: this.data.diceRoll, score: this.data.score }); 
-  
-    scoresheet.render();
+    player.renderScoresheet();
   
     const prompt = new Select({
       name: "scoresheetMenu",
-      message: config.messages.scoresheetPrompt,
+      message: this.config.messages.scoresheetPrompt,
       choices: ["Continue"],
     });
   
     return prompt.run().then(answer => {
-      const data = this.getDataClone();
       switch(answer) {
         case "Continue":
-          changeMode(data, GameMode.ROLL);
-          this.setData(data);
+          this.state.setMode(GameMode.ROLL);
           return true;
         default:
           return true;

@@ -1,29 +1,24 @@
 import figlet from "figlet";
-import config from "../config";
-import { isYahtzee } from "../handleScoreDiceMode";
-import { IGame } from "../types";
 
 export function drawTitle() {
   console.log(figlet.textSync("Yahtzee", { horizontalLayout: "default" }));
 }
 
-export function drawTurnStats(game: IGame) {
-  console.log(`Turn: ${game.turn + 1}       Rolls left: ${
-    config.rollsPerTurn - game.rollNumber}       ${
-      isYahtzee(game.diceRoll) ? "Yahtzee!" : ""}`);
+export function drawTurnStats(player: string, turn: number, rollsLeft: number, isYahtzee?: boolean) {
+  console.log(`Player: ${player}     Turn: ${turn + 1}     Rolls left: ${rollsLeft}     ${isYahtzee ? "Yahtzee!" : ""}`);
 }
 
-export function drawDiceValues(game: IGame) {
-  if (!game.diceRoll.length || !game.diceRoll.filter(d => d).length) {
+export function drawDiceValues(diceRoll: number[], diceLock: boolean[]) {
+  if (!diceRoll.length || !diceRoll.filter(d => d).length) {
     console.log("\n");
     return;
   }
 
   const rows = ["", "", "", "", "", ""];
-  const len = game.diceRoll.length;
+  const len = diceRoll.length;
 
   for (let i = 0; i < len; i += 1) {
-    switch(game.diceRoll[i]) {
+    switch(diceRoll[i]) {
       case 1:
         rows[0] += " ______  ";
         rows[1] += "|      | ";
@@ -67,7 +62,7 @@ export function drawDiceValues(game: IGame) {
         rows[3] += "";
     }
 
-    if (game.diceLock[i]) {
+    if (diceLock[i]) {
       rows[5] += "    L    "
     } else {
       rows[5] += "         "

@@ -1,33 +1,7 @@
-import { GameMode, IGame } from "./types";
 import Game from "./Game";
+import config from "./config";
 
-const gameData: IGame = {
-  turn: 0,
-  diceRoll: [],
-  diceLock: [],
-  rollNumber: 0,
-  mode: GameMode.ROLL,
-  modeHistory: [],
-  score: {
-    ones: null,
-    twos: null,
-    threes: null,
-    fours: null,
-    fives: null,
-    sixes: null,
-    threeOfAKind: null,
-    fourOfAKind: null,
-    fullHouse: null,
-    smallStraight: null,
-    largeStraight: null,
-    yahtzee: null,
-    chance: null,
-    bonusYahtzees: 0,
-  },
-};
-
-const game = new Game(gameData);
+const game = new Game(config);
 
 game.init();
-
 game.loop();

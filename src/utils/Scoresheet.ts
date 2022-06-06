@@ -19,12 +19,10 @@ export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
 };
 
 export default class Scoresheet {
-  diceRoll: number[];
   score: YahtzeeScore;
 
-  constructor(options: { diceRoll: number[], score: YahtzeeScore }) {
-    this.diceRoll = options.diceRoll;
-    this.score = options.score;
+  constructor(score: YahtzeeScore) {
+    this.score = score;
   }
 
   scoreTopSection() {
@@ -49,6 +47,12 @@ export default class Scoresheet {
         + (this.score.yahtzee || 0)
         + (this.score.chance || 0)
         + (this.score.bonusYahtzees || 0);
+  }
+
+  scoreTotal() {
+    return this.scoreTopSection()
+      + this.scoreTopSectionBonus(this.scoreTopSection())
+      + this.scoreBottomSection();
   }
 
   renderScore(score: number) {
@@ -89,7 +93,7 @@ export default class Scoresheet {
     });
 
     grandTotal.push(
-      ["Grand total", this.scoreTopSection() + this.scoreTopSectionBonus(this.scoreTopSection()) + this.scoreBottomSection()],
+      ["Grand total", this.scoreTotal()],
     );
 
     console.log(grandTotal.toString() + "\n");

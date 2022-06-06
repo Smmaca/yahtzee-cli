@@ -46,3 +46,26 @@ export enum RollModeChoice {
   SEE_SCORESHEET = "See scoresheet",
   QUIT = "Quit",
 }
+
+export interface IConfig {
+  diceCount: number;
+  rollsPerTurn: number;
+  turns: number;
+  messages: {
+    rollPrompt: string;
+    diceLockPrompt: string;
+    scoreDicePrompt: string;
+    scoreJokerPrompt: string;
+    scoresheetPrompt: string;
+    playAgainPrompt: string;
+    quitConfirmPrompt: string;
+    gameOverPrompt: string;
+  };
+  scoreValues: {
+    [YahtzeeScoreCategory.FullHouse]: number;
+    [YahtzeeScoreCategory.SmallStraight]: number;
+    [YahtzeeScoreCategory.LargeStraight]: number;
+    [YahtzeeScoreCategory.Yahtzee]: number;
+    [YahtzeeScoreCategory.BonusYahtzees]: number;
+  };
+}
