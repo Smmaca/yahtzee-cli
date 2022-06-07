@@ -34,7 +34,7 @@ export default class Player {
       largeStraight: null,
       yahtzee: null,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     };
   }
 

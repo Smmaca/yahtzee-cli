@@ -15,7 +15,7 @@ export default class DiceScorer {
     this.smallStraightScore = config.scoreValues[YahtzeeScoreCategory.SmallStraight];
     this.largeStraightScore = config.scoreValues[YahtzeeScoreCategory.LargeStraight];
     this.yahtzeeScore = config.scoreValues[YahtzeeScoreCategory.Yahtzee];
-    this.bonusYahtzeeScore = config.scoreValues[YahtzeeScoreCategory.BonusYahtzees];
+    this.bonusYahtzeeScore = config.scoreValues[YahtzeeScoreCategory.YahtzeeBonus];
   }
 
   getCategoryScoreValue(category: YahtzeeScoreCategory): number {
@@ -28,7 +28,7 @@ export default class DiceScorer {
         return this.largeStraightScore;
       case YahtzeeScoreCategory.Yahtzee:
         return this.yahtzeeScore;
-      case YahtzeeScoreCategory.BonusYahtzees:
+      case YahtzeeScoreCategory.YahtzeeBonus:
         return this.bonusYahtzeeScore;
       default:
         return 0;
@@ -63,7 +63,7 @@ export default class DiceScorer {
         return this.scoreYahtzee();
       case YahtzeeScoreCategory.Chance:
         return this.sumDiceValues();
-      case YahtzeeScoreCategory.BonusYahtzees:
+      case YahtzeeScoreCategory.YahtzeeBonus:
         return this.scoreYahtzeeBonus();
       default:
         return 0;

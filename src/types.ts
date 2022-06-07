@@ -28,7 +28,7 @@ export enum YahtzeeScoreCategory {
   LargeStraight = "largeStraight",
   Yahtzee = "yahtzee",
   Chance = "chance",
-  BonusYahtzees = "bonusYahtzees",
+  YahtzeeBonus = "yahtzeeBonus",
 }
 
 export type YahtzeeScore = Record<YahtzeeScoreCategory, number>;
@@ -78,6 +78,6 @@ export interface IConfig {
     [YahtzeeScoreCategory.SmallStraight]: number;
     [YahtzeeScoreCategory.LargeStraight]: number;
     [YahtzeeScoreCategory.Yahtzee]: number;
-    [YahtzeeScoreCategory.BonusYahtzees]: number;
+    [YahtzeeScoreCategory.YahtzeeBonus]: number;
   };
 }

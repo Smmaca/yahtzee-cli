@@ -30,7 +30,7 @@ describe("Player", () => {
       largeStraight: null,
       yahtzee: null,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     });
   });
 
@@ -54,7 +54,7 @@ describe("Player", () => {
         largeStraight: null,
         yahtzee: null,
         chance: null,
-        bonusYahtzees: 0,
+        yahtzeeBonus: 0,
       },
     });
   });
@@ -80,7 +80,7 @@ describe("Player", () => {
       largeStraight: null,
       yahtzee: null,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     });
   });
 
@@ -112,7 +112,7 @@ describe("Player", () => {
       largeStraight: null,
       yahtzee: null,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     });
   });
 
@@ -143,7 +143,7 @@ describe("Player", () => {
       largeStraight: null,
       yahtzee: 50,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     });
 
     const mockScoresheetInstance = MockScoresheet.mock.instances[0];
@@ -176,7 +176,7 @@ describe("Player", () => {
       largeStraight: null,
       yahtzee: null,
       chance: null,
-      bonusYahtzees: 0,
+      yahtzeeBonus: 0,
     });
 
     const mockScoresheetInstance = MockScoresheet.mock.instances[0];

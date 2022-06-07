@@ -15,7 +15,7 @@ export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
   [YahtzeeScoreCategory.LargeStraight]: "Large Straight",
   [YahtzeeScoreCategory.Yahtzee]: "Yahtzee",
   [YahtzeeScoreCategory.Chance]: "Chance",
-  [YahtzeeScoreCategory.BonusYahtzees]: "Bonus Yahtzees",
+  [YahtzeeScoreCategory.YahtzeeBonus]: "Bonus Yahtzees",
 };
 
 export default class Scoresheet {
@@ -46,7 +46,7 @@ export default class Scoresheet {
         + (this.score.largeStraight || 0)
         + (this.score.yahtzee || 0)
         + (this.score.chance || 0)
-        + (this.score.bonusYahtzees || 0);
+        + (this.score.yahtzeeBonus || 0);
   }
 
   scoreTotal() {
@@ -79,7 +79,7 @@ export default class Scoresheet {
       [scoreLabels[YahtzeeScoreCategory.Fives], this.renderScore(this.score.fives), "", scoreLabels[YahtzeeScoreCategory.LargeStraight], this.renderScore(this.score.largeStraight)],
       [scoreLabels[YahtzeeScoreCategory.Sixes], this.renderScore(this.score.sixes), "", scoreLabels[YahtzeeScoreCategory.Yahtzee], this.renderScore(this.score.yahtzee)],
       ["Total score", this.scoreTopSection(), "", scoreLabels[YahtzeeScoreCategory.Chance], this.renderScore(this.score.chance)],
-      ["Bonus", this.scoreTopSectionBonus(this.scoreTopSection()), "", scoreLabels[YahtzeeScoreCategory.BonusYahtzees], this.score.bonusYahtzees],
+      ["Bonus", this.scoreTopSectionBonus(this.scoreTopSection()), "", scoreLabels[YahtzeeScoreCategory.YahtzeeBonus], this.score.yahtzeeBonus],
       ["Total", this.scoreTopSection() + this.scoreTopSectionBonus(this.scoreTopSection()), "", "Total", this.scoreBottomSection()],
     );
 

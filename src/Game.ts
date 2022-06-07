@@ -407,7 +407,7 @@ export default class Game {
 
       const diceScorer = new DiceScorer(this.state.dice.values, this.config);
   
-      if (category === YahtzeeScoreCategory.BonusYahtzees) {
+      if (category === YahtzeeScoreCategory.YahtzeeBonus) {
         const disabled = !score[YahtzeeScoreCategory.Yahtzee]
           || diceScorer.scoreYahtzeeBonus() === 0;
         choices.push({
@@ -415,7 +415,7 @@ export default class Game {
           name: category,
           value: category,
           hint: `[${score[category]}]${(!disabled &&
-            category === YahtzeeScoreCategory.BonusYahtzees)
+            category === YahtzeeScoreCategory.YahtzeeBonus)
               ? ` + ${diceScorer.bonusYahtzeeScore}` : ""}`,
           disabled,
         });
@@ -464,12 +464,12 @@ export default class Game {
       const player = this.state.currentPlayer;
       const diceScorer = new DiceScorer(this.state.dice.values, this.config);
   
-      if (category === YahtzeeScoreCategory.BonusYahtzees
+      if (category === YahtzeeScoreCategory.YahtzeeBonus
         && player.score[YahtzeeScoreCategory.Yahtzee] !== null
       ) {
         player.setScore(
-          YahtzeeScoreCategory.BonusYahtzees,
-          player.score[YahtzeeScoreCategory.BonusYahtzees] += diceScorer.scoreYahtzeeBonus(),
+          YahtzeeScoreCategory.YahtzeeBonus,
+          player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
         );
         this.state.setMode(GameMode.EDIT_SCORE_JOKER);
         return true;
