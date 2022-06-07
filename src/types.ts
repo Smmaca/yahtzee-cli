@@ -54,7 +54,7 @@ export enum RollModeChoice {
 }
 
 export interface IConfig {
-  debug: boolean;
+  debug?: boolean;
   rollsPerTurn: number;
   turns: number;
   maxPlayers: number;
