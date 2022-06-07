@@ -5,9 +5,11 @@
     "target": "es2021",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["jest", "node"]
   },
   "include": [
     "src/**/*.ts"
-  ]
+  ],
+  "files": ["global.d.ts"]
 }
