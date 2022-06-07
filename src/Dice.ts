@@ -64,4 +64,11 @@ export default class Dice {
     }
     this.setLock(lock);
   }
+
+  toJSON() {
+    return {
+      values: this.values,
+      lock: this.lock,
+    };
+  }
 }

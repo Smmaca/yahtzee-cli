@@ -7,7 +7,7 @@ Run `npm i` then `npm start`
 ## Future features
 
 - [X] Main menu
-- [ ] 2+ players
+- [X] 2+ players
 - [ ] Game stats
   - [ ] High score
   - [ ] Low score

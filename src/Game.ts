@@ -1,7 +1,9 @@
 import clear from "clear";
+import util from 'util';
 import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import Confirm from "enquirer/lib/prompts/Confirm";
 import Select from "enquirer/lib/prompts/Select";
+import Input from "enquirer/lib/prompts/Input";
 import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "./types";
 import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
 import { scoreLabels } from "./Scoresheet";
@@ -17,9 +19,7 @@ export default class Game {
     this.state = new GameState(config);
   }
 
-  init() {
-    
-  }
+  init() {}
 
   async loop() {
     clear();
@@ -28,39 +28,55 @@ export default class Game {
 
     let continueLoop = true;
 
-    switch(this.state.mode) {
-      case GameMode.MAIN_MENU:
-        continueLoop = await this.handleMainMenu();
-        break;
-      case GameMode.NEW_GAME:
-        continueLoop = await this.handleNewGame();
-        break;
-      case GameMode.ROLL:
-        continueLoop = await this.handleRollMode();
-        break;
-      case GameMode.DICE_LOCKER:
-        continueLoop = await this.handleDiceLockMode();
-        break;
-      case GameMode.VIEW_SCORE:
-        continueLoop = await this.handleScoresheetMode();
-        break;
-      case GameMode.EDIT_SCORE:
-        continueLoop = await this.handleScoreDiceMode();
-        break;
-      case GameMode.EDIT_SCORE_JOKER:
-        continueLoop = await this.handleScoreJokerMode();
-        break;
-      case GameMode.GAME_OVER:
-        continueLoop = await this.handleGameOver();
-        break;
-      case GameMode.QUIT_TO_MAIN_MENU_CONFIRM:
-        continueLoop = await this.handleQuitToMainMenuConfirm();
-        break;
-      case GameMode.QUIT_CONFIRM:
-        continueLoop = await this.handleQuitConfirm();
-        break;
-      default:
-        continueLoop = true;
+    try {
+      switch(this.state.mode) {
+        case GameMode.MAIN_MENU:
+          continueLoop = await this.handleMainMenu();
+          break;
+        case GameMode.NEW_GAME:
+          continueLoop = await this.handleNewGame();
+          break;
+        case GameMode.NEW_MULTIPLAYER_GAME:
+          continueLoop = await this.handleNewMultiplayerGame();
+          break;
+        case GameMode.ADD_PLAYER:
+          continueLoop = await this.handleAddPlayer();
+          break;
+        case GameMode.ROLL:
+          continueLoop = await this.handleRollMode();
+          break;
+        case GameMode.DICE_LOCKER:
+          continueLoop = await this.handleDiceLockMode();
+          break;
+        case GameMode.VIEW_SCORE:
+          continueLoop = await this.handleScoresheetMode();
+          break;
+        case GameMode.EDIT_SCORE:
+          continueLoop = await this.handleScoreDiceMode();
+          break;
+        case GameMode.EDIT_SCORE_JOKER:
+          continueLoop = await this.handleScoreJokerMode();
+          break;
+        case GameMode.GAME_OVER:
+          continueLoop = await this.handleGameOver();
+          break;
+        case GameMode.QUIT_TO_MAIN_MENU_CONFIRM:
+          continueLoop = await this.handleQuitToMainMenuConfirm();
+          break;
+        case GameMode.QUIT_CONFIRM:
+          continueLoop = await this.handleQuitConfirm();
+          break;
+        default:
+          continueLoop = true;
+      }
+    } catch (err) {
+      if (this.config.debug) {
+        console.log(util.inspect(this.state.toJSON(), { showHidden: false, depth: null }));
+        console.error(err);
+      } else {
+        console.error("Something went wrong :(");
+      }
+      process.exit(1);
     }
 
     return continueLoop && this.loop();
@@ -94,7 +110,8 @@ export default class Game {
       message: this.config.messages.newGamePrompt,
       choices: [
         "Single player",
-        // "Multiplayer",
+        "Multiplayer",
+        "Cancel",
       ],
     });
 
@@ -104,11 +121,74 @@ export default class Game {
         this.state.setMode(GameMode.ROLL);
         return true;
       }
+      if (answer === "Multiplayer") {
+        this.state.setMode(GameMode.NEW_MULTIPLAYER_GAME);
+        return true;
+      }
+      if (answer === "Cancel") {
+        this.state.revertMode();
+        return true;
+      }
       return true;
-      // if (answer === "Multiplayer") {
-      //   this.state.setMode(GameMode.NEW_GAME_PLAYERS);
-      //   return true;
-      // }
+    });
+  }
+
+  async handleNewMultiplayerGame(): Promise<boolean> {
+    if (this.state.players.length) {
+      this.state.players.forEach((player, i) => console.log(`Player ${i + 1}: ${player.name}`));
+    } else {
+      console.log("No players added yet");
+    }
+    console.log("\n");
+
+    const choices = [];
+
+    if (this.state.players.length < this.config.maxPlayers) {
+      choices.push("Add player");
+    }
+    if (this.state.players.length >= 2) {
+      choices.push("Start game");
+    }
+    choices.push("Cancel");
+
+    const prompt = new Select({
+      name: "newMultiplayerGame",
+      message: this.config.messages.newMultiplayerGamePrompt,
+      choices,
+    });
+
+    return prompt.run().then(answer => {
+      if (answer === "Add player") {
+        this.state.setMode(GameMode.ADD_PLAYER);
+        return true;
+      }
+      if (answer === "Start game") {
+        this.state.setMode(GameMode.ROLL);
+        return true;
+      }
+      if (answer === "Cancel") {
+        this.state.setMode(GameMode.NEW_GAME);
+        return true;
+      }
+      return true;
+    });
+  }
+
+  async handleAddPlayer(): Promise<boolean> {
+    const prompt = new Input({
+      name: "addPlayer",
+      message: this.config.messages.addPlayerPrompt,
+      initial: `Player ${this.state.players.length + 1}`,
+    });
+
+    return prompt.run().then(answer => {
+      if (answer) {
+        this.state.addPlayer(answer);
+        this.state.revertMode();
+        return true;
+      }
+      this.state.revertMode();
+      return true;
     });
   }
 
@@ -156,8 +236,8 @@ export default class Game {
     
     this.state.players.forEach((player, i) => {
       choices.push({
-        name: i,
-        value: player.name,
+        name: player.name,
+        value: i,
         message: `See ${player.name}'s scoresheet`,
       });
     });
@@ -191,7 +271,7 @@ export default class Game {
         return true;
       });
     } else {
-      if (this.state.currentPlayerIndex >= 0) {
+      if (this.state.currentPlayerIndex !== null) {
         this.state.currentPlayer.renderScoresheet();
       } else {
         console.log(`${this.state.winner.name} wins!`);
@@ -217,9 +297,11 @@ export default class Game {
 
         if (answer === "See final scores") {
           this.state.setCurrentPlayer(null);
+          return true;
         }
 
-        this.state.setCurrentPlayer(answer);
+        const index = this.state.players.findIndex(player => player.name === answer);
+        this.state.setCurrentPlayer(index);
         return true;
       });
     }

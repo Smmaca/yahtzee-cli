@@ -126,6 +126,18 @@ export default class GameState {
   }
 
   get winner() {
-    return this.players.sort((a, b) => b.totalScore - a.totalScore)[0];
+    return this.players.slice().sort((a, b) => b.totalScore - a.totalScore)[0];
+  }
+
+  toJSON() {
+    return {
+      turn: this.turn,
+      currentPlayerIndex: this.currentPlayerIndex,
+      rollNumber: this.rollNumber,
+      mode: this.mode,
+      modeHistory: this.modeHistory,
+      players: this.players.map(player => player.toJSON()),
+      dice: this.dice.toJSON(),
+    };
   }
 }

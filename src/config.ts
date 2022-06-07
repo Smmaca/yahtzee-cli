@@ -1,11 +1,15 @@
 import { IConfig, YahtzeeScoreCategory } from "./types";
 
 const config: IConfig = {
+  debug: false,
   rollsPerTurn: 3,
   turns: 13,
+  maxPlayers: 4,
   messages: {
     mainMenuPrompt: "Main menu",
     newGamePrompt: "What kind of game do you want to play?",
+    newMultiplayerGamePrompt: "Add a player or start the game",
+    addPlayerPrompt: "Enter player name",
     rollPrompt: "What do you want to do?",
     diceLockPrompt: "Which dice do you want to lock? (press space to toggle lock status)",
     scoreDicePrompt: "Which category do you want to score?",

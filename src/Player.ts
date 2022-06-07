@@ -42,4 +42,11 @@ export default class Player {
     const scoresheet = new Scoresheet(this.score);
     scoresheet.render();
   }
+
+  toJSON() {
+    return {
+      name: this.name,
+      score: this.score,
+    };
+  }
 }

@@ -2,6 +2,8 @@
 export enum GameMode {
   MAIN_MENU = "MAIN_MENU",
   NEW_GAME = "NEW_GAME",
+  NEW_MULTIPLAYER_GAME = "NEW_MULTIPLAYER_GAME",
+  ADD_PLAYER = "ADD_PLAYER",
   ROLL = "ROLL",
   DICE_LOCKER = "DICE_LOCKER",
   VIEW_SCORE = "VIEW_SCORE",
@@ -52,11 +54,15 @@ export enum RollModeChoice {
 }
 
 export interface IConfig {
+  debug: boolean;
   rollsPerTurn: number;
   turns: number;
+  maxPlayers: number;
   messages: {
     mainMenuPrompt: string;
     newGamePrompt: string;
+    newMultiplayerGamePrompt: string;
+    addPlayerPrompt: string;
     rollPrompt: string;
     diceLockPrompt: string;
     scoreDicePrompt: string;
