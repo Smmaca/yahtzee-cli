@@ -1,7 +1,7 @@
 
-export function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
+export function getRandomIntInclusive(min: number, max: number) {
+  min = Math.ceil(min); // no floats
+  max = Math.floor(max); // no floats
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
