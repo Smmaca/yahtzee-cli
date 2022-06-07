@@ -28,7 +28,7 @@ export default class GameState {
     this.dice = new Dice();
   }
 
-  init() {
+  initSinglePlayer() {
     this.addPlayer("Player 1");
   }
 

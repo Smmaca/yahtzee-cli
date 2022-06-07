@@ -5,6 +5,7 @@ const config: IConfig = {
   turns: 13,
   messages: {
     mainMenuPrompt: "Main menu",
+    newGamePrompt: "What kind of game do you want to play?",
     rollPrompt: "What do you want to do?",
     diceLockPrompt: "Which dice do you want to lock? (press space to toggle lock status)",
     scoreDicePrompt: "Which category do you want to score?",

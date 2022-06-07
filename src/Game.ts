@@ -32,6 +32,9 @@ export default class Game {
       case GameMode.MAIN_MENU:
         continueLoop = await this.handleMainMenu();
         break;
+      case GameMode.NEW_GAME:
+        continueLoop = await this.handleNewGame();
+        break;
       case GameMode.ROLL:
         continueLoop = await this.handleRollMode();
         break;
@@ -75,14 +78,37 @@ export default class Game {
 
     return prompt.run().then(answer => {
       if (answer === "New game") {
-        this.state.init();
-        this.state.setMode(GameMode.ROLL);
+        this.state.setMode(GameMode.NEW_GAME);
         return true;
       }
       if (answer === "Quit") {
         this.state.setMode(GameMode.QUIT_CONFIRM);
         return true;
       }
+    });
+  }
+
+  async handleNewGame(): Promise<boolean> {
+    const prompt = new Select({
+      name: "newGame",
+      message: this.config.messages.newGamePrompt,
+      choices: [
+        "Single player",
+        // "Multiplayer",
+      ],
+    });
+
+    return prompt.run().then(answer => {
+      if (answer === "Single player") {
+        this.state.initSinglePlayer();
+        this.state.setMode(GameMode.ROLL);
+        return true;
+      }
+      return true;
+      // if (answer === "Multiplayer") {
+      //   this.state.setMode(GameMode.NEW_GAME_PLAYERS);
+      //   return true;
+      // }
     });
   }
 

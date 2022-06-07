@@ -1,6 +1,7 @@
 
 export enum GameMode {
   MAIN_MENU = "MAIN_MENU",
+  NEW_GAME = "NEW_GAME",
   ROLL = "ROLL",
   DICE_LOCKER = "DICE_LOCKER",
   VIEW_SCORE = "VIEW_SCORE",
@@ -55,6 +56,7 @@ export interface IConfig {
   turns: number;
   messages: {
     mainMenuPrompt: string;
+    newGamePrompt: string;
     rollPrompt: string;
     diceLockPrompt: string;
     scoreDicePrompt: string;
