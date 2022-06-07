@@ -48,7 +48,6 @@ export enum RollModeChoice {
 }
 
 export interface IConfig {
-  diceCount: number;
   rollsPerTurn: number;
   turns: number;
   messages: {

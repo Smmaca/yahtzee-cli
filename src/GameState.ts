@@ -1,4 +1,5 @@
 import Table from "cli-table";
+import Dice from "./Dice";
 import Player from "./Player";
 import { GameMode, IConfig } from "./types";
 
@@ -8,12 +9,11 @@ export default class GameState {
   turn: number;
   currentPlayerIndex: number;
   rollNumber: number;
-  diceRoll: number[];
-  diceLock: boolean[];
   mode: GameMode;
   modeHistory: GameMode[];
 
   players: Player[];
+  dice: Dice;
 
   constructor(config: IConfig) {
     this.config = config;
@@ -21,25 +21,19 @@ export default class GameState {
     this.turn = 0;
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
-    this.diceRoll = [];
-    this.diceLock = [];
     this.mode = GameMode.ROLL;
     this.modeHistory = [];
     this.players = [];
+
+    this.dice = new Dice();
   }
 
   init() {
-    this.resetDiceRoll();
-    this.resetDiceLock();
     this.addPlayer("Player 1");
   }
 
   get diceRollsLeft() {
     return this.config.rollsPerTurn - this.rollNumber;
-  }
-
-  get unlockedDiceCount() {
-    return this.config.diceCount - this.diceLock.filter(diceLock => diceLock).length;
   }
 
   get currentPlayer() {
@@ -66,8 +60,7 @@ export default class GameState {
       this.incrementPlayer();
       this.setMode(GameMode.VIEW_SCORE);
     }
-    this.resetDiceRoll();
-    this.resetDiceLock();
+    this.dice.reset();
     this.setRollNumber(0);
   }
 
@@ -106,30 +99,6 @@ export default class GameState {
     this.modeHistory.unshift(currentMode);
   }
 
-  setDiceRoll(diceRoll: number[]) {
-    this.diceRoll = diceRoll;
-  }
-
-  setDiceLock(diceLock: boolean[]) {
-    this.diceLock = diceLock;
-  }
-
-  resetDiceRoll() {
-    const diceRoll = [];
-    for (let i = 0; i < this.config.diceCount; i++) {
-      diceRoll.push(0);
-    }
-    this.setDiceRoll(diceRoll);
-  }
-
-  resetDiceLock() {
-    const diceLock = [];
-    for (let i = 0; i < this.config.diceCount; i++) {
-      diceLock.push(false);
-    }
-    this.setDiceLock(diceLock);
-  }
-
   resetGame() {
     this.mode = GameMode.ROLL;
     this.modeHistory = [];
@@ -137,8 +106,7 @@ export default class GameState {
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
     this.players.forEach(player => player.resetScore());
-    this.resetDiceRoll();
-    this.resetDiceLock();
+    this.dice.reset();
   }
 
   renderPlayerScores() {

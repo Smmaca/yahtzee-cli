@@ -1,5 +1,5 @@
 import { YahtzeeScore, YahtzeeScoreCategory } from "./types";
-import Scoresheet from "./utils/Scoresheet";
+import Scoresheet from "./Scoresheet";
 
 export default class Player {
   name: string;

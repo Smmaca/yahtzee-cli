@@ -1,7 +1,6 @@
 import { IConfig, YahtzeeScoreCategory } from "./types";
 
 const config: IConfig = {
-  diceCount: 5,
   rollsPerTurn: 3,
   turns: 13,
   messages: {
