@@ -21,7 +21,7 @@ export default class GameState {
     this.turn = 0;
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
-    this.mode = GameMode.ROLL;
+    this.mode = GameMode.MAIN_MENU;
     this.modeHistory = [];
     this.players = [];
 

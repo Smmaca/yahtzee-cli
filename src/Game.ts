@@ -18,7 +18,7 @@ export default class Game {
   }
 
   init() {
-    this.state.init();
+    
   }
 
   async loop() {
@@ -29,6 +29,9 @@ export default class Game {
     let continueLoop = true;
 
     switch(this.state.mode) {
+      case GameMode.MAIN_MENU:
+        continueLoop = await this.handleMainMenu();
+        break;
       case GameMode.ROLL:
         continueLoop = await this.handleRollMode();
         break;
@@ -47,6 +50,9 @@ export default class Game {
       case GameMode.GAME_OVER:
         continueLoop = await this.handleGameOver();
         break;
+      case GameMode.QUIT_TO_MAIN_MENU_CONFIRM:
+        continueLoop = await this.handleQuitToMainMenuConfirm();
+        break;
       case GameMode.QUIT_CONFIRM:
         continueLoop = await this.handleQuitConfirm();
         break;
@@ -55,6 +61,29 @@ export default class Game {
     }
 
     return continueLoop && this.loop();
+  }
+
+  async handleMainMenu(): Promise<boolean> {
+    const prompt = new Select({
+      name: "mainMenu",
+      message: this.config.messages.mainMenuPrompt,
+      choices: [
+        "New game",
+        "Quit",
+      ],
+    });
+
+    return prompt.run().then(answer => {
+      if (answer === "New game") {
+        this.state.init();
+        this.state.setMode(GameMode.ROLL);
+        return true;
+      }
+      if (answer === "Quit") {
+        this.state.setMode(GameMode.QUIT_CONFIRM);
+        return true;
+      }
+    });
   }
 
   async handleDiceLockMode(): Promise<boolean> {
@@ -132,7 +161,8 @@ export default class Game {
           this.state.resetGame();
           return true;
         }
-        return false;
+        this.state.setMode(GameMode.MAIN_MENU);
+        return true;
       });
     } else {
       if (this.state.currentPlayerIndex >= 0) {
@@ -184,6 +214,22 @@ export default class Game {
     });
   }
 
+  handleQuitToMainMenuConfirm(): Promise<boolean> {
+    const prompt = new Confirm({
+      name: "quitToMainMenuConfirm",
+      message: this.config.messages.quitToMainMenuConfirmPrompt,
+    });
+  
+    return prompt.run().then(quit => {
+      if (!quit) {
+        this.state.revertMode();
+        return true;
+      } 
+      this.state.setMode(GameMode.MAIN_MENU);
+      return true;
+    });
+  }
+
   getRollModePromptChoices() {
     const choices = [];
     if (this.state.rollNumber === 0) {
@@ -196,7 +242,7 @@ export default class Game {
         choices.push(RollModeChoice.SCORE_DICE);
       }
     }
-    choices.push(RollModeChoice.SEE_SCORESHEET, RollModeChoice.QUIT);
+    choices.push(RollModeChoice.SEE_SCORESHEET, RollModeChoice.QUIT_TO_MAIN_MENU, RollModeChoice.QUIT);
     return choices;
   }
 
@@ -226,6 +272,9 @@ export default class Game {
           return true;
         case RollModeChoice.SCORE_DICE:
           this.state.setMode(GameMode.EDIT_SCORE);
+          return true;
+        case RollModeChoice.QUIT_TO_MAIN_MENU:
+          this.state.setMode(GameMode.QUIT_TO_MAIN_MENU_CONFIRM);
           return true;
         case RollModeChoice.QUIT:
           this.state.setMode(GameMode.QUIT_CONFIRM);

@@ -1,5 +1,6 @@
 
 export enum GameMode {
+  MAIN_MENU = "MAIN_MENU",
   ROLL = "ROLL",
   DICE_LOCKER = "DICE_LOCKER",
   VIEW_SCORE = "VIEW_SCORE",
@@ -7,6 +8,7 @@ export enum GameMode {
   EDIT_SCORE_JOKER = "EDIT_SCORE_JOKER",
   GAME_OVER = "GAME_OVER",
   QUIT_CONFIRM = "QUIT_CONFIRM",
+  QUIT_TO_MAIN_MENU_CONFIRM = "QUIT_TO_MAIN_MENU_CONFIRM",
 }
 
 export enum YahtzeeScoreCategory {
@@ -44,6 +46,7 @@ export enum RollModeChoice {
   LOCK_DICE = "Lock dice",
   SCORE_DICE = "Score dice",
   SEE_SCORESHEET = "See scoresheet",
+  QUIT_TO_MAIN_MENU = "Quit to main menu",
   QUIT = "Quit",
 }
 
@@ -51,6 +54,7 @@ export interface IConfig {
   rollsPerTurn: number;
   turns: number;
   messages: {
+    mainMenuPrompt: string;
     rollPrompt: string;
     diceLockPrompt: string;
     scoreDicePrompt: string;
@@ -58,6 +62,7 @@ export interface IConfig {
     scoresheetPrompt: string;
     playAgainPrompt: string;
     quitConfirmPrompt: string;
+    quitToMainMenuConfirmPrompt: string;
     gameOverPrompt: string;
   };
   scoreValues: {
