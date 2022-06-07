@@ -117,11 +117,13 @@ export default class Game {
 
     return prompt.run().then(answer => {
       if (answer === "Single player") {
+        this.state.newGame();
         this.state.initSinglePlayer();
         this.state.setMode(GameMode.ROLL);
         return true;
       }
       if (answer === "Multiplayer") {
+        this.state.newGame();
         this.state.setMode(GameMode.NEW_MULTIPLAYER_GAME);
         return true;
       }
@@ -265,6 +267,7 @@ export default class Game {
       return prompt.run().then(playAgain => {
         if (playAgain) {
           this.state.resetGame();
+          this.state.setMode(GameMode.ROLL);
           return true;
         }
         this.state.setMode(GameMode.MAIN_MENU);
@@ -287,6 +290,7 @@ export default class Game {
       return prompt.run().then(answer => {
         if (answer === "Play again") {
           this.state.resetGame();
+          this.state.setMode(GameMode.ROLL);
           return true;
         }
         
@@ -478,19 +482,37 @@ export default class Game {
     });
   }
 
+  /**
+   * Joker rules
+   * Score the total of all 5 dice in the appropriate upper section box.
+   * If this box has already been filled in, score as follows in any open
+   * lower section box:
+   * - 3 of a kind: total of all five dice
+   * - 4 of a kind: total of all five dice
+   * - full house: 25
+   * - small straight: 30
+   * - large straight: 40
+   * - chance: total of all five dice
+   */
   getScoreJokerPromptChoices() {
     const choices = [];
 
     const score = this.state.currentPlayer.score;
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
 
-    [
+    const numberCategories = [
       YahtzeeScoreCategory.Ones,
       YahtzeeScoreCategory.Twos,
       YahtzeeScoreCategory.Threes,
       YahtzeeScoreCategory.Fours,
       YahtzeeScoreCategory.Fives,
       YahtzeeScoreCategory.Sixes,
+    ];
+    const yahtzeeDiceValue = this.state.dice.values[0];
+    const yahtzeeNumberCategory = numberCategories[yahtzeeDiceValue - 1];
+
+    [
+      yahtzeeNumberCategory,
       YahtzeeScoreCategory.ThreeOfAKind,
       YahtzeeScoreCategory.FourOfAKind,
       YahtzeeScoreCategory.FullHouse,
@@ -499,7 +521,17 @@ export default class Game {
       YahtzeeScoreCategory.Chance,
     ].forEach(key => {
       const category = key as YahtzeeScoreCategory;
-      if ([
+      if (category === yahtzeeNumberCategory) {
+        choices.push({
+          message: scoreLabels[category],
+          name: category,
+          value: category,
+          hint: score[category] === null
+            ? diceScorer.scoreCategory(category)
+            : `[${score[category]}]`,
+          disabled: score[category] !== null,
+        });
+      } else if ([
         YahtzeeScoreCategory.FullHouse,
         YahtzeeScoreCategory.SmallStraight,
         YahtzeeScoreCategory.LargeStraight,
@@ -508,16 +540,20 @@ export default class Game {
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: diceScorer.getCategoryScoreValue(category),
-          disabled: score[category] !== null,
+          hint: score[category] === null
+            ? diceScorer.getCategoryScoreValue(category)
+            : `[${score[category]}]`,
+          disabled: score[yahtzeeNumberCategory] === null || score[category] !== null,
         });
       } else {
         choices.push({
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: diceScorer.scoreCategory(category),
-          disabled: score[category] !== null,
+          hint: score[category] === null
+            ? diceScorer.scoreCategory(category)
+            : `[${score[category]}]`,
+          disabled: score[yahtzeeNumberCategory] === null || score[category] !== null,
         });
       }
     });
