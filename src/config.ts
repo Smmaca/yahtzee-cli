@@ -24,7 +24,7 @@ const config: IConfig = {
     [YahtzeeScoreCategory.SmallStraight]: 30,
     [YahtzeeScoreCategory.LargeStraight]: 40,
     [YahtzeeScoreCategory.Yahtzee]: 50,
-    [YahtzeeScoreCategory.BonusYahtzees]: 100,
+    [YahtzeeScoreCategory.YahtzeeBonus]: 100,
   },
 };
 
