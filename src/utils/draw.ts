@@ -24,48 +24,73 @@ export function drawDiceValues(diceRoll: number[], diceLock: boolean[]) {
         rows[1] += "|      | ";
         rows[2] += "|   0  | ";
         rows[3] += "|______| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       case 2:
         rows[0] += " ______  ";
         rows[1] += "|    0 | ";
         rows[2] += "|      | ";
         rows[3] += "|_0____| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       case 3:
         rows[0] += " ______  ";
         rows[1] += "|    0 | ";
         rows[2] += "|   0  | ";
         rows[3] += "|_0____| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       case 4:
         rows[0] += " ______  ";
         rows[1] += "| 0  0 | ";
         rows[2] += "|      | ";
         rows[3] += "|_0__0_| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       case 5:
         rows[0] += " ______  ";
         rows[1] += "| 0  0 | ";
         rows[2] += "|   0  | ";
         rows[3] += "|_0__0_| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       case 6:
         rows[0] += " ______  ";
         rows[1] += "| 0  0 | ";
         rows[2] += "| 0  0 | ";
         rows[3] += "|_0__0_| ";
+        if (diceLock[i]) {
+          rows[5] += "    L    "
+        } else {
+          rows[5] += "         "
+        }
         break;
       default:
         rows[0] += "";
         rows[1] += "";
         rows[2] += "";
         rows[3] += "";
-    }
-
-    if (diceLock[i]) {
-      rows[5] += "    L    "
-    } else {
-      rows[5] += "         "
+        rows[5] += "";
     }
   }
   console.log(rows.join("\n") + "\n");
