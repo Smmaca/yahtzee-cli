@@ -265,15 +265,163 @@ describe("GameState", () => {
     });
   });
 
-  // describe("renderPlayerScores", () => {
+  describe("renderPlayerScores", () => {
+    const log = jest.spyOn(console, "log").mockImplementation(() => {});
 
-  // });
+    beforeEach(() => {
+      log.mockClear();
+    });
 
-  // describe("winner", () => [
+    test("renders the player scores", () => {
+      const gameState = new GameState(fakeConfig);
+      
+      const mockPlayer = {
+        name: "",
+        totalScore: 0,
+        score: null,
+        setScore: jest.fn(),
+        resetScore: jest.fn(),
+        renderScoresheet: jest.fn(),
+        toJSON: jest.fn(),
+      }
 
-  // ]);
+      MockPlayer
+        .mockImplementationOnce((name) => ({ ...mockPlayer, name, totalScore: 10 }))
+        .mockImplementationOnce((name) => ({ ...mockPlayer, name, totalScore: 20 }));
 
-  // describe("toJSON", () => {
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
 
-  // });
+      gameState.renderPlayerScores();
+    
+      expect(log).toHaveBeenCalledWith(`╔══════════╤══════════╗
+║ Player 1 │ Player 2 ║
+╟──────────┼──────────╢
+║ 10       │ 20       ║
+╚══════════╧══════════╝`)
+    });
+  });
+
+  describe("winner", () => {
+    test("gets the player with the highest score", () => {
+      const gameState = new GameState(fakeConfig);
+      
+      const mockPlayer = {
+        name: "",
+        totalScore: 0,
+        score: null,
+        setScore: jest.fn(),
+        resetScore: jest.fn(),
+        renderScoresheet: jest.fn(),
+        toJSON: jest.fn(),
+      }
+
+      MockPlayer
+        .mockImplementationOnce((name) => ({ ...mockPlayer, name, totalScore: 10 }))
+        .mockImplementationOnce((name) => ({ ...mockPlayer, name, totalScore: 20 }));
+
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
+
+      const winner = gameState.winner;
+
+      expect(winner.name).toBe("Player 2");
+      expect(winner.totalScore).toBe(20);
+    });
+  });
+
+  describe("toJSON", () => {
+    test("ouputs itself as json", () => {
+      const gameState = new GameState(fakeConfig);
+
+      // Change the initial game state
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
+      gameState.setMode(GameMode.NEW_GAME);
+      gameState.setMode(GameMode.EDIT_SCORE_JOKER);
+      gameState.setTurn(4);
+      gameState.setRollNumber(2);
+      gameState.setCurrentPlayer(1);
+
+      const json = gameState.toJSON();
+
+      expect(json).toMatchObject({
+        turn: 4,
+        rollNumber: 2,
+        currentPlayerIndex: 1,
+        mode: GameMode.EDIT_SCORE_JOKER,
+        modeHistory: [GameMode.NEW_GAME, GameMode.MAIN_MENU],
+        players: [undefined, undefined],
+        dice: undefined,
+      });
+
+      const [mockPlayer1, mockPlayer2] = MockPlayer.mock.instances;
+      const dice = MockDice.mock.instances[0];
+
+      expect(mockPlayer1.toJSON).toHaveBeenCalledTimes(1);
+      expect(mockPlayer2.toJSON).toHaveBeenCalledTimes(1);
+      expect(dice.toJSON).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("nextPlayer", () => {
+    test("sets the current player to the next player", () => {
+      const gameState = new GameState(fakeConfig);
+
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
+      gameState.setRollNumber(1);
+      gameState.setTurn(2);
+
+      gameState.nextPlayer();
+
+      const dice = MockDice.mock.instances[0];
+
+      expect(gameState.currentPlayerIndex).toBe(1);
+      expect(gameState.mode).toBe(GameMode.VIEW_SCORE);
+      expect(gameState.turn).toBe(2);
+      expect(gameState.rollNumber).toBe(0);
+      expect(dice.reset).toHaveBeenCalledTimes(1);
+    });
+
+    test("sets the current player to the first player and increments the turn if the last player has rolled", () => {
+      const gameState = new GameState(fakeConfig);
+
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
+      gameState.setRollNumber(1);
+      gameState.setTurn(2);
+      gameState.setCurrentPlayer(1);
+
+      gameState.nextPlayer();
+
+      const dice = MockDice.mock.instances[0];
+
+      expect(gameState.currentPlayerIndex).toBe(0);
+      expect(gameState.mode).toBe(GameMode.VIEW_SCORE);
+      expect(gameState.turn).toBe(3);
+      expect(gameState.rollNumber).toBe(0);
+      expect(dice.reset).toHaveBeenCalledTimes(1);
+    });
+
+    test("sets the current player to null and the mode to game over if the last player has rolled for the last turn", () => {
+      const gameState = new GameState(fakeConfig);
+
+      gameState.addPlayer("Player 1");
+      gameState.addPlayer("Player 2");
+      gameState.setRollNumber(1);
+      gameState.setTurn(14);
+      gameState.setCurrentPlayer(1);
+
+      gameState.nextPlayer();
+
+      const dice = MockDice.mock.instances[0];
+
+      expect(gameState.currentPlayerIndex).toBe(null);
+      expect(gameState.mode).toBe(GameMode.GAME_OVER);
+      expect(gameState.turn).toBe(14);
+      expect(gameState.rollNumber).toBe(0);
+      expect(dice.reset).toHaveBeenCalledTimes(1);
+    });
+  });
 });
