@@ -99,22 +99,19 @@ export default class GameState {
     this.modeHistory.unshift(currentMode);
   }
 
-  newGame() {
-    this.modeHistory = [];
-    this.turn = 0;
-    this.currentPlayerIndex = 0;
-    this.rollNumber = 0;
-    this.dice.reset();
-    this.players = [];
-  }
-
   resetGame() {
     this.modeHistory = [];
     this.turn = 0;
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
-    this.players.forEach(player => player.resetScore());
     this.dice.reset();
+
+    this.players.forEach(player => player.resetScore());
+  }
+
+  newGame() {
+    this.resetGame();
+    this.players = [];
   }
 
   renderPlayerScores() {
