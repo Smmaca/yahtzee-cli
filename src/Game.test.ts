@@ -2,6 +2,7 @@ import clear from "clear";
 import config from "./config";
 import Game from "./Game";
 import GameState from "./GameState";
+import Player from "./Player";
 import { GameMode } from "./types";
 import * as drawUtils from "./utils/draw";
 import MultiSelect from "enquirer/lib/prompts/MultiSelect";
@@ -10,6 +11,7 @@ import Select from "enquirer/lib/prompts/Select";
 import Input from "enquirer/lib/prompts/Input";
 
 jest.mock("./GameState");
+jest.mock("./Player");
 jest.mock("clear");
 jest.mock("./utils/draw");
 jest.mock("enquirer/lib/prompts/MultiSelect");
@@ -19,6 +21,7 @@ jest.mock("enquirer/lib/prompts/Input");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;
+const MockPlayer = Player as jest.MockedClass<typeof Player>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockMultiSelect = MultiSelect as jest.MockedClass<typeof MultiSelect>;
 const MockConfirm = Confirm as jest.MockedClass<typeof Confirm>;
@@ -308,17 +311,46 @@ describe("Game", () => {
   });
 
   describe("handleNewMultiplayerGame", () => {
+    const logSpy = jest.spyOn(console, "log");
+
     beforeEach(() => {
       MockGameState.mockClear();
+      logSpy.mockClear().mockImplementation(() => {});
     });
 
-    test("handles selecting option: Add player", async () => {
+    test("handles selecting option: Add player (no existing players)", async () => {
+      MockGameState.prototype.players = [];
+
       const game = new Game(fakeConfig);
 
       MockSelect.prototype.run.mockImplementation(async () => "Add player");
-      MockGameState.prototype.players = [];
 
       const continueLoop = await game.handleNewMultiplayerGame();
+
+      expect(logSpy).toHaveBeenCalledWith("No players added yet");
+
+      const mockPrompt = MockSelect.mock.instances[0];
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(MockSelect).toHaveBeenCalledTimes(1);
+      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
+
+      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ADD_PLAYER);
+    });
+
+    test("handles selecting option: Add player (existing players)", async () => {
+      const mockPlayer = new MockPlayer("Player 1");
+      mockPlayer.name = "Player 1";
+      MockGameState.prototype.players = [mockPlayer];
+
+      const game = new Game(fakeConfig);
+
+      MockSelect.prototype.run.mockImplementation(async () => "Add player");
+
+      const continueLoop = await game.handleNewMultiplayerGame();
+
+      expect(logSpy).toHaveBeenCalledWith("Player 1: Player 1");
 
       const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
@@ -334,7 +366,6 @@ describe("Game", () => {
       const game = new Game(fakeConfig);
 
       MockSelect.prototype.run.mockImplementation(async () => "Start game");
-      MockGameState.prototype.players = [];
 
       const continueLoop = await game.handleNewMultiplayerGame();
 
@@ -407,6 +438,62 @@ describe("Game", () => {
       expect(mockPrompt.run).toHaveBeenCalledTimes(1);
 
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("handleGameOver", () => {
+    const logSpy = jest.spyOn(console, "log");
+
+    beforeEach(() => {
+      MockGameState.mockReset();
+      logSpy.mockClear().mockImplementation(() => {});
+    });
+
+    test("single player game, handles play again: yes", async () => {
+      const mockPlayer = new MockPlayer("Player 1");
+      MockGameState.prototype.players = [mockPlayer];
+      
+      const game = new Game(fakeConfig);
+
+      MockConfirm.prototype.run.mockImplementation(async () =>  true);
+
+      const continueLoop = await game.handleGameOver();
+
+      const mockPrompt = MockConfirm.mock.instances[0];
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenCalledWith("Game over!\n");
+      expect(mockPlayer.renderScoresheet).toHaveBeenCalledTimes(1);
+      expect(MockConfirm).toHaveBeenCalledTimes(1);
+      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
+
+      expect(mockGameState.resetGame).toHaveBeenCalledTimes(1);
+      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
+    });
+
+    test("single player game, handles play again: no", async () => {
+      const mockPlayer = new MockPlayer("Player 1");
+      MockGameState.prototype.players = [mockPlayer];
+
+      const game = new Game(fakeConfig);
+
+      console.log(game.state.players);
+
+      MockConfirm.prototype.run.mockImplementation(async () =>  false);
+
+      const continueLoop = await game.handleGameOver();
+
+      const mockPrompt = MockConfirm.mock.instances[0];
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenCalledWith("Game over!\n");
+      expect(mockPlayer.renderScoresheet).toHaveBeenCalledTimes(1);
+      expect(MockConfirm).toHaveBeenCalledTimes(1);
+      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
+
+      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.MAIN_MENU);
     });
   });
 });
