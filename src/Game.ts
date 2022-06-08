@@ -76,7 +76,7 @@ export default class Game {
       } else {
         console.error("Something went wrong :(");
       }
-      process.exit(1);
+      return process.exit(1);
     }
 
     return continueLoop && this.loop();
