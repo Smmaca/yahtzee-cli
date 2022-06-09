@@ -6,6 +6,10 @@ A game of Yahtzee that runs in the command line. The object of the game is to sc
 
 Run `npm i` then `npm start`
 
+## Run unit tests
+
+Run `npm test`
+
 ## Future improvements
 
 - [ ] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
