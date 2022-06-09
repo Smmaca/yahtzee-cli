@@ -1,15 +1,14 @@
 # Yahtzee CLI
 
-## Instructions
+A game of Yahtzee that runs in the command line. The object of the game is to score as high as possible by rolling five dice to get different combinations over 13 turns (see full rules linked at bottom of README).
+
+## Instructions to run
 
 Run `npm i` then `npm start`
 
 ## Future improvements
 
-- [ ] Joker rules have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled.
-
-## Future features
-
+- [ ] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
 - [X] Main menu
 - [X] 2+ players
 - [ ] Game stats
@@ -17,6 +16,8 @@ Run `npm i` then `npm start`
   - [ ] Low score
   - [ ] Average score
   - [ ] Most yahtzees in a single game
+- [ ] User profile to save player's name and player's play history over sessions
+- [ ] Print scoresheet to file
 - [ ] Achievements
   - [ ] Get the lowest possible score (5)
   - [ ] Get a yahtzee
@@ -28,3 +29,9 @@ Run `npm i` then `npm start`
   - [ ] Get a final score over 300
   - [ ] Get a final score over 400
   - [ ] Play an entire game without rerolling
+
+## Related links
+
+- [Hasbro rulebook](https://www.hasbro.com/common/instruct/yahtzee.pdf)
+- [Printable scoresheet](https://www.memory-improvement-tips.com/support-files/yahtzee-score-sheets.pdf)
+- [Yahtzee probability](https://www.datagenetics.com/blog/january42012/#:~:text=5%20dice,possible%20combinations%20for%20five%20dice.)
