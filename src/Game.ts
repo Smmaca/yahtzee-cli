@@ -201,7 +201,8 @@ export default class Game {
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const choices = this.state.dice.values.map((value, index) => ({
-      name: `Dice ${index + 1}`,
+      name: index,
+      message: `Dice ${index + 1}`,
       hint: value,
       value: index,
       // Enabled property doesn't work but can use it to set initial choices from the prompt
