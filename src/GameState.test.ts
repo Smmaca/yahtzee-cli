@@ -102,8 +102,8 @@ describe("GameState", () => {
 
       gameState.addPlayer("Player 1");
 
-      expect(gameState.currentPlayer).toBeInstanceOf(MockPlayer);
-      expect(gameState.currentPlayer).toBe(gameState.players[0]);
+      expect(gameState.getCurrentPlayer()).toBeInstanceOf(MockPlayer);
+      expect(gameState.getCurrentPlayer()).toBe(gameState.players[0]);
     });
 
     test("returns the current player for multiplayer game", () => {
@@ -114,8 +114,8 @@ describe("GameState", () => {
 
       gameState.setCurrentPlayer(1);
 
-      expect(gameState.currentPlayer).toBeInstanceOf(MockPlayer);
-      expect(gameState.currentPlayer).toBe(gameState.players[1]);
+      expect(gameState.getCurrentPlayer()).toBeInstanceOf(MockPlayer);
+      expect(gameState.getCurrentPlayer()).toBe(gameState.players[1]);
     });
   });
 
@@ -314,7 +314,7 @@ describe("GameState", () => {
         resetScore: jest.fn(),
         renderScoresheet: jest.fn(),
         toJSON: jest.fn(),
-      }
+      };
 
       MockPlayer
         .mockImplementationOnce((name) => ({ ...mockPlayer, name, totalScore: 10 }))
@@ -323,7 +323,7 @@ describe("GameState", () => {
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
 
-      const winner = gameState.winner;
+      const winner = gameState.getWinner();
 
       expect(winner.name).toBe("Player 2");
       expect(winner.totalScore).toBe(20);

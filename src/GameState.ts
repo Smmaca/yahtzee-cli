@@ -36,7 +36,7 @@ export default class GameState {
     return this.config.rollsPerTurn - this.rollNumber;
   }
 
-  get currentPlayer() {
+  getCurrentPlayer() {
     return this.players[this.currentPlayerIndex];
   }
 
@@ -130,7 +130,7 @@ export default class GameState {
     console.log(table.toString());
   }
 
-  get winner() {
+  getWinner() {
     return this.players.slice().sort((a, b) => b.totalScore - a.totalScore)[0];
   }
 

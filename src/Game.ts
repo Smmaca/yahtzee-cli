@@ -10,6 +10,7 @@ import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
 
+
 export default class Game {
   config: IConfig;
   state: GameState;
@@ -196,7 +197,7 @@ export default class Game {
 
   async handleDiceLockMode(): Promise<boolean> {
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const choices = this.state.dice.values.map((value, index) => ({
@@ -275,9 +276,9 @@ export default class Game {
       });
     } else {
       if (this.state.currentPlayerIndex !== null) {
-        this.state.currentPlayer.renderScoresheet();
+        this.state.getCurrentPlayer().renderScoresheet();
       } else {
-        console.log(`${this.state.winner.name} wins!`);
+        console.log(`${this.state.getWinner().name} wins!`);
         this.state.renderPlayerScores();
       }
 
@@ -288,6 +289,7 @@ export default class Game {
       });
 
       return prompt.run().then(answer => {
+        console.log(answer);
         if (answer === "Play again") {
           this.state.resetGame();
           this.state.setMode(GameMode.ROLL);
@@ -360,7 +362,7 @@ export default class Game {
 
  async handleRollMode(): Promise<boolean> {
   const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const prompt = new Select({
@@ -400,7 +402,7 @@ export default class Game {
   getScoreDicePromptChoices() {
     const choices = [];
 
-    const score = this.state.currentPlayer.score;
+    const score = this.state.getCurrentPlayer().score;
 
     Object.keys(score).forEach(key => {
       const category = key as YahtzeeScoreCategory;
@@ -445,7 +447,7 @@ export default class Game {
 
   async handleScoreDiceMode(): Promise<boolean> {
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const prompt = new Select({
@@ -461,7 +463,7 @@ export default class Game {
       }
   
       const category = answer as YahtzeeScoreCategory;
-      const player = this.state.currentPlayer;
+      const player = this.state.getCurrentPlayer();
       const diceScorer = new DiceScorer(this.state.dice.values, this.config);
   
       if (category === YahtzeeScoreCategory.YahtzeeBonus
@@ -497,7 +499,7 @@ export default class Game {
   getScoreJokerPromptChoices() {
     const choices = [];
 
-    const score = this.state.currentPlayer.score;
+    const score = this.state.getCurrentPlayer().score;
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
 
     const numberCategories = [
@@ -563,7 +565,7 @@ export default class Game {
 
   async handleScoreJokerMode(): Promise<boolean> {
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const prompt = new Select({
@@ -574,7 +576,7 @@ export default class Game {
   
     return prompt.run().then((answer) => {
       const category = answer as YahtzeeScoreCategory;
-      const player = this.state.currentPlayer;
+      const player = this.state.getCurrentPlayer();
       const diceScorer = new DiceScorer(this.state.dice.values, this.config);
 
       if ([
@@ -594,10 +596,10 @@ export default class Game {
 
   async handleScoresheetMode(): Promise<boolean> {
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.currentPlayer.name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
 
-    const player = this.state.currentPlayer;
+    const player = this.state.getCurrentPlayer();
   
     player.renderScoresheet();
   
