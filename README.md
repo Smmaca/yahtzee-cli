@@ -6,7 +6,7 @@ Run `npm i` then `npm start`
 
 ## Future improvements
 
-- Joker rules have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled.
+- [ ] Joker rules have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled.
 
 ## Future features
 
