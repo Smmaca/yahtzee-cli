@@ -17,5 +17,11 @@
   "collectCoverage": true,
   "collectCoverageFrom": [
     "src/**/*.ts"
+  ],
+  "coverageReporters": [
+    "json-summary",
+    "lcov",
+    "text",
+    "clover"
   ]
 }

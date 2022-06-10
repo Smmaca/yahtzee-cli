@@ -1,3 +1,10 @@
+![Coverage statements](./badges/badge-statements.svg)
+![Coverage branches](./badges/badge-branches.svg)
+![Coverage functions](./badges/badge-functions.svg)
+![Coverage lines](./badges/badge-lines.svg)
+
+
+
 ```
  __   __    _     _                _ 
  \ \ / /_ _| |__ | |_ _______  ___| |

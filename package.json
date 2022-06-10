@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "test": "jest"
+    "coverage-badges": "jest-coverage-badges --output ./badges",
+    "test": "jest && npm run coverage-badges"
   },
   "author": "Shavaun MacArthur <shavaunmac@gmail.com>",
   "license": "ISC",
@@ -13,7 +14,8 @@
     "clear": "^0.0.1",
     "cli-table": "^0.3.11",
     "enquirer": "^2.3.6",
-    "figlet": "^1.2.0"
+    "figlet": "^1.2.0",
+    "jest-coverage-badges": "^1.1.2"
   },
   "devDependencies": {
     "@types/clear": "^0.1.2",
