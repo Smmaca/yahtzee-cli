@@ -32,7 +32,7 @@ export default class GameState {
     this.addPlayer("Player 1");
   }
 
-  get diceRollsLeft() {
+  getDiceRollsLeft() {
     return this.config.rollsPerTurn - this.rollNumber;
   }
 

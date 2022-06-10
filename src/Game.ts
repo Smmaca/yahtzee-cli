@@ -215,7 +215,7 @@ export default class Game {
   async handleDiceLockMode(): Promise<boolean> {
     // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer()?.name, this.state.turn, this.state.getDiceRollsLeft(), diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const choices = this.state.dice.values.map((value, index) => ({
@@ -331,8 +331,10 @@ export default class Game {
   async handleGameOver(): Promise<boolean> {
     if (this.state.players.length === 1) {
       return this.handleSinglePlayerGameOver();
-    } else {
+    } else if (this.state.players.length > 1) {
       return this.handleMultiplayerGameOver();
+    } else {
+      throw new Error("Cannot handle game over with no players");
     }
   }
 
@@ -371,26 +373,28 @@ export default class Game {
     return true;
   }
 
-  getRollModePromptChoices() {
-    const choices = [];
+  getRollModePromptChoices(): IChoice<RollModeChoice>[] {
+    const choices: IChoice<RollModeChoice>[] = [];
     if (this.state.rollNumber === 0) {
-      choices.push(RollModeChoice.ROLL_DICE);
+      choices.push({name: RollModeChoice.ROLL_DICE });
     } else {
-      if (this.state.rollNumber > 0 && this.state.rollNumber < this.config.rollsPerTurn) {
-        choices.push(RollModeChoice.ROLL_AGAIN, RollModeChoice.LOCK_DICE);
+      if (this.state.rollNumber < this.config.rollsPerTurn) {
+        choices.push({name: RollModeChoice.ROLL_AGAIN }, { name: RollModeChoice.LOCK_DICE });
       }
-      if (this.state.rollNumber > 0) {
-        choices.push(RollModeChoice.SCORE_DICE);
-      }
+      choices.push({ name: RollModeChoice.SCORE_DICE });
     }
-    choices.push(RollModeChoice.SEE_SCORESHEET, RollModeChoice.QUIT_TO_MAIN_MENU, RollModeChoice.QUIT);
+    choices.push(
+      { name: RollModeChoice.SEE_SCORESHEET },
+      { name: RollModeChoice.QUIT_TO_MAIN_MENU },
+      { name: RollModeChoice.QUIT },
+    );
     return choices;
   }
 
   async handleRollMode(): Promise<boolean> {
     // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.getDiceRollsLeft(), diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     // Get input
@@ -403,7 +407,7 @@ export default class Game {
     // Handle input
     switch(answer) {
       case RollModeChoice.LOCK_DICE:
-        this.state.setMode(GameMode.DICE_LOCKER)
+        this.state.setMode(GameMode.DICE_LOCKER);
         return true;
       case RollModeChoice.ROLL_DICE:
       case RollModeChoice.ROLL_AGAIN:
@@ -439,14 +443,13 @@ export default class Game {
   
       if (category === YahtzeeScoreCategory.YahtzeeBonus) {
         const disabled = !score[YahtzeeScoreCategory.Yahtzee]
-          || diceScorer.scoreYahtzeeBonus() === 0;
+          || !diceScorer.scoreYahtzeeBonus();
         choices.push({
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: `[${score[category]}]${(!disabled &&
-            category === YahtzeeScoreCategory.YahtzeeBonus)
-              ? ` + ${diceScorer.bonusYahtzeeScore}` : ""}`,
+          hint: `[${score[category]}]${!disabled
+            ? ` + ${diceScorer.scoreYahtzeeBonus()}` : ""}`,
           disabled,
         });
       } else {
@@ -462,11 +465,11 @@ export default class Game {
       }
     });
   
-    if (this.config.rollsPerTurn - this.state.rollNumber > 0) {
+    if (this.state.getDiceRollsLeft() > 0) {
       choices.push({
         message: "Cancel",
-        name: "cancel",
-        value: "cancel",
+        name: "Cancel",
+        value: "Cancel",
       });
     }
   
@@ -476,7 +479,7 @@ export default class Game {
   async handleScoreDiceMode(): Promise<boolean> {
     // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.getDiceRollsLeft(), diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     // Get input
@@ -487,7 +490,7 @@ export default class Game {
     });
   
     // Handle input
-    if (answer === "cancel") {
+    if (answer === "Cancel") {
       this.state.setMode(GameMode.ROLL);
       return true;
     }
@@ -495,19 +498,16 @@ export default class Game {
     const category = answer as YahtzeeScoreCategory;
     const player = this.state.getCurrentPlayer();
 
-    if (category === YahtzeeScoreCategory.YahtzeeBonus
-      && player.score[YahtzeeScoreCategory.Yahtzee] !== null
-    ) {
+    if (category === YahtzeeScoreCategory.YahtzeeBonus) {
       player.setScore(
         YahtzeeScoreCategory.YahtzeeBonus,
         player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
       );
       this.state.setMode(GameMode.EDIT_SCORE_JOKER);
       return true;
-    } else {
-      player.setScore(category, diceScorer.scoreCategory(category));
     }
-
+    
+    player.setScore(category, diceScorer.scoreCategory(category));
     this.state.nextPlayer();
     return true;
   }
@@ -594,7 +594,7 @@ export default class Game {
   async handleScoreJokerMode(): Promise<boolean> {
     // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.getDiceRollsLeft(), diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     // Get input
@@ -625,7 +625,7 @@ export default class Game {
   async handleScoresheetMode(): Promise<boolean> {
     // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
+    drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.getDiceRollsLeft(), diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
 
     const player = this.state.getCurrentPlayer();

@@ -80,7 +80,7 @@ describe("GameState", () => {
     test("returns the number of rolls left", () => {
       const gameState = new GameState(fakeConfig);
 
-      expect(gameState.diceRollsLeft).toBe(4);
+      expect(gameState.getDiceRollsLeft()).toBe(4);
     });
 
     test("returns the number of rolls left after rolling", () => {
@@ -88,7 +88,7 @@ describe("GameState", () => {
 
       gameState.setRollNumber(2);
 
-      expect(gameState.diceRollsLeft).toBe(2);
+      expect(gameState.getDiceRollsLeft()).toBe(2);
     });
   });
 

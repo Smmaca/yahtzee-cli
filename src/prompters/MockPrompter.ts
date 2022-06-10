@@ -10,7 +10,7 @@ export interface IMockAnswer {
  * Prompter child class that returns mocked answers passed in at instantiation rather than prompting the user.
  */
 export default class MockPrompter extends BasePrompter {
-  constructor(private answers: IMockAnswer[]) {
+  constructor(private answers: IMockAnswer[] = []) {
     super();
   }
 
