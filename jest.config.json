@@ -4,7 +4,7 @@
     "**/__tests__/**/*.[jt]s?(x)",
     "**/?(*.)+(spec|test).[jt]s?(x)"
   ],
-  "testPathIgnore": [
+  "testPathIgnorePatterns": [
     "/node_modules/",
     "/e2e/",
     "/coverage/"
