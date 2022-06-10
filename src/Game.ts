@@ -540,18 +540,33 @@ export default class Game {
     ];
     const yahtzeeDiceValue = this.state.dice.values[0];
     const yahtzeeNumberCategory = numberCategories[yahtzeeDiceValue - 1];
+    const yahtzeeOtherNumberCategories = numberCategories.filter(
+      category => category !== yahtzeeNumberCategory,
+    );
 
     [
+      "Attempt 1: Score sum of dice in the appropriate number category",
       yahtzeeNumberCategory,
+      "Attempt 2: Score in any lower section category",
       YahtzeeScoreCategory.ThreeOfAKind,
       YahtzeeScoreCategory.FourOfAKind,
       YahtzeeScoreCategory.FullHouse,
       YahtzeeScoreCategory.SmallStraight,
       YahtzeeScoreCategory.LargeStraight,
       YahtzeeScoreCategory.Chance,
+      "Attempt 3: Score zero in any number category",
+      ...yahtzeeOtherNumberCategories,
     ].forEach(key => {
       const category = key as YahtzeeScoreCategory;
-      if (category === yahtzeeNumberCategory) {
+      if (key.startsWith("Attempt")) {
+        choices.push({
+          message: key,
+          name: key,
+          value: key,
+          hint: "",
+          role: "separator",
+        });
+      } else if (category === yahtzeeNumberCategory) {
         choices.push({
           message: scoreLabels[category],
           name: category,
@@ -560,6 +575,23 @@ export default class Game {
             ? diceScorer.scoreCategory(category)
             : `[${score[category]}]`,
           disabled: score[category] !== null,
+        });
+      } else if (yahtzeeOtherNumberCategories.includes(category)) {
+        choices.push({
+          message: scoreLabels[category],
+          name: category,
+          value: category,
+          hint: score[category] === null
+            ? diceScorer.scoreCategory(category)
+            : `[${score[category]}]`,
+          disabled: score[category] !== null || score[yahtzeeNumberCategory] !== null || [
+            YahtzeeScoreCategory.ThreeOfAKind,
+            YahtzeeScoreCategory.FourOfAKind,
+            YahtzeeScoreCategory.FullHouse,
+            YahtzeeScoreCategory.SmallStraight,
+            YahtzeeScoreCategory.LargeStraight,
+            YahtzeeScoreCategory.Chance
+          ].some(c => score[c] !== null),
         });
       } else if ([
         YahtzeeScoreCategory.FullHouse,
@@ -573,7 +605,7 @@ export default class Game {
           hint: score[category] === null
             ? diceScorer.getCategoryScoreValue(category)
             : `[${score[category]}]`,
-          disabled: score[yahtzeeNumberCategory] === null || score[category] !== null,
+          disabled: score[category] !== null || score[yahtzeeNumberCategory] === null,
         });
       } else {
         choices.push({
@@ -583,7 +615,7 @@ export default class Game {
           hint: score[category] === null
             ? diceScorer.scoreCategory(category)
             : `[${score[category]}]`,
-          disabled: score[yahtzeeNumberCategory] === null || score[category] !== null,
+          disabled: score[category] !== null || score[yahtzeeNumberCategory] === null,
         });
       }
     });

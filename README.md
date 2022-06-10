@@ -25,7 +25,7 @@ Run `npm test`
 
 ## Future improvements
 
-- [ ] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
+- [X] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
 - [X] Main menu
 - [X] 2+ players
 - [ ] Game stats
@@ -33,8 +33,11 @@ Run `npm test`
   - [ ] Low score
   - [ ] Average score
   - [ ] Most yahtzees in a single game
+  - [ ] Total games played
 - [ ] User profile to save player's name and player's play history over sessions
 - [ ] Print scoresheet to file
+- [ ] Settings
+  - [ ] Change dice style between pips and digits
 - [ ] Achievements
   - [ ] Get the lowest possible score (5)
   - [ ] Get a yahtzee
