@@ -1,9 +1,5 @@
 import clear from "clear";
 import util from 'util';
-import MultiSelect from "enquirer/lib/prompts/MultiSelect";
-import Confirm from "enquirer/lib/prompts/Confirm";
-import Select from "enquirer/lib/prompts/Select";
-import Input from "enquirer/lib/prompts/Input";
 import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "./types";
 import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
 import { scoreLabels } from "./Scoresheet";

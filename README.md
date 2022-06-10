@@ -23,7 +23,7 @@ Run `npm i` then `npm start`
 
 Run `npm test`
 
-## Improvements
+## To Do
 
 - [X] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
 - [X] Main menu
@@ -49,6 +49,8 @@ Run `npm test`
   - [ ] Get a final score over 300
   - [ ] Get a final score over 400
   - [ ] Play an entire game without rerolling
+- [ ] 100% unit test coverage
+- [ ] E2E tests using MockPrompter
 
 ## Related links
 
