@@ -23,7 +23,7 @@ Run `npm i` then `npm start`
 
 Run `npm test`
 
-## Future improvements
+## Improvements
 
 - [X] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
 - [X] Main menu
