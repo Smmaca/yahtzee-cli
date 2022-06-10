@@ -23,7 +23,9 @@ export default class Game {
     this.state = new GameState(config);
   }
 
-  init() {}
+  init() {
+    // Noop
+  }
 
   async loop() {
     clear();
