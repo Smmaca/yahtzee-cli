@@ -1,11 +1,12 @@
 import clear from "clear";
-import util from 'util';
+import util from "util";
 import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "./types";
 import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
 import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
 import BasePrompter, { IChoice } from "./prompters/BasePrompter";
+import DataLoader, { StatsData } from "./DataLoader";
 
 
 export default class Game {
@@ -13,14 +14,17 @@ export default class Game {
   state: GameState;
   prompter: BasePrompter;
 
+  statsLoader: DataLoader<StatsData>;
+
   constructor(config: IConfig, prompter: BasePrompter) {
     this.config = config;
     this.prompter = prompter;
     this.state = new GameState(config);
+    this.statsLoader = new DataLoader("data", "stats.json", { gamesPlayed: 0 });
   }
 
   init() {
-    // Noop
+    this.statsLoader.init();
   }
 
   async loop() {
@@ -86,6 +90,8 @@ export default class Game {
 
   async handleMainMenu(): Promise<boolean> {
     // Draw stuff
+    const stats = this.statsLoader.getData();
+    console.log(`You've played ${stats.gamesPlayed} games\n`);
 
     // Get input
     const answer = await this.prompter.getInputFromSelect({
@@ -326,6 +332,9 @@ export default class Game {
 
   async handleGameOver(): Promise<boolean> {
     if (this.state.players.length === 1) {
+      const stats = this.statsLoader.getData();
+      stats.gamesPlayed++;
+      this.statsLoader.setData(stats);
       return this.handleSinglePlayerGameOver();
     } else if (this.state.players.length > 1) {
       return this.handleMultiplayerGameOver();

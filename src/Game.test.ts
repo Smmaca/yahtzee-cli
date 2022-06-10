@@ -8,8 +8,10 @@ import * as drawUtils from "./utils/draw";
 import MockPrompter from "./prompters/MockPrompter";
 import DiceScorer from "./DiceScorer";
 import Dice from "./Dice";
+import DataLoader from "./DataLoader";
 
 jest.mock("./GameState");
+jest.mock("./DataLoader");
 jest.mock("./Player");
 jest.mock("./Dice");
 jest.mock("./DiceScorer");
@@ -21,6 +23,7 @@ const MockGameState = GameState as jest.MockedClass<typeof GameState>;
 const MockPlayer = Player as jest.MockedClass<typeof Player>;
 const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
 const MockDice = Dice as jest.MockedClass<typeof Dice>;
+const MockDataLoader = DataLoader as jest.MockedClass<typeof DataLoader>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 
 const fakeConfig = {
@@ -44,7 +47,23 @@ describe("Game", () => {
 
     expect(game.config).toMatchObject(fakeConfig);
     expect(MockGameState).toHaveBeenCalledWith(fakeConfig);
+    expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", { gamesPlayed: 0 });
   });
+
+  // TODO: Why does this cause a stack overflow??
+  // describe("init", () => {
+  //   beforeEach(() => {
+  //     MockGameState.mockClear();
+  //     MockDataLoader.mockClear();
+  //   });
+
+  //   test("inits the stats data loader", async () => {
+  //     const game = new Game(fakeConfig, new MockPrompter());
+  //     game.init();
+  //     const mockDataLoader = MockDataLoader.mock.instances[0];
+  //     expect(mockDataLoader.init).toHaveBeenCalledTimes(1);
+  //   });
+  // });
 
   describe("loop", () => {
     const game = new Game(fakeConfig, new MockPrompter());
@@ -206,11 +225,17 @@ describe("Game", () => {
   });
 
   describe("handleMainMenu", () => {
+    const logSpy = jest.spyOn(console, "log");
+
     beforeEach(() => {
       MockGameState.mockClear();
+      MockDataLoader.mockClear();
+      logSpy.mockClear().mockImplementation(() => {});
     });
 
     test("handles selecting option: New game", async () => {
+      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
+
       const prompter = new MockPrompter([{
         promptName: "mainMenu",
         answer: "New game",
@@ -220,12 +245,17 @@ describe("Game", () => {
       const continueLoop = await game.handleMainMenu();
 
       const mockGameState = MockGameState.mock.instances[0];
+      const mockDataLoader = MockDataLoader.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenCalledWith("You've played 0 games\n");
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.NEW_GAME);
+      expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
     });
 
     test("handles selecting option: Quit", async () => {
+      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
+      
       const prompter = new MockPrompter([{
         promptName: "mainMenu",
         answer: "Quit",
@@ -237,6 +267,7 @@ describe("Game", () => {
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenCalledWith("You've played 0 games\n");
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.QUIT_CONFIRM);
     });
   });
@@ -836,6 +867,7 @@ describe("Game", () => {
     beforeEach(() => {
       singlePlayerGameOverSpy.mockClear().mockImplementation(async () => false);
       multiplayerGameOverSpy.mockClear().mockImplementation(async () => false);
+      MockDataLoader.mockClear();
     });
 
     afterAll(() => {
@@ -846,11 +878,16 @@ describe("Game", () => {
     test("runs single player game over if there's only one player", async () => {
       const mockPlayer = new MockPlayer("Player 1");
       MockGameState.prototype.players = [mockPlayer];
+      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
 
       const game = new Game(fakeConfig, new MockPrompter());
 
       await game.handleGameOver();
 
+      const mockDataLoader = MockDataLoader.mock.instances[0];
+
+      expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
+      expect(mockDataLoader.setData).toHaveBeenCalledTimes(1);
       expect(singlePlayerGameOverSpy).toHaveBeenCalledTimes(1);
       expect(multiplayerGameOverSpy).not.toHaveBeenCalled();
     });
