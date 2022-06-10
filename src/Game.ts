@@ -9,14 +9,17 @@ import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
 import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
+import BasePrompter, { IChoice } from "./prompters/BasePrompter";
 
 
 export default class Game {
   config: IConfig;
   state: GameState;
+  prompter: BasePrompter;
 
-  constructor(config: IConfig) {
+  constructor(config: IConfig, prompter: BasePrompter) {
     this.config = config;
+    this.prompter = prompter;
     this.state = new GameState(config);
   }
 
@@ -84,59 +87,79 @@ export default class Game {
   }
 
   async handleMainMenu(): Promise<boolean> {
-    const prompt = new Select({
+    // Draw stuff
+
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "mainMenu",
       message: this.config.messages.mainMenuPrompt,
       choices: [
-        "New game",
-        "Quit",
+        { name: "New game" },
+        { name: "Quit" },
       ],
     });
 
-    return prompt.run().then(answer => {
-      if (answer === "New game") {
-        this.state.setMode(GameMode.NEW_GAME);
-        return true;
-      }
-      if (answer === "Quit") {
-        this.state.setMode(GameMode.QUIT_CONFIRM);
-        return true;
-      }
-    });
+    // Handle input
+    if (answer === "New game") {
+      this.state.setMode(GameMode.NEW_GAME);
+      return true;
+    }
+    if (answer === "Quit") {
+      this.state.setMode(GameMode.QUIT_CONFIRM);
+      return true;
+    }
+    return true;
   }
 
   async handleNewGame(): Promise<boolean> {
-    const prompt = new Select({
+    // Draw stuff
+
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "newGame",
       message: this.config.messages.newGamePrompt,
       choices: [
-        "Single player",
-        "Multiplayer",
-        "Cancel",
+        { name: "Single player" },
+        { name: "Multiplayer" },
+        { name: "Cancel" },
       ],
     });
 
-    return prompt.run().then(answer => {
-      if (answer === "Single player") {
-        this.state.newGame();
-        this.state.initSinglePlayer();
-        this.state.setMode(GameMode.ROLL);
-        return true;
-      }
-      if (answer === "Multiplayer") {
-        this.state.newGame();
-        this.state.setMode(GameMode.NEW_MULTIPLAYER_GAME);
-        return true;
-      }
-      if (answer === "Cancel") {
-        this.state.revertMode();
-        return true;
-      }
+    // Handle input
+    if (answer === "Single player") {
+      this.state.newGame();
+      this.state.initSinglePlayer();
+      this.state.setMode(GameMode.ROLL);
       return true;
-    });
+    }
+    if (answer === "Multiplayer") {
+      this.state.newGame();
+      this.state.setMode(GameMode.NEW_MULTIPLAYER_GAME);
+      return true;
+    }
+    if (answer === "Cancel") {
+      this.state.revertMode();
+      return true;
+    }
+    return true;
+  }
+
+  getNewMultiplayerGamePromptChoices(): IChoice<string>[] {
+    const choices = [];
+
+    if (this.state.players.length < this.config.maxPlayers) {
+      choices.push({ name: "Add player" });
+    }
+    if (this.state.players.length >= 2) {
+      choices.push({ name: "Start game" });
+    }
+    choices.push({ name: "Cancel" });
+
+    return choices;
   }
 
   async handleNewMultiplayerGame(): Promise<boolean> {
+    // Draw stuff
     if (this.state.players.length) {
       this.state.players.forEach((player, i) => console.log(`Player ${i + 1}: ${player.name}`));
     } else {
@@ -144,90 +167,78 @@ export default class Game {
     }
     console.log("\n");
 
-    const choices = [];
-
-    if (this.state.players.length < this.config.maxPlayers) {
-      choices.push("Add player");
-    }
-    if (this.state.players.length >= 2) {
-      choices.push("Start game");
-    }
-    choices.push("Cancel");
-
-    const prompt = new Select({
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "newMultiplayerGame",
       message: this.config.messages.newMultiplayerGamePrompt,
-      choices,
+      choices: this.getNewMultiplayerGamePromptChoices(),
     });
 
-    return prompt.run().then(answer => {
-      if (answer === "Add player") {
-        this.state.setMode(GameMode.ADD_PLAYER);
-        return true;
-      }
-      if (answer === "Start game") {
-        this.state.setMode(GameMode.ROLL);
-        return true;
-      }
-      if (answer === "Cancel") {
-        this.state.setMode(GameMode.NEW_GAME);
-        return true;
-      }
+    // Handle input
+    if (answer === "Add player") {
+      this.state.setMode(GameMode.ADD_PLAYER);
       return true;
-    });
+    }
+    if (answer === "Start game") {
+      this.state.setMode(GameMode.ROLL);
+      return true;
+    }
+    if (answer === "Cancel") {
+      this.state.setMode(GameMode.NEW_GAME);
+      return true;
+    }
+    return true;
   }
 
   async handleAddPlayer(): Promise<boolean> {
-    const prompt = new Input({
+    // Draw stuff
+
+    // Get input
+    const answer = await this.prompter.getInput({
       name: "addPlayer",
       message: this.config.messages.addPlayerPrompt,
       initial: `Player ${this.state.players.length + 1}`,
     });
 
-    return prompt.run().then(answer => {
-      if (answer) {
-        this.state.addPlayer(answer);
-        this.state.revertMode();
-        return true;
-      }
+    // Handle input
+    if (answer) {
+      this.state.addPlayer(answer);
       this.state.revertMode();
       return true;
-    });
+    }
+    this.state.revertMode();
+    return true;
   }
 
   async handleDiceLockMode(): Promise<boolean> {
+    // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
     drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
     const choices = this.state.dice.values.map((value, index) => ({
-      name: index,
+      name: `${index}`,
       message: `Dice ${index + 1}`,
-      hint: value,
+      hint: `${value}`,
       value: index,
-      // Enabled property doesn't work but can use it to set initial choices from the prompt
-      enabled: this.state.dice.lock[index],
     }));
-  
-    const prompt = new MultiSelect({
+
+    // Get input
+    const answer = await this.prompter.getInputFromMultiSelect({
       name: "diceLockMenu",
       message: this.config.messages.diceLockPrompt,
       limit: 5,
       choices,
-      initial: choices.filter((choice) => choice.enabled).map((choice) => choice.name),
-      result(names) {
-        return this.map(names);
-      }
+      initial: choices.filter((_, i) => this.state.dice.lock[i]).map((choice) => choice.name),
     });
   
-    return prompt.run().then((answer) => {
-      this.state.dice.resetLock();
-      const indicesToLock = Object.keys(answer).map(key => answer[key]);
-      const diceLock = this.state.dice.values.map((_, i) => indicesToLock.includes(i));
-      this.state.dice.setLock(diceLock);
-      this.state.setMode(GameMode.ROLL);
-      return true;
-    });
+    // Handle input
+    this.state.dice.resetLock();
+    const indicesToLock = Object.keys(answer).map(key => answer[key]);
+    const diceLock = this.state.dice.values.map((_, i) => indicesToLock.includes(i));
+    this.state.dice.setLock(diceLock);
+    this.state.setMode(GameMode.ROLL);
+    return true;
   }
 
   getGameOverPromptChoices() {
@@ -254,95 +265,108 @@ export default class Game {
     return choices;
   }
 
+  async handleSinglePlayerGameOver(): Promise<boolean> {
+    // Draw stuff
+    const player = this.state.players[0];
+
+    console.log("Game over!\n");
+    player.renderScoresheet();
+
+    // Get input
+    const playAgain = await this.prompter.getInputFromConfirm({
+      name: "playAgain",
+      message: this.config.messages.playAgainPrompt,
+    });
+
+    // Handle input
+    if (playAgain) {
+      this.state.resetGame();
+      this.state.setMode(GameMode.ROLL);
+      return true;
+    }
+    this.state.setMode(GameMode.MAIN_MENU);
+    return true;
+  }
+
+  async handleMultiplayerGameOver(): Promise<boolean> {
+    // Draw stuff
+    if (this.state.currentPlayerIndex !== null) {
+      this.state.getCurrentPlayer().renderScoresheet();
+    } else {
+      console.log(`${this.state.getWinner().name} wins!`);
+      this.state.renderPlayerScores();
+    }
+
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
+      name: "gameOverMenu",
+      message: this.config.messages.gameOverPrompt,
+      choices: this.getGameOverPromptChoices(),
+    });
+
+    // Handle input
+    if (answer === "Play again") {
+      this.state.resetGame();
+      this.state.setMode(GameMode.ROLL);
+      return true;
+    }
+    
+    if (answer === "Quit") {
+      this.state.setMode(GameMode.QUIT_CONFIRM);
+      return true;
+    }
+
+    if (answer === "See final scores") {
+      this.state.setCurrentPlayer(null);
+      return true;
+    }
+
+    const index = this.state.players.findIndex(player => player.name === answer);
+    this.state.setCurrentPlayer(index);
+    return true;
+  }
+
   async handleGameOver(): Promise<boolean> {
     if (this.state.players.length === 1) {
-      const player = this.state.players[0];
-
-      console.log("Game over!\n");
-      player.renderScoresheet();
-
-      const prompt = new Confirm({
-        name: "playAgain",
-        message: this.config.messages.playAgainPrompt,
-      });
-    
-      return prompt.run().then(playAgain => {
-        if (playAgain) {
-          this.state.resetGame();
-          this.state.setMode(GameMode.ROLL);
-          return true;
-        }
-        this.state.setMode(GameMode.MAIN_MENU);
-        return true;
-      });
+      return this.handleSinglePlayerGameOver();
     } else {
-      if (this.state.currentPlayerIndex !== null) {
-        this.state.getCurrentPlayer().renderScoresheet();
-      } else {
-        console.log(`${this.state.getWinner().name} wins!`);
-        this.state.renderPlayerScores();
-      }
-
-      const prompt = new Select({
-        name: "gameOverMenu",
-        message: this.config.messages.gameOverPrompt,
-        choices: this.getGameOverPromptChoices(),
-      });
-
-      return prompt.run().then(answer => {
-        console.log(answer);
-        if (answer === "Play again") {
-          this.state.resetGame();
-          this.state.setMode(GameMode.ROLL);
-          return true;
-        }
-        
-        if (answer === "Quit") {
-          this.state.setMode(GameMode.QUIT_CONFIRM);
-          return true;
-        }
-
-        if (answer === "See final scores") {
-          this.state.setCurrentPlayer(null);
-          return true;
-        }
-
-        const index = this.state.players.findIndex(player => player.name === answer);
-        this.state.setCurrentPlayer(index);
-        return true;
-      });
+      return this.handleMultiplayerGameOver();
     }
   }
 
-  handleQuitConfirm(): Promise<boolean> {
-    const prompt = new Confirm({
+  async handleQuitConfirm(): Promise<boolean> {
+    // Draw stuff
+
+    // Get input
+    const quit = await this.prompter.getInputFromConfirm({
       name: "quitConfirm",
       message: this.config.messages.quitConfirmPrompt,
     });
   
-    return prompt.run().then(quit => {
-      if (!quit) {
-        this.state.revertMode();
-        return true;
-      } 
-      return false;
-    });
+    // Handle input
+    if (!quit) {
+      this.state.revertMode();
+      return true;
+    } 
+    return false;
   }
 
-  handleQuitToMainMenuConfirm(): Promise<boolean> {
-    const prompt = new Confirm({
+  async handleQuitToMainMenuConfirm(): Promise<boolean> {
+    // Draw stuff
+
+    // Get input
+    const quit = await this.prompter.getInputFromConfirm({
       name: "quitToMainMenuConfirm",
       message: this.config.messages.quitToMainMenuConfirmPrompt,
     });
   
-    return prompt.run().then(quit => {
-      if (!quit) {
-        this.state.revertMode();
-        return true;
-      } 
-      this.state.setMode(GameMode.MAIN_MENU);
+    // Handle input
+    if (!quit) {
+      this.state.revertMode();
       return true;
-    });
+    } 
+    this.state.setMode(GameMode.MAIN_MENU);
+    return true;
   }
 
   getRollModePromptChoices() {
@@ -361,43 +385,44 @@ export default class Game {
     return choices;
   }
 
- async handleRollMode(): Promise<boolean> {
-  const diceScorer = new DiceScorer(this.state.dice.values, this.config);
+  async handleRollMode(): Promise<boolean> {
+    // Draw stuff
+    const diceScorer = new DiceScorer(this.state.dice.values, this.config);
     drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
-    const prompt = new Select({
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "gameAction",
       message: this.config.messages.rollPrompt,
       choices: this.getRollModePromptChoices(),
     });
   
-    return prompt.run().then((answer) => {
-      switch(answer) {
-        case RollModeChoice.LOCK_DICE:
-          this.state.setMode(GameMode.DICE_LOCKER)
-          return true;
-        case RollModeChoice.ROLL_DICE:
-        case RollModeChoice.ROLL_AGAIN:
-          this.state.dice.roll();
-          this.state.incrementRollNumber();
-          return true;
-        case RollModeChoice.SEE_SCORESHEET:
-          this.state.setMode(GameMode.VIEW_SCORE);
-          return true;
-        case RollModeChoice.SCORE_DICE:
-          this.state.setMode(GameMode.EDIT_SCORE);
-          return true;
-        case RollModeChoice.QUIT_TO_MAIN_MENU:
-          this.state.setMode(GameMode.QUIT_TO_MAIN_MENU_CONFIRM);
-          return true;
-        case RollModeChoice.QUIT:
-          this.state.setMode(GameMode.QUIT_CONFIRM);
-          return true;
-        default:
-          return true;
-      }
-    });
+    // Handle input
+    switch(answer) {
+      case RollModeChoice.LOCK_DICE:
+        this.state.setMode(GameMode.DICE_LOCKER)
+        return true;
+      case RollModeChoice.ROLL_DICE:
+      case RollModeChoice.ROLL_AGAIN:
+        this.state.dice.roll();
+        this.state.incrementRollNumber();
+        return true;
+      case RollModeChoice.SEE_SCORESHEET:
+        this.state.setMode(GameMode.VIEW_SCORE);
+        return true;
+      case RollModeChoice.SCORE_DICE:
+        this.state.setMode(GameMode.EDIT_SCORE);
+        return true;
+      case RollModeChoice.QUIT_TO_MAIN_MENU:
+        this.state.setMode(GameMode.QUIT_TO_MAIN_MENU_CONFIRM);
+        return true;
+      case RollModeChoice.QUIT:
+        this.state.setMode(GameMode.QUIT_CONFIRM);
+        return true;
+      default:
+        return true;
+    }
   }
 
   getScoreDicePromptChoices() {
@@ -447,42 +472,42 @@ export default class Game {
   }
 
   async handleScoreDiceMode(): Promise<boolean> {
+    // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
     drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
-    const prompt = new Select({
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "scoreDiceMenu",
       message: this.config.messages.scoreDicePrompt,
       choices: this.getScoreDicePromptChoices(),
     });
   
-    return prompt.run().then((answer) => {
-      if (answer === "cancel") {
-        this.state.setMode(GameMode.ROLL);
-        return true;
-      }
-  
-      const category = answer as YahtzeeScoreCategory;
-      const player = this.state.getCurrentPlayer();
-      const diceScorer = new DiceScorer(this.state.dice.values, this.config);
-  
-      if (category === YahtzeeScoreCategory.YahtzeeBonus
-        && player.score[YahtzeeScoreCategory.Yahtzee] !== null
-      ) {
-        player.setScore(
-          YahtzeeScoreCategory.YahtzeeBonus,
-          player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
-        );
-        this.state.setMode(GameMode.EDIT_SCORE_JOKER);
-        return true;
-      } else {
-        player.setScore(category, diceScorer.scoreCategory(category));
-      }
-  
-      this.state.nextPlayer();
+    // Handle input
+    if (answer === "cancel") {
+      this.state.setMode(GameMode.ROLL);
       return true;
-    });
+    }
+
+    const category = answer as YahtzeeScoreCategory;
+    const player = this.state.getCurrentPlayer();
+
+    if (category === YahtzeeScoreCategory.YahtzeeBonus
+      && player.score[YahtzeeScoreCategory.Yahtzee] !== null
+    ) {
+      player.setScore(
+        YahtzeeScoreCategory.YahtzeeBonus,
+        player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
+      );
+      this.state.setMode(GameMode.EDIT_SCORE_JOKER);
+      return true;
+    } else {
+      player.setScore(category, diceScorer.scoreCategory(category));
+    }
+
+    this.state.nextPlayer();
+    return true;
   }
 
   /**
@@ -565,37 +590,38 @@ export default class Game {
   }
 
   async handleScoreJokerMode(): Promise<boolean> {
+    // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
     drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
   
-    const prompt = new Select({
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "scoreDiceMenu",
       message: this.config.messages.scoreJokerPrompt,
       choices: this.getScoreJokerPromptChoices(),
     });
   
-    return prompt.run().then((answer) => {
-      const category = answer as YahtzeeScoreCategory;
-      const player = this.state.getCurrentPlayer();
-      const diceScorer = new DiceScorer(this.state.dice.values, this.config);
+    // Handle input
+    const category = answer as YahtzeeScoreCategory;
+    const player = this.state.getCurrentPlayer();
 
-      if ([
-        YahtzeeScoreCategory.FullHouse,
-        YahtzeeScoreCategory.SmallStraight,
-        YahtzeeScoreCategory.LargeStraight,
-      ].includes(category)) {
-        player.setScore(category, this.config.scoreValues[category]);
-      } else {
-        player.setScore(category, diceScorer.scoreCategory(category));
-      }
-  
-      this.state.nextPlayer();
-      return true;
-    });
+    if ([
+      YahtzeeScoreCategory.FullHouse,
+      YahtzeeScoreCategory.SmallStraight,
+      YahtzeeScoreCategory.LargeStraight,
+    ].includes(category)) {
+      player.setScore(category, this.config.scoreValues[category]);
+    } else {
+      player.setScore(category, diceScorer.scoreCategory(category));
+    }
+
+    this.state.nextPlayer();
+    return true;
   }
 
   async handleScoresheetMode(): Promise<boolean> {
+    // Draw stuff
     const diceScorer = new DiceScorer(this.state.dice.values, this.config);
     drawTurnStats(this.state.getCurrentPlayer().name, this.state.turn, this.state.diceRollsLeft, diceScorer.scoreYahtzee() > 0);
     drawDiceValues(this.state.dice.values, this.state.dice.lock);
@@ -604,20 +630,20 @@ export default class Game {
   
     player.renderScoresheet();
   
-    const prompt = new Select({
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
       name: "scoresheetMenu",
       message: this.config.messages.scoresheetPrompt,
-      choices: ["Continue"],
+      choices: [{ name: "Continue" }],
     });
   
-    return prompt.run().then(answer => {
-      switch(answer) {
-        case "Continue":
-          this.state.setMode(GameMode.ROLL);
-          return true;
-        default:
-          return true;
-      }
-    });
+    // Handle input
+    switch(answer) {
+      case "Continue":
+        this.state.setMode(GameMode.ROLL);
+        return true;
+      default:
+        return true;
+    }
   }
 }

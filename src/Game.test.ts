@@ -5,28 +5,17 @@ import GameState from "./GameState";
 import Player from "./Player";
 import { GameMode } from "./types";
 import * as drawUtils from "./utils/draw";
-import MultiSelect from "enquirer/lib/prompts/MultiSelect";
-import Confirm from "enquirer/lib/prompts/Confirm";
-import Select from "enquirer/lib/prompts/Select";
-import Input from "enquirer/lib/prompts/Input";
+import MockPrompter from "./prompters/MockPrompter";
 
 jest.mock("./GameState");
 jest.mock("./Player");
 jest.mock("clear");
 jest.mock("./utils/draw");
-jest.mock("enquirer/lib/prompts/MultiSelect");
-jest.mock("enquirer/lib/prompts/Confirm");
-jest.mock("enquirer/lib/prompts/Select");
-jest.mock("enquirer/lib/prompts/Input");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;
 const MockPlayer = Player as jest.MockedClass<typeof Player>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
-const MockMultiSelect = MultiSelect as jest.MockedClass<typeof MultiSelect>;
-const MockConfirm = Confirm as jest.MockedClass<typeof Confirm>;
-const MockSelect = Select as jest.MockedClass<typeof Select>;
-const MockInput = Input as jest.MockedClass<typeof Input>;
 
 const fakeConfig = {
   ...config,
@@ -43,15 +32,10 @@ const mockPlayerData = {
 };
 
 describe("Game", () => {
-  beforeEach(() => {
-    MockSelect.mockClear();
-    MockConfirm.mockClear();
-    MockInput.mockClear();
-    MockMultiSelect.mockClear();
-  });
-
   test("saves the config and creates a new game state on instantiation", () => {
-    const game = new Game(fakeConfig);
+    const prompter = new MockPrompter([]);
+
+    const game = new Game(fakeConfig, prompter);
 
     expect(game.config).toMatchObject(fakeConfig);
     expect(MockGameState).toHaveBeenCalledWith(fakeConfig);
@@ -62,7 +46,8 @@ describe("Game", () => {
   });
 
   describe("loop", () => {
-    const game = new Game(fakeConfig);
+    const prompter = new MockPrompter([]);
+    const game = new Game(fakeConfig, prompter);
 
     const handleMainMenuSpy = jest.spyOn(game, "handleMainMenu");
     const handleNewGameSpy = jest.spyOn(game, "handleNewGame");
@@ -226,36 +211,32 @@ describe("Game", () => {
     });
 
     test("handles selecting option: New game", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "New game");
+      const prompter = new MockPrompter([{
+        promptName: "mainMenu",
+        answer: "New game",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleMainMenu();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.NEW_GAME);
     });
 
     test("handles selecting option: Quit", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Quit");
+      const prompter = new MockPrompter([{
+        promptName: "mainMenu",
+        answer: "Quit",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleMainMenu();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.QUIT_CONFIRM);
     });
   });
@@ -266,56 +247,50 @@ describe("Game", () => {
     });
 
     test("handles selecting option: Single player", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Single player");
+      const prompter = new MockPrompter([{
+        promptName: "newGame",
+        answer: "Single player",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewGame();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.newGame).toHaveBeenCalledTimes(1);
       expect(mockGameState.initSinglePlayer).toHaveBeenCalledTimes(1);
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
     });
 
     test("handles selecting option: Multiplayer", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Multiplayer");
+      const prompter = new MockPrompter([{
+        promptName: "newGame",
+        answer: "Multiplayer",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewGame();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.newGame).toHaveBeenCalledTimes(1);
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.NEW_MULTIPLAYER_GAME);
     });
 
     test("handles selecting option: Cancel", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Cancel");
+      const prompter = new MockPrompter([{
+        promptName: "newGame",
+        answer: "Cancel",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewGame();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
     });
   });
@@ -335,21 +310,18 @@ describe("Game", () => {
     test("handles selecting option: Add player (no existing players)", async () => {
       MockGameState.prototype.players = [];
 
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Add player");
+      const prompter = new MockPrompter([{
+        promptName: "newMultiplayerGame",
+        answer: "Add player",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewMultiplayerGame();
 
-      expect(logSpy).toHaveBeenCalledWith("No players added yet");
-
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
+      expect(logSpy).toHaveBeenCalledWith("No players added yet");
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ADD_PLAYER);
     });
 
@@ -358,56 +330,56 @@ describe("Game", () => {
       mockPlayer.name = "Player 1";
       MockGameState.prototype.players = [mockPlayer];
 
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Add player");
+      const prompter = new MockPrompter([{
+        promptName: "newMultiplayerGame",
+        answer: "Add player",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewMultiplayerGame();
 
-      expect(logSpy).toHaveBeenCalledWith("Player 1: Player 1");
-
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
-
+      
+      expect(logSpy).toHaveBeenCalledWith("Player 1: Player 1");
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ADD_PLAYER);
     });
 
     test("handles selecting option: Start game", async () => {
-      const game = new Game(fakeConfig);
+      const mockPlayer1 = new MockPlayer("Player 1");
+      const mockPlayer2 = new MockPlayer("Player 2");
+      mockPlayer1.name = "Player 1";
+      mockPlayer2.name = "Player 2";
+      MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
 
-      MockSelect.prototype.run.mockImplementation(async () => "Start game");
+      const prompter = new MockPrompter([{
+        promptName: "newMultiplayerGame",
+        answer: "Start game",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewMultiplayerGame();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
     });
 
     test("handles selecting option: Cancel", async () => {
-      const game = new Game(fakeConfig);
-
-      MockSelect.prototype.run.mockImplementation(async () => "Cancel");
       MockGameState.prototype.players = [];
+
+      const prompter = new MockPrompter([{
+        promptName: "newMultiplayerGame",
+        answer: "Cancel",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleNewMultiplayerGame();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.NEW_GAME);
     });
   });
@@ -418,44 +390,42 @@ describe("Game", () => {
     });
 
     test("handles name input", async () => {
-      const game = new Game(fakeConfig);
-
-      MockInput.prototype.run.mockImplementation(async () => "Player 1");
       MockGameState.prototype.players = [];
+
+      const prompter = new MockPrompter([{
+        promptName: "addPlayer",
+        answer: "Player 1",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleAddPlayer();
 
-      const mockPrompt = MockInput.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockInput).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.addPlayer).toHaveBeenCalledWith("Player 1");
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
     });
 
     test("handles empty name input", async () => {
-      const game = new Game(fakeConfig);
-
-      MockInput.prototype.run.mockImplementation(async () => "");
       MockGameState.prototype.players = [];
+
+      const prompter = new MockPrompter([{
+        promptName: "addPlayer",
+        answer: "Player 1",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
       const continueLoop = await game.handleAddPlayer();
 
-      const mockPrompt = MockInput.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(MockInput).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe("handleGameOver", () => {
+  describe("handleSinglePlayerGameOver", () => {
     let logSpy;
 
     beforeAll(() => {
@@ -464,172 +434,212 @@ describe("Game", () => {
 
     beforeEach(() => {
       MockGameState.mockReset();
-      logSpy.mockClear();
+      logSpy.mockClear().mockImplementation(() => {});
+      mockPlayerData.renderScoresheet.mockClear();
+      mockPlayerData.resetScore.mockClear();
+      mockPlayerData.setScore.mockClear();
+      mockPlayerData.toJSON.mockClear();
     });
 
     afterAll(() => {
       logSpy.mockRestore();
     });
 
-    test("single player game, handles play again: yes", async () => {
+    test("handles play again: yes", async () => {
       const mockPlayer = new MockPlayer("Player 1");
       MockGameState.prototype.players = [mockPlayer];
       
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "playAgain",
+        answer: true,
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockConfirm.prototype.run.mockImplementation(async () =>  true);
-      const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
+      const continueLoop = await game.handleSinglePlayerGameOver();
 
-      const continueLoop = await game.handleGameOver();
-
-      const mockPrompt = MockConfirm.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Game over!\n");
       expect(mockPlayer.renderScoresheet).toHaveBeenCalledTimes(1);
-      expect(getChoicesSpy).not.toHaveBeenCalledTimes(1);
-      expect(MockConfirm).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.resetGame).toHaveBeenCalledTimes(1);
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
     });
 
-    test("single player game, handles play again: no", async () => {
+    test("handles play again: no", async () => {
       const mockPlayer = new MockPlayer("Player 1");
       MockGameState.prototype.players = [mockPlayer];
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "playAgain",
+        answer: false,
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockConfirm.prototype.run.mockImplementation(async () =>  false);
-      const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
+      const continueLoop = await game.handleSinglePlayerGameOver();
 
-      const continueLoop = await game.handleGameOver();
-
-      const mockPrompt = MockConfirm.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Game over!\n");
       expect(mockPlayer.renderScoresheet).toHaveBeenCalledTimes(1);
-      expect(getChoicesSpy).not.toHaveBeenCalledTimes(1);
-      expect(MockConfirm).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.MAIN_MENU);
     });
+  });
 
-    test("multiplayer, show all scores and handle selecting option: Play again", async () => {
+  describe("handleMultiplayerGameOver", () => {
+    let logSpy;
+
+    beforeAll(() => {
+      logSpy = jest.spyOn(console, "log")
+    });
+
+    beforeEach(() => {
+      MockGameState.mockReset();
+      logSpy.mockClear().mockImplementation(() => {});
+      mockPlayerData.renderScoresheet.mockClear();
+      mockPlayerData.resetScore.mockClear();
+      mockPlayerData.setScore.mockClear();
+      mockPlayerData.toJSON.mockClear();
+    });
+
+    afterAll(() => {
+      logSpy.mockRestore();
+    });
+
+    test("show all scores and handle selecting option: Play again", async () => {
       const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
       const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
       MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
       MockGameState.prototype.currentPlayerIndex = null;
       MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Play again",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockSelect.prototype.run.mockImplementation(async () => "Play again");
       const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-      const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Player 2 wins!");
       expect(mockGameState.renderPlayerScores).toHaveBeenCalledTimes(1);
       expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.resetGame).toHaveBeenCalledTimes(1);
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
     });
 
-    test("multiplayer, show all scores and handle selecting option: See Player 1's scoresheet", async () => {
+    test("show all scores and handle selecting option: See Player 1's scoresheet", async () => {
       const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
       const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
       MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
       MockGameState.prototype.currentPlayerIndex = null;
       MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Player 1",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockSelect.prototype.run.mockImplementation(async () => "Player 1");
       const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-      const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Player 2 wins!");
       expect(mockGameState.renderPlayerScores).toHaveBeenCalledTimes(1);
       expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(0);
     });
 
-    test("multiplayer, show all scores and handle selecting option: See final scores", async () => {
+    test("show all scores and handle selecting option: See final scores", async () => {
       const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
       const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
       MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
       MockGameState.prototype.currentPlayerIndex = null;
       MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "See final scores",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockSelect.prototype.run.mockImplementation(async () => "See final scores");
       const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-      const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Player 2 wins!");
       expect(mockGameState.renderPlayerScores).toHaveBeenCalledTimes(1);
       expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(null);
     });
 
-    test("multiplayer, show all scores and handle selecting option: Quit", async () => {
+    test("show all scores and handle selecting option: Quit", async () => {
       const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
       const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
       MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
       MockGameState.prototype.currentPlayerIndex = null;
       MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Quit",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockSelect.prototype.run.mockImplementation(async () => "Quit");
       const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-      const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenCalledWith("Player 2 wins!");
       expect(mockGameState.renderPlayerScores).toHaveBeenCalledTimes(1);
       expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.QUIT_CONFIRM);
     });
 
-    test("multiplayer, show player scoresheet and handle selecting option: Play again", async () => {
+    test("show player scoresheet and handle selecting option: Play again", async () => {
+      const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
+      const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
+      MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
+      MockGameState.prototype.currentPlayerIndex = 1;
+      MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer2);
+
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Play again",
+      }]);
+      const game = new Game(fakeConfig, prompter);
+
+      const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
+
+      const continueLoop = await game.handleMultiplayerGameOver();
+
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(mockPlayer2.renderScoresheet).toHaveBeenCalledTimes(1);
+      expect(getChoicesSpy).toHaveBeenCalledTimes(1);
+      expect(mockGameState.resetGame).toHaveBeenCalledTimes(1);
+      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
+    });
+
+    test("show player scoresheet and handle selecting option: See Player 2's scoresheet", async () => {
       const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
       const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
       MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
@@ -637,51 +647,74 @@ describe("Game", () => {
       MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
       MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
 
-      const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Player 2",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-      MockSelect.prototype.run.mockImplementation(async () => "Play again");
       const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-      const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-      const mockPrompt = MockSelect.mock.instances[0];
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
       expect(mockPlayer1.renderScoresheet).toHaveBeenCalledTimes(1);
       expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-      expect(MockSelect).toHaveBeenCalledTimes(1);
-      expect(mockPrompt.run).toHaveBeenCalledTimes(1);
-
-      expect(mockGameState.resetGame).toHaveBeenCalledTimes(1);
-      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.ROLL);
+      expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(1);
     });
 
-    // test("multiplayer, show player scoresheet and handle selecting option: See Player 2's scoresheet", async () => {
-    //   const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
-    //   const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
-    //   MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
-    //   MockGameState.prototype.currentPlayerIndex = 0;
-    //   MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
-    //   MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+    test("show player scoresheet and handle selecting option: See final scores", async () => {
+      const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
+      const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
+      MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
+      MockGameState.prototype.currentPlayerIndex = 0;
+      MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
 
-    //   const game = new Game(fakeConfig);
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "See final scores",
+      }]);
+      const game = new Game(fakeConfig, prompter);
 
-    //   MockSelect.prototype.run.mockImplementation(async () => "Player 2");
-    //   const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
+      const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
 
-    //   const continueLoop = await game.handleGameOver();
+      const continueLoop = await game.handleMultiplayerGameOver();
 
-    //   const mockPrompt = MockSelect.mock.instances[0];
-    //   const mockGameState = MockGameState.mock.instances[0];
+      const mockGameState = MockGameState.mock.instances[0];
 
-    //   expect(continueLoop).toBeTrue();
-    //   expect(mockPlayer1.renderScoresheet).toHaveBeenCalledTimes(1);
-    //   expect(getChoicesSpy).toHaveBeenCalledTimes(1);
-    //   expect(MockSelect).toHaveBeenCalledTimes(1);
-    //   expect(mockPrompt.run).toHaveBeenCalledTimes(1);
+      expect(continueLoop).toBeTrue();
+      expect(mockPlayer1.renderScoresheet).toHaveBeenCalledTimes(1);
+      expect(getChoicesSpy).toHaveBeenCalledTimes(1);
+      expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(null);
+    });
 
-    //   expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(1);
-    // });
+    test("show player scoresheet and handle selecting option: Quit", async () => {
+      const mockPlayer1 = { ...mockPlayerData, name: "Player 1" };
+      const mockPlayer2 = { ...mockPlayerData, name: "Player 2" };
+      MockGameState.prototype.players = [mockPlayer1, mockPlayer2];
+      MockGameState.prototype.currentPlayerIndex = 0;
+      MockGameState.prototype.getWinner.mockImplementation(() => mockPlayer2);
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+
+      const prompter = new MockPrompter([{
+        promptName: "gameOverMenu",
+        answer: "Quit",
+      }]);
+      const game = new Game(fakeConfig, prompter);
+
+      const getChoicesSpy = jest.spyOn(game, "getGameOverPromptChoices");
+
+      const continueLoop = await game.handleMultiplayerGameOver();
+
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(mockPlayer1.renderScoresheet).toHaveBeenCalledTimes(1);
+      expect(getChoicesSpy).toHaveBeenCalledTimes(1);
+      expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.QUIT_CONFIRM);
+    });
   });
 });
