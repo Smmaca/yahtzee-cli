@@ -13,11 +13,11 @@ describe("drawTitle", () => {
   });
 
   test("draws the title", () => {
-    mockFiglet.textSync.mockReturnValue("Yahtzee");
+    mockFiglet.textSync.mockReturnValue("Yahtzee!");
 
     drawTitle();
 
-    expect(log).toHaveBeenCalledWith("Yahtzee");
+    expect(log).toHaveBeenCalledWith("Yahtzee!");
   });
 });
 

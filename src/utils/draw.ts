@@ -1,7 +1,7 @@
 import figlet from "figlet";
 
 export function drawTitle() {
-  console.log(figlet.textSync("Yahtzee", { horizontalLayout: "default" }));
+  console.log(figlet.textSync("Yahtzee!", { horizontalLayout: "default" }));
 }
 
 export function drawTurnStats(player: string, turn: number, rollsLeft: number, isYahtzee?: boolean) {
