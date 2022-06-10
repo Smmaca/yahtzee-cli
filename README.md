@@ -1,4 +1,10 @@
-# Yahtzee CLI
+```
+ __   __    _     _                _ 
+ \ \ / /_ _| |__ | |_ _______  ___| |
+  \ V / _` | '_ \| __|_  / _ \/ _ \ |
+   | | (_| | | | | |_ / /  __/  __/_|
+   |_|\__,_|_| |_|\__/___\___|\___(_)
+```
 
 A game of Yahtzee that runs in the command line. The object of the game is to score as high as possible by rolling five dice to get different combinations over 13 turns (see full rules linked at bottom of README).
 
