@@ -6,6 +6,7 @@ const config: IConfig = {
   maxPlayers: 4,
   messages: {
     mainMenuPrompt: "Main menu",
+    statisticsPrompt: "Statistics",
     newGamePrompt: "What kind of game do you want to play?",
     newMultiplayerGamePrompt: "Add a player or start the game",
     addPlayerPrompt: "Enter player name",

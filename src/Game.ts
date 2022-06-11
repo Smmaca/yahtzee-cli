@@ -39,6 +39,9 @@ export default class Game {
         case GameMode.MAIN_MENU:
           continueLoop = await this.handleMainMenu();
           break;
+        case GameMode.STATISTICS:
+          continueLoop = await this.handleStatistics();
+          break;
         case GameMode.NEW_GAME:
           continueLoop = await this.handleNewGame();
           break;
@@ -90,8 +93,6 @@ export default class Game {
 
   async handleMainMenu(): Promise<boolean> {
     // Draw stuff
-    const stats = this.statsLoader.getData();
-    console.log(`You've played ${stats.gamesPlayed} games\n`);
 
     // Get input
     const answer = await this.prompter.getInputFromSelect({
@@ -99,6 +100,7 @@ export default class Game {
       message: this.config.messages.mainMenuPrompt,
       choices: [
         { name: "New game" },
+        { name: "See stats"},
         { name: "Quit" },
       ],
     });
@@ -108,8 +110,40 @@ export default class Game {
       this.state.setMode(GameMode.NEW_GAME);
       return true;
     }
+    if (answer === "See stats") {
+      this.state.setMode(GameMode.STATISTICS);
+      return true;
+    }
     if (answer === "Quit") {
       this.state.setMode(GameMode.QUIT_CONFIRM);
+      return true;
+    }
+    return true;
+  }
+
+  async handleStatistics(): Promise<boolean> {
+    // Draw stuff
+    const stats = this.statsLoader.getData();
+    console.log(`Games played: ${stats.gamesPlayed}`);
+    console.log(" ");
+
+    // Get input
+    const answer = await this.prompter.getInputFromSelect({
+      name: "statistics",
+      message: this.config.messages.statisticsPrompt,
+      choices: [
+        { name: "Back" },
+        { name: "Clear stats" },
+      ],
+    });
+
+    // Handle input
+    if (answer === "Back") {
+      this.state.revertMode();
+      return true;
+    }
+    if (answer === "Clear stats") {
+      this.statsLoader.setData(this.statsLoader.defaultData);
       return true;
     }
     return true;

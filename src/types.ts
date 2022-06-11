@@ -1,6 +1,7 @@
 
 export enum GameMode {
   MAIN_MENU = "MAIN_MENU",
+  STATISTICS = "STATISTICS",
   NEW_GAME = "NEW_GAME",
   NEW_MULTIPLAYER_GAME = "NEW_MULTIPLAYER_GAME",
   ADD_PLAYER = "ADD_PLAYER",
@@ -60,6 +61,7 @@ export interface IConfig {
   maxPlayers: number;
   messages: {
     mainMenuPrompt: string;
+    statisticsPrompt: string;
     newGamePrompt: string;
     newMultiplayerGamePrompt: string;
     addPlayerPrompt: string;

@@ -267,17 +267,11 @@ describe("Game", () => {
   });
 
   describe("handleMainMenu", () => {
-    const logSpy = jest.spyOn(console, "log");
-
     beforeEach(() => {
       MockGameState.mockClear();
-      MockDataLoader.mockClear();
-      logSpy.mockClear().mockImplementation(() => {});
     });
 
     test("handles selecting option: New game", async () => {
-      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
-
       const prompter = new MockPrompter([{
         promptName: "mainMenu",
         answer: "New game",
@@ -287,17 +281,12 @@ describe("Game", () => {
       const continueLoop = await game.handleMainMenu();
 
       const mockGameState = MockGameState.mock.instances[0];
-      const mockDataLoader = MockDataLoader.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(logSpy).toHaveBeenCalledWith("You've played 0 games\n");
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.NEW_GAME);
-      expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
     });
 
     test("handles selecting option: Quit", async () => {
-      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
-      
       const prompter = new MockPrompter([{
         promptName: "mainMenu",
         answer: "Quit",
@@ -309,8 +298,61 @@ describe("Game", () => {
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(logSpy).toHaveBeenCalledWith("You've played 0 games\n");
       expect(mockGameState.setMode).toHaveBeenCalledWith(GameMode.QUIT_CONFIRM);
+    });
+  });
+
+  describe("handleStatistics", () => {
+    let logSpy;
+
+    beforeEach(() => {
+      MockGameState.mockClear();
+      MockDataLoader.mockClear();
+      logSpy = jest.spyOn(console, "log").mockClear().mockImplementation(() => {});
+    });
+
+    afterAll(() => {
+      logSpy.mockRestore();
+    });
+
+    test("shows stats and handles selecting option: Back", async () => {
+      MockDataLoader.prototype.getData.mockImplementation(() => ({
+        gamesPlayed: 14,
+      }));
+
+      const prompter = new MockPrompter([{
+        promptName: "statistics",
+        answer: "Back",
+      }]);
+      const game = new Game(fakeConfig, prompter);
+
+      const continueLoop = await game.handleStatistics();
+
+      const mockGameState = MockGameState.mock.instances[0];
+
+      expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
+      expect(logSpy).toHaveBeenNthCalledWith(2, " ");
+      expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
+    });
+
+    test("shows stats and handles selecting option: Clear stats", async () => {
+      MockDataLoader.prototype.getData.mockImplementation(() => ({
+        gamesPlayed: 14,
+      }));
+      MockDataLoader.prototype.defaultData = { gamesPlayed: 0 };
+
+      const prompter = new MockPrompter([{
+        promptName: "statistics",
+        answer: "Clear stats",
+      }]);
+      const game = new Game(fakeConfig, prompter);
+
+      const continueLoop = await game.handleStatistics();
+
+      expect(continueLoop).toBeTrue();
+      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
+      expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
   });
 
@@ -401,11 +443,11 @@ describe("Game", () => {
   });
 
   describe("handleNewMultiplayerGame", () => {
-    const logSpy = jest.spyOn(console, "log");
+    let logSpy;
 
     beforeEach(() => {
       MockGameState.mockClear();
-      logSpy.mockClear().mockImplementation(() => {});
+      logSpy = jest.spyOn(console, "log").mockClear().mockImplementation(() => {});
     });
 
     afterAll(() => {
