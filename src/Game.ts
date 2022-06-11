@@ -586,17 +586,15 @@ export default class Game {
           message: scoreLabels[category],
           name: category,
           value: category,
-          hint: score[category] === null
-            ? diceScorer.scoreCategory(category)
-            : `[${score[category]}]`,
-          disabled: score[category] !== null || score[yahtzeeNumberCategory] !== null || [
+          hint: score[category] === null ? 0 : `[${score[category]}]`,
+          disabled: score[category] !== null || score[yahtzeeNumberCategory] === null || [
             YahtzeeScoreCategory.ThreeOfAKind,
             YahtzeeScoreCategory.FourOfAKind,
             YahtzeeScoreCategory.FullHouse,
             YahtzeeScoreCategory.SmallStraight,
             YahtzeeScoreCategory.LargeStraight,
             YahtzeeScoreCategory.Chance
-          ].some(c => score[c] !== null),
+          ].some(c => score[c] === null),
         });
       } else if ([
         YahtzeeScoreCategory.FullHouse,

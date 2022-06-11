@@ -1550,20 +1550,20 @@ describe("Game", () => {
         ...mockPlayerData,
         name: "Player 1",
         score: {
-          ones: 3,
+          ones: null,
           twos: null,
           threes: null,
           fours: null,
-          fives: 15,
+          fives: null,
           sixes: null,
           threeOfAKind: null,
           fourOfAKind: null,
-          fullHouse: 25,
+          fullHouse: null,
           smallStraight: null,
           largeStraight: null,
           yahtzee: 50,
-          chance: 25,
-          yahtzeeBonus: 0,
+          chance: null,
+          yahtzeeBonus: 100,
         },
       };
       MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer);
@@ -1580,6 +1580,413 @@ describe("Game", () => {
       expect(continueLoop).toBeTrue();
       expect(mockPlayer.setScore).toHaveBeenCalledWith(YahtzeeScoreCategory.Fours, 12);
       expect(game.state.nextPlayer).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("getScoreJokerPromptChoices", () => {
+    beforeEach(() => {
+      MockGameState.mockClear();
+      MockDiceScorer.mockClear();
+      MockDice.mockClear();
+    });
+
+    test("only allows choosing the correct number category if it's open", () => {
+      const mockPlayer1 = {
+        ...mockPlayerData,
+        score: {
+          ones: null,
+          twos: null,
+          threes: null,
+          fours: null,
+          fives: null,
+          sixes: null,
+          threeOfAKind: null,
+          fourOfAKind: null,
+          fullHouse: null,
+          smallStraight: null,
+          largeStraight: null,
+          yahtzee: 50,
+          chance: null,
+          yahtzeeBonus: 100,
+        },
+      };
+      MockGameState.prototype.players = [mockPlayer1];
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+      MockDice.prototype.values = [6, 6, 6, 6, 6];
+      MockGameState.prototype.dice = new MockDice();
+      MockDiceScorer.prototype.scoreCategory.mockImplementation(() => 30);
+
+      const game = new Game(fakeConfig, new MockPrompter());
+
+      const choices = game.getScoreJokerPromptChoices();
+
+      expect(choices).toEqual([
+        {
+          message: "Attempt 1: Score sum of dice in the appropriate number category",
+          name: "Attempt 1: Score sum of dice in the appropriate number category",
+          value: "Attempt 1: Score sum of dice in the appropriate number category",
+          hint: "",
+          role: "separator",
+        },
+        { message: "Sixes", name: "sixes", value: "sixes", hint: 30, disabled: false },
+        {
+          message: "Attempt 2: Score in any lower section category",
+          name: "Attempt 2: Score in any lower section category",
+          value: "Attempt 2: Score in any lower section category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Three of a Kind",
+          name: "threeOfAKind",
+          value: "threeOfAKind",
+          hint: 30,
+          disabled: true,
+        },
+        {
+          message: "Four of a Kind",
+          name: "fourOfAKind",
+          value: "fourOfAKind",
+          hint: 30,
+          disabled: true,
+        },
+        {
+          message: "Full House",
+          name: "fullHouse",
+          value: "fullHouse",
+          hint: undefined,
+          disabled: true,
+        },
+        {
+          message: "Small Straight",
+          name: "smallStraight",
+          value: "smallStraight",
+          hint: undefined,
+          disabled: true,
+        },
+        {
+          message: "Large Straight",
+          name: "largeStraight",
+          value: "largeStraight",
+          hint: undefined,
+          disabled: true,
+        },
+        {
+          message: "Chance",
+          name: "chance",
+          value: "chance",
+          hint: 30,
+          disabled: true,
+        },
+        {
+          message: "Attempt 3: Score zero in any number category",
+          name: "Attempt 3: Score zero in any number category",
+          value: "Attempt 3: Score zero in any number category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Aces",
+          name: "ones",
+          value: "ones",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Twos",
+          name: "twos",
+          value: "twos",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Threes",
+          name: "threes",
+          value: "threes",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Fours",
+          name: "fours",
+          value: "fours",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Fives",
+          name: "fives",
+          value: "fives",
+          hint: 0,
+          disabled: true,
+        },
+      ]);
+    });
+
+    test("only allows choosing open bottom section categories if number category is taken", () => {
+      const mockPlayer1 = {
+        ...mockPlayerData,
+        score: {
+          ones: null,
+          twos: null,
+          threes: null,
+          fours: null,
+          fives: null,
+          sixes: 30,
+          threeOfAKind: null,
+          fourOfAKind: null,
+          fullHouse: 25,
+          smallStraight: null,
+          largeStraight: null,
+          yahtzee: 50,
+          chance: null,
+          yahtzeeBonus: 100,
+        },
+      };
+      MockGameState.prototype.players = [mockPlayer1];
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+      MockDice.prototype.values = [6, 6, 6, 6, 6];
+      MockGameState.prototype.dice = new MockDice();
+      MockDiceScorer.prototype.scoreCategory.mockImplementation(() => 30);
+
+      const game = new Game(fakeConfig, new MockPrompter());
+
+      const choices = game.getScoreJokerPromptChoices();
+
+      expect(choices).toEqual([
+        {
+          message: "Attempt 1: Score sum of dice in the appropriate number category",
+          name: "Attempt 1: Score sum of dice in the appropriate number category",
+          value: "Attempt 1: Score sum of dice in the appropriate number category",
+          hint: "",
+          role: "separator",
+        },
+        { message: "Sixes", name: "sixes", value: "sixes", hint: "[30]", disabled: true },
+        {
+          message: "Attempt 2: Score in any lower section category",
+          name: "Attempt 2: Score in any lower section category",
+          value: "Attempt 2: Score in any lower section category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Three of a Kind",
+          name: "threeOfAKind",
+          value: "threeOfAKind",
+          hint: 30,
+          disabled: false,
+        },
+        {
+          message: "Four of a Kind",
+          name: "fourOfAKind",
+          value: "fourOfAKind",
+          hint: 30,
+          disabled: false,
+        },
+        {
+          message: "Full House",
+          name: "fullHouse",
+          value: "fullHouse",
+          hint: "[25]",
+          disabled: true,
+        },
+        {
+          message: "Small Straight",
+          name: "smallStraight",
+          value: "smallStraight",
+          hint: undefined,
+          disabled: false,
+        },
+        {
+          message: "Large Straight",
+          name: "largeStraight",
+          value: "largeStraight",
+          hint: undefined,
+          disabled: false,
+        },
+        {
+          message: "Chance",
+          name: "chance",
+          value: "chance",
+          hint: 30,
+          disabled: false,
+        },
+        {
+          message: "Attempt 3: Score zero in any number category",
+          name: "Attempt 3: Score zero in any number category",
+          value: "Attempt 3: Score zero in any number category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Aces",
+          name: "ones",
+          value: "ones",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Twos",
+          name: "twos",
+          value: "twos",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Threes",
+          name: "threes",
+          value: "threes",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Fours",
+          name: "fours",
+          value: "fours",
+          hint: 0,
+          disabled: true,
+        },
+        {
+          message: "Fives",
+          name: "fives",
+          value: "fives",
+          hint: 0,
+          disabled: true,
+        },
+      ]);
+    });
+
+    test("only allows choosing other top section categories everything else is taken", () => {
+      const mockPlayer1 = {
+        ...mockPlayerData,
+        score: {
+          ones: null,
+          twos: null,
+          threes: 18,
+          fours: null,
+          fives: null,
+          sixes: 30,
+          threeOfAKind: 30,
+          fourOfAKind: 30,
+          fullHouse: 25,
+          smallStraight: 30,
+          largeStraight: 40,
+          yahtzee: 50,
+          chance: 30,
+          yahtzeeBonus: 100,
+        },
+      };
+      MockGameState.prototype.players = [mockPlayer1];
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+      MockDice.prototype.values = [6, 6, 6, 6, 6];
+      MockGameState.prototype.dice = new MockDice();
+      MockDiceScorer.prototype.scoreCategory.mockImplementation(() => 30);
+
+      const game = new Game(fakeConfig, new MockPrompter());
+
+      const choices = game.getScoreJokerPromptChoices();
+
+      expect(choices).toEqual([
+        {
+          message: "Attempt 1: Score sum of dice in the appropriate number category",
+          name: "Attempt 1: Score sum of dice in the appropriate number category",
+          value: "Attempt 1: Score sum of dice in the appropriate number category",
+          hint: "",
+          role: "separator",
+        },
+        { message: "Sixes", name: "sixes", value: "sixes", hint: "[30]", disabled: true },
+        {
+          message: "Attempt 2: Score in any lower section category",
+          name: "Attempt 2: Score in any lower section category",
+          value: "Attempt 2: Score in any lower section category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Three of a Kind",
+          name: "threeOfAKind",
+          value: "threeOfAKind",
+          hint: "[30]",
+          disabled: true,
+        },
+        {
+          message: "Four of a Kind",
+          name: "fourOfAKind",
+          value: "fourOfAKind",
+          hint: "[30]",
+          disabled: true,
+        },
+        {
+          message: "Full House",
+          name: "fullHouse",
+          value: "fullHouse",
+          hint: "[25]",
+          disabled: true,
+        },
+        {
+          message: "Small Straight",
+          name: "smallStraight",
+          value: "smallStraight",
+          hint: "[30]",
+          disabled: true,
+        },
+        {
+          message: "Large Straight",
+          name: "largeStraight",
+          value: "largeStraight",
+          hint: "[40]",
+          disabled: true,
+        },
+        {
+          message: "Chance",
+          name: "chance",
+          value: "chance",
+          hint: "[30]",
+          disabled: true,
+        },
+        {
+          message: "Attempt 3: Score zero in any number category",
+          name: "Attempt 3: Score zero in any number category",
+          value: "Attempt 3: Score zero in any number category",
+          hint: "",
+          role: "separator",
+        },
+        {
+          message: "Aces",
+          name: "ones",
+          value: "ones",
+          hint: 0,
+          disabled: false,
+        },
+        {
+          message: "Twos",
+          name: "twos",
+          value: "twos",
+          hint: 0,
+          disabled: false,
+        },
+        {
+          message: "Threes",
+          name: "threes",
+          value: "threes",
+          hint: "[18]",
+          disabled: true,
+        },
+        {
+          message: "Fours",
+          name: "fours",
+          value: "fours",
+          hint: 0,
+          disabled: false,
+        },
+        {
+          message: "Fives",
+          name: "fives",
+          value: "fives",
+          hint: 0,
+          disabled: false,
+        },
+      ]);
     });
   });
 });
