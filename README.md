@@ -29,8 +29,8 @@ Run `npm test`
 - [X] Main menu
 - [X] 2+ players
 - [ ] Game stats
-  - [ ] High score
-  - [ ] Low score
+  - [X] High score
+  - [X] Low score
   - [ ] Average score
   - [ ] Most yahtzees in a single game
   - [X] Total games played

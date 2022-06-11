@@ -2,12 +2,15 @@ import path from "path";
 import {
   existsSync,
   mkdirSync,
+  openSync,
   readFileSync,
   writeFileSync,
 } from "fs";
 
 export interface StatsData {
   gamesPlayed: number;
+  highScore: number;
+  lowScore: number;
 }
 
 export default class DataLoader<T> {
@@ -22,14 +25,19 @@ export default class DataLoader<T> {
   }
 
   // Checks the folder and file exists. If not, creates them.
+  // If they do, merges data data into default data to make sure all properties exist
   init() {
     if (!existsSync(this.getFolderPath())) {
       mkdirSync(this.getFolderPath());
     }
 
     if (!existsSync(this.getFilePath())) {
-      this.setData(this.defaultData);
+      openSync(this.getFilePath(), "r");
     }
+
+    const contents = this.getData();
+    const mergedData = { ...this.defaultData, ...contents };
+    this.setData(mergedData);
   }
 
   getFolderPath() {
@@ -44,7 +52,7 @@ export default class DataLoader<T> {
   getData(): T {
     try {
       const data = readFileSync(this.getFilePath(), "utf8");
-      return JSON.parse(data);
+      return data ? JSON.parse(data) : {};
     } catch (err) {
       console.error("Couldn't get data from file: " + this.getFilePath());
       throw err;

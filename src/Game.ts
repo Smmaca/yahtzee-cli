@@ -20,7 +20,11 @@ export default class Game {
     this.config = config;
     this.prompter = prompter;
     this.state = new GameState(config);
-    this.statsLoader = new DataLoader("data", "stats.json", { gamesPlayed: 0 });
+    this.statsLoader = new DataLoader("data", "stats.json", {
+      gamesPlayed: 0,
+      highScore: null,
+      lowScore: null,
+    });
   }
 
   init() {
@@ -125,6 +129,8 @@ export default class Game {
     // Draw stuff
     const stats = this.statsLoader.getData();
     console.log(`Games played: ${stats.gamesPlayed}`);
+    console.log(`High score: ${stats.highScore}`);
+    console.log(`Low score: ${stats.lowScore}`);
     console.log(" ");
 
     // Get input
@@ -366,8 +372,15 @@ export default class Game {
 
   async handleGameOver(): Promise<boolean> {
     if (this.state.players.length === 1) {
+      this.state.setCurrentPlayer(0);
       const stats = this.statsLoader.getData();
       stats.gamesPlayed++;
+      if (!stats.highScore || this.state.getCurrentPlayer().totalScore > stats.highScore) {
+        stats.highScore = this.state.getCurrentPlayer().totalScore;
+      }
+      if (!stats.lowScore || this.state.getCurrentPlayer().totalScore < stats.lowScore) {
+        stats.lowScore = this.state.getCurrentPlayer().totalScore;
+      }
       this.statsLoader.setData(stats);
       return this.handleSinglePlayerGameOver();
     } else if (this.state.players.length > 1) {

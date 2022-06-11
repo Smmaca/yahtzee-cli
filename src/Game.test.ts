@@ -47,7 +47,11 @@ describe("Game", () => {
 
     expect(game.config).toMatchObject(fakeConfig);
     expect(MockGameState).toHaveBeenCalledWith(fakeConfig);
-    expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", { gamesPlayed: 0 });
+    expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", {
+      gamesPlayed: 0,
+      highScore: null,
+      lowScore: null,
+    });
   });
 
   describe("init", () => {
@@ -318,6 +322,8 @@ describe("Game", () => {
     test("shows stats and handles selecting option: Back", async () => {
       MockDataLoader.prototype.getData.mockImplementation(() => ({
         gamesPlayed: 14,
+        highScore: 300,
+        lowScore: 5,
       }));
 
       const prompter = new MockPrompter([{
@@ -332,13 +338,17 @@ describe("Game", () => {
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
-      expect(logSpy).toHaveBeenNthCalledWith(2, " ");
+      expect(logSpy).toHaveBeenNthCalledWith(2, "High score: 300");
+      expect(logSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
+      expect(logSpy).toHaveBeenNthCalledWith(4, " ");
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
     });
 
     test("shows stats and handles selecting option: Clear stats", async () => {
       MockDataLoader.prototype.getData.mockImplementation(() => ({
         gamesPlayed: 14,
+        highScore: 300,
+        lowScore: 5,
       }));
       MockDataLoader.prototype.defaultData = { gamesPlayed: 0 };
 
@@ -352,6 +362,9 @@ describe("Game", () => {
 
       expect(continueLoop).toBeTrue();
       expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
+      expect(logSpy).toHaveBeenNthCalledWith(2, "High score: 300");
+      expect(logSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
+      expect(logSpy).toHaveBeenNthCalledWith(4, " ");
       expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
   });
@@ -959,10 +972,15 @@ describe("Game", () => {
       multiplayerGameOverSpy.mockRestore();
     });
 
-    test("runs single player game over if there's only one player", async () => {
-      const mockPlayer = new MockPlayer("Player 1");
+    test("sets stats and runs single player game over if there's only one player", async () => {
+      const mockPlayer = { ...mockPlayerData, name: "Player 1", totalScore: 100 };
       MockGameState.prototype.players = [mockPlayer];
-      MockDataLoader.prototype.getData.mockImplementation(() => ({ gamesPlayed: 0 }));
+      MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer);
+      MockDataLoader.prototype.getData.mockImplementation(() => ({
+        gamesPlayed: 0,
+        highScore: null,
+        lowScore: null,
+      }));
 
       const game = new Game(fakeConfig, new MockPrompter());
 
@@ -971,7 +989,11 @@ describe("Game", () => {
       const mockDataLoader = MockDataLoader.mock.instances[0];
 
       expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
-      expect(mockDataLoader.setData).toHaveBeenCalledTimes(1);
+      expect(mockDataLoader.setData).toHaveBeenCalledWith({
+        gamesPlayed: 1,
+        highScore: 100,
+        lowScore: 100,
+      });
       expect(singlePlayerGameOverSpy).toHaveBeenCalledTimes(1);
       expect(multiplayerGameOverSpy).not.toHaveBeenCalled();
     });

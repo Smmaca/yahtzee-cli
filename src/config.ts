@@ -1,6 +1,7 @@
 import { IConfig, YahtzeeScoreCategory } from "./types";
 
 const config: IConfig = {
+  debug: true,
   rollsPerTurn: 3,
   turns: 13,
   maxPlayers: 4,

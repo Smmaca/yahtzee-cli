@@ -11,6 +11,7 @@ describe("DataLoader", () => {
     MockFs.mkdirSync.mockClear();
     MockFs.readFileSync.mockClear();
     MockFs.writeFileSync.mockClear();
+    MockFs.openSync.mockClear();
   });
 
   test("instantiates with folder, file path and default data", () => {
@@ -47,16 +48,19 @@ describe("DataLoader", () => {
 
   describe("init", () => {
     const setDataSpy = jest.spyOn(DataLoader.prototype, "setData");
+    const getDataSpy = jest.spyOn(DataLoader.prototype, "getData");
 
     beforeEach(() => {
       setDataSpy.mockClear().mockImplementation(() => {});
+      getDataSpy.mockClear().mockImplementation(() => ({}));
     });
 
     afterAll(() => {
       setDataSpy.mockRestore();
+      getDataSpy.mockRestore();
     });
 
-    test("creates the folder and file with default data if the folder doesn't exist", () => {
+    test("creates the folder and file with default data if the folder doesn't exist and merges with default data", () => {
       MockFs.mkdirSync.mockImplementation(() => "");
       MockFs.existsSync.mockImplementation(() => false);
 
@@ -77,12 +81,15 @@ describe("DataLoader", () => {
         2,
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
       );
-      expect(setDataSpy).toHaveBeenCalledWith({
-        gamesPlayed: 0,
-      });
+      expect(MockFs.openSync).toHaveBeenCalledWith(
+        "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
+        "r",
+      );
+      expect(getDataSpy).toHaveBeenCalledTimes(1);
+      expect(setDataSpy).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
 
-    test("creates the file with default data if the folder exists but the file doesn't", () => {
+    test("creates the file with default data if the folder exists but the file doesn't and merges with default data", () => {
       MockFs.mkdirSync.mockImplementation(() => "");
       MockFs.existsSync
         .mockImplementationOnce(() => true)
@@ -105,12 +112,15 @@ describe("DataLoader", () => {
         2,
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
       );
-      expect(setDataSpy).toHaveBeenCalledWith({
-        gamesPlayed: 0,
-      });
+      expect(MockFs.openSync).toHaveBeenCalledWith(
+        "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
+        "r",
+      );
+      expect(getDataSpy).toHaveBeenCalledTimes(1);
+      expect(setDataSpy).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
 
-    test("does nothing if the file and folder already exist", () => {
+    test("does nothing if the file and folder already exist and merges with default data", () => {
       MockFs.mkdirSync.mockImplementation(() => "");
       MockFs.existsSync.mockImplementation(() => true);
 
@@ -124,16 +134,14 @@ describe("DataLoader", () => {
         1,
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data",
       );
-      expect(MockFs.mkdirSync).not.toHaveBeenCalledWith(
-        "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data",
-      );
+      expect(MockFs.mkdirSync).not.toHaveBeenCalled();
       expect(MockFs.existsSync).toHaveBeenNthCalledWith(
         2,
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
       );
-      expect(setDataSpy).not.toHaveBeenCalledWith({
-        gamesPlayed: 0,
-      });
+      expect(MockFs.openSync).not.toHaveBeenCalled();
+      expect(getDataSpy).toHaveBeenCalledTimes(1);
+      expect(setDataSpy).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
   });
 
@@ -153,6 +161,21 @@ describe("DataLoader", () => {
 
     test("returns data from file", () => {
       MockFs.readFileSync.mockImplementation(() => "{}");
+
+      const dataLoader = new DataLoader("data", "stats.json", { gamesPlayed: 0 });
+
+      const data = dataLoader.getData();
+
+      expect(getFilePathSpy).toHaveBeenCalledTimes(1);
+      expect(MockFs.readFileSync).toHaveBeenCalledWith(
+        "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
+        "utf8",
+      );
+      expect(data).toEqual({});
+    });
+
+    test("returns empty object if file is empty", () => {
+      MockFs.readFileSync.mockImplementation(() => "");
 
       const dataLoader = new DataLoader("data", "stats.json", { gamesPlayed: 0 });
 
