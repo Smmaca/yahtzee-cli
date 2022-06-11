@@ -50,36 +50,33 @@ describe("Game", () => {
     expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", { gamesPlayed: 0 });
   });
 
-  // TODO: Why does this cause a stack overflow??
-  // describe("init", () => {
-  //   beforeEach(() => {
-  //     MockGameState.mockClear();
-  //     MockDataLoader.mockClear();
-  //   });
+  describe("init", () => {
+    beforeEach(() => {
+      MockGameState.mockClear();
+      MockDataLoader.mockClear();
+    });
 
-  //   test("inits the stats data loader", async () => {
-  //     const game = new Game(fakeConfig, new MockPrompter());
-  //     game.init();
-  //     const mockDataLoader = MockDataLoader.mock.instances[0];
-  //     expect(mockDataLoader.init).toHaveBeenCalledTimes(1);
-  //   });
-  // });
+    test("inits the stats data loader", async () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+      game.init();
+      const mockDataLoader = MockDataLoader.mock.instances[0];
+      expect(mockDataLoader.init).toHaveBeenCalledTimes(1);
+    });
+  });
 
   describe("loop", () => {
-    const game = new Game(fakeConfig, new MockPrompter());
-
-    const handleMainMenuSpy = jest.spyOn(game, "handleMainMenu");
-    const handleNewGameSpy = jest.spyOn(game, "handleNewGame");
-    const handleNewMultiplayerGameSpy = jest.spyOn(game, "handleNewMultiplayerGame");
-    const handleAddPlayerSpy = jest.spyOn(game, "handleAddPlayer");
-    const handleRollModeSpy = jest.spyOn(game, "handleRollMode");
-    const handleDiceLockModeSpy = jest.spyOn(game, "handleDiceLockMode");
-    const handleScoresheetModeSpy = jest.spyOn(game, "handleScoresheetMode");
-    const handleScoreDiceModeSpy = jest.spyOn(game, "handleScoreDiceMode");
-    const handleScoreJokerModeSpy = jest.spyOn(game, "handleScoreJokerMode");
-    const handleGameOverSpy = jest.spyOn(game, "handleGameOver");
-    const handleQuitToMainMenuConfirmSpy = jest.spyOn(game, "handleQuitToMainMenuConfirm");
-    const handleQuitConfirmSpy = jest.spyOn(game, "handleQuitConfirm");
+    let handleMainMenuSpy = jest.spyOn(Game.prototype, "handleMainMenu");
+    let handleNewGameSpy = jest.spyOn(Game.prototype, "handleNewGame");
+    let handleNewMultiplayerGameSpy = jest.spyOn(Game.prototype, "handleNewMultiplayerGame");
+    let handleAddPlayerSpy = jest.spyOn(Game.prototype, "handleAddPlayer");
+    let handleRollModeSpy = jest.spyOn(Game.prototype, "handleRollMode");
+    let handleDiceLockModeSpy = jest.spyOn(Game.prototype, "handleDiceLockMode");
+    let handleScoresheetModeSpy = jest.spyOn(Game.prototype, "handleScoresheetMode");
+    let handleScoreDiceModeSpy = jest.spyOn(Game.prototype, "handleScoreDiceMode");
+    let handleScoreJokerModeSpy = jest.spyOn(Game.prototype, "handleScoreJokerMode");
+    let handleGameOverSpy = jest.spyOn(Game.prototype, "handleGameOver");
+    let handleQuitToMainMenuConfirmSpy = jest.spyOn(Game.prototype, "handleQuitToMainMenuConfirm");
+    let handleQuitConfirmSpy = jest.spyOn(Game.prototype, "handleQuitConfirm");
 
     beforeEach(() => {
       handleMainMenuSpy.mockClear().mockImplementation(async () => false);
@@ -94,10 +91,29 @@ describe("Game", () => {
       handleGameOverSpy.mockClear().mockImplementation(async () => false);
       handleQuitToMainMenuConfirmSpy.mockClear().mockImplementation(async () => false);
       handleQuitConfirmSpy.mockClear().mockImplementation(async () => false);
+      MockGameState.mockClear();
+      mockClear.mockClear();
       mockDrawUtils.drawTitle.mockClear();
+    });
+
+    afterAll(() => {
+      handleMainMenuSpy.mockRestore();
+      handleNewGameSpy.mockRestore();
+      handleNewMultiplayerGameSpy.mockRestore();
+      handleAddPlayerSpy.mockRestore();
+      handleRollModeSpy.mockRestore();
+      handleDiceLockModeSpy.mockRestore();
+      handleScoresheetModeSpy.mockRestore();
+      handleScoreDiceModeSpy.mockRestore();
+      handleScoreJokerModeSpy.mockRestore();
+      handleGameOverSpy.mockRestore();
+      handleQuitToMainMenuConfirmSpy.mockRestore();
+      handleQuitConfirmSpy.mockRestore();
     });
     
     test("clears the screen", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.MAIN_MENU;
 
@@ -107,6 +123,8 @@ describe("Game", () => {
     });
 
     test("draws the title", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.MAIN_MENU;
 
@@ -116,6 +134,8 @@ describe("Game", () => {
     });
 
     test("calls the main menu handler in main menu mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.MAIN_MENU;
 
@@ -125,6 +145,8 @@ describe("Game", () => {
     });
 
     test("calls the new game handler in new game mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.NEW_GAME;
 
@@ -134,6 +156,8 @@ describe("Game", () => {
     });
 
     test("calls the new multiplayer game handler in new multiplayer game mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.NEW_MULTIPLAYER_GAME;
 
@@ -143,6 +167,8 @@ describe("Game", () => {
     });
 
     test("calls the add player handler in add player mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.ADD_PLAYER;
 
@@ -152,6 +178,8 @@ describe("Game", () => {
     });
 
     test("calls the roll mode handler in roll mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.ROLL;
 
@@ -161,6 +189,8 @@ describe("Game", () => {
     });
 
     test("calls the dice lock mode handler in dice locker mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.DICE_LOCKER;
 
@@ -170,6 +200,8 @@ describe("Game", () => {
     });
 
     test("calls the scoresheet mode handler in view score mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.VIEW_SCORE;
 
@@ -179,6 +211,8 @@ describe("Game", () => {
     });
 
     test("calls the score dice mode handler in edit score mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.EDIT_SCORE;
 
@@ -188,6 +222,8 @@ describe("Game", () => {
     });
 
     test("calls the score joker mode handler in edit score joker mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.EDIT_SCORE_JOKER;
 
@@ -197,6 +233,8 @@ describe("Game", () => {
     });
 
     test("calls the game over handler in game over mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.GAME_OVER;
 
@@ -206,6 +244,8 @@ describe("Game", () => {
     });
 
     test("calls the quit to main menu confirm handler in quit to main menu mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.QUIT_TO_MAIN_MENU_CONFIRM;
 
@@ -215,6 +255,8 @@ describe("Game", () => {
     });
 
     test("calls the quit confirm handler in quit mode", () => {
+      const game = new Game(fakeConfig, new MockPrompter());
+    
       const mockGameState = MockGameState.mock.instances[0];
       mockGameState.mode = GameMode.QUIT_CONFIRM;
 
