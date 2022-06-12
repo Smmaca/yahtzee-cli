@@ -21,9 +21,7 @@ export default class Game {
     this.prompter = prompter;
     this.state = new GameState(config);
     this.statsLoader = new DataLoader("data", "stats.json", {
-      gamesPlayed: 0,
-      highScore: null,
-      lowScore: null,
+      scores: [],
     });
   }
 
@@ -128,9 +126,10 @@ export default class Game {
   async handleStatistics(): Promise<boolean> {
     // Draw stuff
     const stats = this.statsLoader.getData();
-    console.log(`Games played: ${stats.gamesPlayed}`);
-    console.log(`High score: ${stats.highScore}`);
-    console.log(`Low score: ${stats.lowScore}`);
+    console.log(`Games played: ${stats.scores.length}`);
+    console.log(`High score: ${stats.scores.sort((a, b) => b.score - a.score)[0].score}`);
+    console.log(`Low score: ${stats.scores.sort((a, b) => a.score - b.score)[0].score}`);
+    console.log(`Average score: ${Math.round(stats.scores.reduce((acc, cur) => acc + cur.score, 0) / stats.scores.length * 10) / 10}`);
     console.log(" ");
 
     // Get input
@@ -374,13 +373,8 @@ export default class Game {
     if (this.state.players.length === 1) {
       this.state.setCurrentPlayer(0);
       const stats = this.statsLoader.getData();
-      stats.gamesPlayed++;
-      if (!stats.highScore || this.state.getCurrentPlayer().totalScore > stats.highScore) {
-        stats.highScore = this.state.getCurrentPlayer().totalScore;
-      }
-      if (!stats.lowScore || this.state.getCurrentPlayer().totalScore < stats.lowScore) {
-        stats.lowScore = this.state.getCurrentPlayer().totalScore;
-      }
+      const score = this.state.getCurrentPlayer().totalScore;
+      stats.scores.push(({ score, timestamp: Date.now() }));
       this.statsLoader.setData(stats);
       return this.handleSinglePlayerGameOver();
     } else if (this.state.players.length > 1) {

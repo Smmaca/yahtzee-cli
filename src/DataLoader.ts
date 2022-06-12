@@ -7,10 +7,13 @@ import {
   writeFileSync,
 } from "fs";
 
+export interface IScore {
+  score: number;
+  timestamp: number;
+}
+
 export interface StatsData {
-  gamesPlayed: number;
-  highScore: number;
-  lowScore: number;
+  scores: IScore[];
 }
 
 export default class DataLoader<T> {
@@ -32,7 +35,7 @@ export default class DataLoader<T> {
     }
 
     if (!existsSync(this.getFilePath())) {
-      openSync(this.getFilePath(), "r");
+      openSync(this.getFilePath(), "a");
     }
 
     const contents = this.getData();

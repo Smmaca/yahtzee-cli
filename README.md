@@ -31,7 +31,7 @@ Run `npm test`
 - [ ] Game stats
   - [X] High score
   - [X] Low score
-  - [ ] Average score
+  - [X] Average score
   - [ ] Most yahtzees in a single game
   - [X] Total games played
 - [ ] User profile to save player's name and player's play history over sessions

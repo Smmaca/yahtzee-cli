@@ -83,7 +83,7 @@ describe("DataLoader", () => {
       );
       expect(MockFs.openSync).toHaveBeenCalledWith(
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
-        "r",
+        "a",
       );
       expect(getDataSpy).toHaveBeenCalledTimes(1);
       expect(setDataSpy).toHaveBeenCalledWith({ gamesPlayed: 0 });
@@ -114,7 +114,7 @@ describe("DataLoader", () => {
       );
       expect(MockFs.openSync).toHaveBeenCalledWith(
         "/Users/shavaunmacarthur/Documents/repositories/yahtzee-cli/data/stats.json",
-        "r",
+        "a",
       );
       expect(getDataSpy).toHaveBeenCalledTimes(1);
       expect(setDataSpy).toHaveBeenCalledWith({ gamesPlayed: 0 });

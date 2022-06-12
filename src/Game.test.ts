@@ -48,9 +48,7 @@ describe("Game", () => {
     expect(game.config).toMatchObject(fakeConfig);
     expect(MockGameState).toHaveBeenCalledWith(fakeConfig);
     expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", {
-      gamesPlayed: 0,
-      highScore: null,
-      lowScore: null,
+      scores: [],
     });
   });
 
@@ -321,9 +319,10 @@ describe("Game", () => {
 
     test("shows stats and handles selecting option: Back", async () => {
       MockDataLoader.prototype.getData.mockImplementation(() => ({
-        gamesPlayed: 14,
-        highScore: 300,
-        lowScore: 5,
+        scores: [
+          { score: 300, timestamp: 123456789 },
+          { score: 5, timestamp: 123456789 },
+        ],
       }));
 
       const prompter = new MockPrompter([{
@@ -337,18 +336,20 @@ describe("Game", () => {
       const mockGameState = MockGameState.mock.instances[0];
 
       expect(continueLoop).toBeTrue();
-      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
+      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 2");
       expect(logSpy).toHaveBeenNthCalledWith(2, "High score: 300");
       expect(logSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
-      expect(logSpy).toHaveBeenNthCalledWith(4, " ");
+      expect(logSpy).toHaveBeenNthCalledWith(4, "Average score: 152.5");
+      expect(logSpy).toHaveBeenNthCalledWith(5, " ");
       expect(mockGameState.revertMode).toHaveBeenCalledTimes(1);
     });
 
     test("shows stats and handles selecting option: Clear stats", async () => {
       MockDataLoader.prototype.getData.mockImplementation(() => ({
-        gamesPlayed: 14,
-        highScore: 300,
-        lowScore: 5,
+        scores: [
+          { score: 300, timestamp: 123456789 },
+          { score: 5, timestamp: 123456789 },
+        ],
       }));
       MockDataLoader.prototype.defaultData = { gamesPlayed: 0 };
 
@@ -361,10 +362,11 @@ describe("Game", () => {
       const continueLoop = await game.handleStatistics();
 
       expect(continueLoop).toBeTrue();
-      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 14");
+      expect(logSpy).toHaveBeenNthCalledWith(1, "Games played: 2");
       expect(logSpy).toHaveBeenNthCalledWith(2, "High score: 300");
       expect(logSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
-      expect(logSpy).toHaveBeenNthCalledWith(4, " ");
+      expect(logSpy).toHaveBeenNthCalledWith(4, "Average score: 152.5");
+      expect(logSpy).toHaveBeenNthCalledWith(5, " ");
       expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith({ gamesPlayed: 0 });
     });
   });
@@ -960,11 +962,13 @@ describe("Game", () => {
   describe("handleGameOver", () => {
     const singlePlayerGameOverSpy = jest.spyOn(Game.prototype, "handleSinglePlayerGameOver");
     const multiplayerGameOverSpy = jest.spyOn(Game.prototype, "handleMultiplayerGameOver");
+    const dateSpy = jest.spyOn(Date, "now");
 
     beforeEach(() => {
       singlePlayerGameOverSpy.mockClear().mockImplementation(async () => false);
       multiplayerGameOverSpy.mockClear().mockImplementation(async () => false);
       MockDataLoader.mockClear();
+      dateSpy.mockClear().mockImplementation(() => 123456789);
     });
 
     afterAll(() => {
@@ -977,9 +981,7 @@ describe("Game", () => {
       MockGameState.prototype.players = [mockPlayer];
       MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer);
       MockDataLoader.prototype.getData.mockImplementation(() => ({
-        gamesPlayed: 0,
-        highScore: null,
-        lowScore: null,
+        scores: [],
       }));
 
       const game = new Game(fakeConfig, new MockPrompter());
@@ -990,9 +992,7 @@ describe("Game", () => {
 
       expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
       expect(mockDataLoader.setData).toHaveBeenCalledWith({
-        gamesPlayed: 1,
-        highScore: 100,
-        lowScore: 100,
+        scores: [{ score: 100, timestamp: 123456789 }],
       });
       expect(singlePlayerGameOverSpy).toHaveBeenCalledTimes(1);
       expect(multiplayerGameOverSpy).not.toHaveBeenCalled();
