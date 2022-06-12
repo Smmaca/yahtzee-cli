@@ -28,7 +28,7 @@ Run `npm test`
 - [X] Joker rules should have a second fallback of scoring a 0 in any upper section box if all the lower section boxes are filled
 - [X] Main menu
 - [X] 2+ players
-- [ ] Game stats
+- [X] Game stats
   - [X] High score
   - [X] Low score
   - [X] Average score
