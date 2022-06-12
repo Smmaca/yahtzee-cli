@@ -6,7 +6,7 @@ import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
 import BasePrompter, { IChoice } from "./prompters/BasePrompter";
-import DataLoader, { StatsData } from "./DataLoader";
+import DataLoader, { StatsData } from "./dataLoaders/DataLoader";
 
 
 export default class Game {

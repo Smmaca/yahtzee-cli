@@ -8,10 +8,10 @@ import * as drawUtils from "./utils/draw";
 import MockPrompter from "./prompters/MockPrompter";
 import DiceScorer from "./DiceScorer";
 import Dice from "./Dice";
-import DataLoader from "./DataLoader";
+import DataLoader from "./dataLoaders/DataLoader";
 
 jest.mock("./GameState");
-jest.mock("./DataLoader");
+jest.mock("./dataLoaders/DataLoader");
 jest.mock("./Player");
 jest.mock("./Dice");
 jest.mock("./DiceScorer");

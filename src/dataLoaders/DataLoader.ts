@@ -44,7 +44,7 @@ export default class DataLoader<T> {
   }
 
   getFolderPath() {
-    return path.join(__dirname, "..", this.dataFolder);
+    return path.join(__dirname, "..", "..", this.dataFolder);
   }
 
   getFilePath() {
