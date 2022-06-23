@@ -41,7 +41,7 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
     });
   }
 
-  handleInput(input: MainMenuScreenInput, state: GameState, config: IConfig): BaseGameScreen<any> {
+  handleInput(input: MainMenuScreenInput): BaseGameScreen<any> {
     switch (input) {
       case MainMenuScreenInput.NEW_GAME:
         return new NewGameScreen();

@@ -72,7 +72,7 @@ export default class GameActionScreen extends BaseGameScreen<GameActionScreenInp
     });
   }
 
-  handleInput(input: any, state: GameState, config: IConfig) {
+  handleInput(input: any, state: GameState) {
     switch(input) {
       case GameActionScreenInput.ROLL_DICE:
       case GameActionScreenInput.ROLL_AGAIN:

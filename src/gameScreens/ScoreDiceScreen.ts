@@ -8,6 +8,9 @@ import { drawDiceValues, drawTurnStats } from "../utils/draw";
 import ScoresheetScreen from "./ScoresheetScreen";
 import { scoreLabels } from "../Scoresheet";
 import GameActionScreen from "./GameActionScreen";
+import ScoreJokerScreen from "./ScoreJokerScreen";
+import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
+import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 
 export enum ScoreDiceScreenInput {
   CANCEL = "cancel",
@@ -21,6 +24,21 @@ const choiceLabels: Record<ScoreDiceScreenInputs, string> = {
 };
 
 export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInputs> {
+
+  getGameOverScreen(state: GameState): BaseGameScreen<any> {
+    if (state.players.length === 1) {
+      state.setCurrentPlayer(0);
+      // const stats = statsLoader.getData();
+      // const score = state.getCurrentPlayer().totalScore;
+      // stats.scores.push(({ score, timestamp: Date.now() }));
+      // statsLoader.setData(stats);
+      return new GameOverSinglePlayerScreen();
+    } else if (state.players.length > 1) {
+      return new GameOverMultiplayerScreen();
+    } else {
+      throw new Error("Cannot handle game over with no players");
+    }
+  }
 
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
@@ -87,8 +105,7 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
         YahtzeeScoreCategory.YahtzeeBonus,
         player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
       );
-      // TODO: return score joker screen here
-      return this;
+      return new ScoreJokerScreen();
     }
     
     player.setScore(category, diceScorer.scoreCategory(category));
@@ -97,7 +114,7 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
     
     switch (nextScreen) {
       case GameMode.GAME_OVER:
-        // TODO: Add game over screen
+        return this.getGameOverScreen(state);
       case GameMode.VIEW_SCORE:
         return new ScoresheetScreen();
       default:

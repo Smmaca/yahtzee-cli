@@ -39,7 +39,7 @@ export default class LockDiceScreen extends BaseGameScreen<Record<string, number
     });
   }
 
-  handleInput(input: Record<string, number>, state: GameState, config: IConfig): BaseGameScreen<any> {
+  handleInput(input: Record<string, number>, state: GameState): BaseGameScreen<any> {
     state.dice.resetLock();
     const indicesToLock = Object.keys(input).map(key => input[key]);
     const diceLock = state.dice.values.map((_, i) => indicesToLock.includes(i));
