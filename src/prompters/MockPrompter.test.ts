@@ -199,7 +199,7 @@ describe("MockPrompter", () => {
     const prompter = new MockPrompter([]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [],
@@ -217,7 +217,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [],
@@ -235,7 +235,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [{ name: "answer", value: "answer" }],
@@ -253,7 +253,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [{ name: "answer", value: "answer" }],
@@ -271,7 +271,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [{ name: "answer", value: "answer" }],
@@ -289,7 +289,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [{ name: "answer", value: "answer" }],
@@ -307,7 +307,7 @@ describe("MockPrompter", () => {
     }]);
 
     try {
-      await prompter.getInputFromMultiSelect({
+      await prompter.getInputFromMultiselect({
         name: "input",
         message: "message",
         choices: [{ name: "answer", value: "answer" }],
@@ -324,7 +324,7 @@ describe("MockPrompter", () => {
       answer: { answer: "answer" },
     }]);
 
-    const result = await prompter.getInputFromMultiSelect({
+    const result = await prompter.getInputFromMultiselect({
       name: "input",
       message: "message",
       choices: [{ name: "answer", value: "answer" }],

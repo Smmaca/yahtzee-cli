@@ -11,7 +11,7 @@ const config: IConfig = {
     newGamePrompt: "What kind of game do you want to play?",
     newMultiplayerGamePrompt: "Add a player or start the game",
     addPlayerPrompt: "Enter player name",
-    rollPrompt: "What do you want to do?",
+    gameActionPrompt: "What do you want to do?",
     diceLockPrompt: "Which dice do you want to lock? (press space to toggle lock status)",
     scoreDicePrompt: "Which category do you want to score?",
     scoreJokerPrompt: "Which category do you want to score a joker in?",

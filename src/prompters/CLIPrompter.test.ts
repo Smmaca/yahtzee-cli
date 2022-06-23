@@ -79,7 +79,7 @@ describe("CLIPrompter", () => {
 
     MockMultiSelect.prototype.run.mockImplementationOnce(() => ({ answer: "answer" }));
 
-    const result = await prompter.getInputFromMultiSelect({
+    const result = await prompter.getInputFromMultiselect({
       name: "input",
       message: "message",
       choices: [],

@@ -62,6 +62,7 @@ export default class GameState {
     }
     this.dice.reset();
     this.setRollNumber(0);
+    return this.mode;
   }
 
   incrementTurn() {

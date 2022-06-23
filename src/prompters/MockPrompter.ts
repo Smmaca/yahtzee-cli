@@ -58,7 +58,7 @@ export default class MockPrompter extends BasePrompter {
     return mockAnswer.answer;
   }
 
-  async getInputFromMultiSelect<K extends string, V = any>(
+  async getInputFromMultiselect<K extends string, V = any>(
     { name, choices }: IMultiselectParams<K, V>,
   ): Promise<Record<K, V>> {
     const mockAnswer = this.answers.shift();

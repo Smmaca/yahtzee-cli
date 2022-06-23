@@ -30,7 +30,7 @@ export default class CLIPrompter extends BasePrompter {
     return prompt.run();
   }
 
-  async getInputFromMultiSelect<K extends string, V = any>(
+  async getInputFromMultiselect<K extends string, V = any>(
     { name, message, choices, initial, limit }: IMultiselectParams<K, V>,
   ): Promise<Record<K, V>> {
     const prompt = new MultiSelect({

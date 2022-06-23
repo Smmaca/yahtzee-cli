@@ -26,10 +26,17 @@ export interface IMultiselectParams<K extends string, V = any> extends ISelectPa
   limit?: number;
 }
 
-export default abstract class BasePrompter {
+export interface IPrompter {
+  getInput(params: IInputParams): Promise<string>;
+  getInputFromConfirm(params: IConfirmParams): Promise<boolean>;
+  getInputFromSelect<K extends string, V = any>(params: ISelectParams<K, V>): Promise<K>;
+  getInputFromMultiselect<K extends string, V = any>(params: IMultiselectParams<K, V>): Promise<Record<K, V>>;
+}
+
+export default abstract class BasePrompter implements IPrompter {
   abstract getInputFromConfirm(params: IConfirmParams): Promise<boolean>;
   abstract getInput(params: IInputParams): Promise<string>;
   abstract getInputFromSelect<K extends string>(params: ISelectParams<K>): Promise<K>;
-  abstract getInputFromMultiSelect<K extends string, V = any>(
+  abstract getInputFromMultiselect<K extends string, V = any>(
     params: IMultiselectParams<K, V>): Promise<Record<K, V>>;
 }

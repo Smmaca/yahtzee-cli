@@ -1,6 +1,23 @@
 import { YahtzeeScore, YahtzeeScoreCategory } from "./types";
 import Scoresheet from "./Scoresheet";
 
+export const defaultScore = {
+  ones: null,
+  twos: null,
+  threes: null,
+  fours: null,
+  fives: null,
+  sixes: null,
+  threeOfAKind: null,
+  fourOfAKind: null,
+  fullHouse: null,
+  smallStraight: null,
+  largeStraight: null,
+  yahtzee: null,
+  chance: null,
+  yahtzeeBonus: 0,
+};
+
 export default class Player {
   name: string;
   score: YahtzeeScore;
@@ -20,22 +37,7 @@ export default class Player {
   }
 
   resetScore() {
-    this.score = {
-      ones: null,
-      twos: null,
-      threes: null,
-      fours: null,
-      fives: null,
-      sixes: null,
-      threeOfAKind: null,
-      fourOfAKind: null,
-      fullHouse: null,
-      smallStraight: null,
-      largeStraight: null,
-      yahtzee: null,
-      chance: null,
-      yahtzeeBonus: 0,
-    };
+    this.score = { ...defaultScore };
   }
 
   renderScoresheet() {

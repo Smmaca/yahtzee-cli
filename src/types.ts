@@ -65,7 +65,7 @@ export interface IConfig {
     newGamePrompt: string;
     newMultiplayerGamePrompt: string;
     addPlayerPrompt: string;
-    rollPrompt: string;
+    gameActionPrompt: string;
     diceLockPrompt: string;
     scoreDicePrompt: string;
     scoreJokerPrompt: string;

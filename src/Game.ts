@@ -267,7 +267,7 @@ export default class Game {
     }));
 
     // Get input
-    const answer = await this.prompter.getInputFromMultiSelect({
+    const answer = await this.prompter.getInputFromMultiselect({
       name: "diceLockMenu",
       message: this.config.messages.diceLockPrompt,
       limit: 5,
@@ -446,7 +446,7 @@ export default class Game {
     // Get input
     const answer = await this.prompter.getInputFromSelect({
       name: "gameAction",
-      message: this.config.messages.rollPrompt,
+      message: this.config.messages.gameActionPrompt,
       choices: this.getRollModePromptChoices(),
     });
   
