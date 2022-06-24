@@ -16,7 +16,9 @@ const choiceLabels: Record<StatisticsScreenInput, string> = {
 };
 
 export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInput> {
-  draw() {}
+  draw() {
+    // TODO: Draw stats
+  }
 
   getChoices(): IChoice<StatisticsScreenInput, StatisticsScreenInput>[] {
     return [
