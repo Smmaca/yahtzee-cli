@@ -13,7 +13,7 @@ export enum GameOverMultiplayerScreenInput {
   QUIT = "quit",
 }
 
-const choiceLabels: Record<GameOverMultiplayerScreenInput, string> = {
+export const choiceLabels: Record<GameOverMultiplayerScreenInput, string> = {
   [GameOverMultiplayerScreenInput.FINAL_SCORES]: "See final scores",
   [GameOverMultiplayerScreenInput.PLAY_AGAIN]: "Play Again",
   [GameOverMultiplayerScreenInput.QUIT_TO_MAIN_MENU]: "Quit to main menu",
