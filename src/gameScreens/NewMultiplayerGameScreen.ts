@@ -13,7 +13,7 @@ export enum NewMultiplayerGameScreenInput {
   CANCEL = "cancel",
 }
 
-const choiceLabels: Record<NewMultiplayerGameScreenInput, string> = {
+export const choiceLabels: Record<NewMultiplayerGameScreenInput, string> = {
   [NewMultiplayerGameScreenInput.ADD_PLAYER]: "Add player",
   [NewMultiplayerGameScreenInput.START_GAME]: "Start game",
   [NewMultiplayerGameScreenInput.CANCEL]: "Cancel",
@@ -21,7 +21,14 @@ const choiceLabels: Record<NewMultiplayerGameScreenInput, string> = {
 
 export default class NewMultiplayerGameScreen extends BaseGameScreen<NewMultiplayerGameScreenInput> {
 
-  draw() {}
+  draw(state: GameState) {
+    if (state.players.length) {
+      state.players.forEach((player, i) => console.log(`Player ${i + 1}: ${player.name}`));
+    } else {
+      console.log("No players added yet");
+    }
+    console.log("\n");
+  }
 
   getChoices(state: GameState, config: IConfig) {
     const choices = [];

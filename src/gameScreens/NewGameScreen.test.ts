@@ -89,7 +89,7 @@ describe("NewGameScreen", () => {
   });
 
   describe("getChoices", () => {
-    test("gives the main menu options", () => {
+    test("gives the correct options", () => {
       const screen = new NewGameScreen();
       const choices = screen.getChoices();
 

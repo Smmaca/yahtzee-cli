@@ -89,7 +89,7 @@ describe("MainMenuScreen", () => {
   });
 
   describe("getChoices", () => {
-    test("gives the main menu options", () => {
+    test("gives the correct options", () => {
       const screen = new MainMenuScreen();
       const choices = screen.getChoices();
 
