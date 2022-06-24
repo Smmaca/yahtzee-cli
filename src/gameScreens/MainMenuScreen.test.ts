@@ -147,8 +147,6 @@ describe("MainMenuScreen", () => {
       expect(nextScreen).toBe(MockStatisticsScreen.mock.instances[0]);
     });
 
-    test.todo("handles selecting option: Settings");
-
     test("handles selecting option: Quit", () => {
       const screen = new MainMenuScreen();
       const nextScreen = screen.handleInput(MainMenuScreenInput.QUIT);
