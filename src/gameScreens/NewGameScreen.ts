@@ -13,7 +13,7 @@ export enum NewGameScreenInput {
   CANCEL = "cancel",
 }
 
-const choiceLabels: Record<NewGameScreenInput, string> = {
+export const choiceLabels: Record<NewGameScreenInput, string> = {
   [NewGameScreenInput.SINGLEPLAYER]: "Single player",
   [NewGameScreenInput.MULTIPLAYER]: "Multiplayer",
   [NewGameScreenInput.CANCEL]: "Cancel",
