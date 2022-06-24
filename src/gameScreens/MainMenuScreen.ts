@@ -14,7 +14,7 @@ export enum MainMenuScreenInput {
   QUIT = "quit",
 }
 
-const choiceLabels: Record<MainMenuScreenInput, string> = {
+export const choiceLabels: Record<MainMenuScreenInput, string> = {
   [MainMenuScreenInput.NEW_GAME]: "New Game",
   [MainMenuScreenInput.STATISTICS]: "Statistics",
   [MainMenuScreenInput.SETTINGS]: "Settings",
@@ -47,8 +47,6 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
         return new NewGameScreen();
       case MainMenuScreenInput.STATISTICS:
         return new StatisticsScreen();
-      case MainMenuScreenInput.SETTINGS:
-        // TODO: Settings screen
       case MainMenuScreenInput.QUIT:
         return new QuitConfirmScreen({ previousScreen: this });
       default:
