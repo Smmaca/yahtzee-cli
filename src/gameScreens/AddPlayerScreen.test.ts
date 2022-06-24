@@ -1,20 +1,39 @@
+import clear from "clear";
 import MockPrompter from "../prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
 import AddPlayerScreen from "./AddPlayerScreen";
 import { Screen } from "./BaseGameScreen";
 import NewMultiplayerGameScreen from "./NewMultiplayerGameScreen";
+import * as drawUtils from "../utils/draw";
 
+jest.mock("clear");
+jest.mock("../utils/draw");
 jest.mock("./NewMultiplayerGameScreen");
 
+const mockClear = clear as jest.MockedFunction<typeof clear>;
+const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockNewMultiplayerGameScreen = NewMultiplayerGameScreen as jest.MockedClass<
   typeof NewMultiplayerGameScreen
 >;
 
 describe("AddPlayerScreen", () => {
   beforeEach(() => {
-    MockNewMultiplayerGameScreen.mockClear();
+    mockClear.mockClear();
+    mockDrawUtils.drawTitle.mockClear();
+    mockDrawUtils.drawTurnStats.mockClear();
+    mockDrawUtils.drawDiceValues.mockClear();
     mockGameState.addPlayer.mockClear();
+    MockNewMultiplayerGameScreen.mockClear();
+  });
+
+  describe("drawScreenStart", () => {
+    test("clears the screen and draws the title", () => {
+      const screen = new AddPlayerScreen();
+      screen.drawScreenStart();
+      expect(mockClear).toHaveBeenCalledTimes(1);
+      expect(mockDrawUtils.drawTitle).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("run", () => {
@@ -24,10 +43,10 @@ describe("AddPlayerScreen", () => {
     const handleInputSpy = jest.spyOn(AddPlayerScreen.prototype, "handleInput");
 
     beforeAll(() => {
-      drawScreenStartSpy.mockImplementation(() => {});
-      drawSpy.mockImplementation(() => {});
-      getInputSpy.mockImplementation(async () => "");
-      handleInputSpy.mockImplementation(() => new AddPlayerScreen());
+      drawScreenStartSpy.mockClear().mockImplementation(() => {});
+      drawSpy.mockClear().mockImplementation(() => {});
+      getInputSpy.mockClear().mockImplementation(async () => "");
+      handleInputSpy.mockClear().mockImplementation(() => new AddPlayerScreen());
     });
 
     afterAll(() => {

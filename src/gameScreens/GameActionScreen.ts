@@ -20,7 +20,7 @@ export enum GameActionScreenInput {
   QUIT = "quit",
 }
 
-const choiceLabels: Record<GameActionScreenInput, string> = {
+export const choiceLabels: Record<GameActionScreenInput, string> = {
   [GameActionScreenInput.ROLL_DICE]: "Roll dice",
   [GameActionScreenInput.ROLL_AGAIN]: "Roll again",
   [GameActionScreenInput.LOCK_DICE]: "Lock dice",
@@ -35,7 +35,7 @@ export default class GameActionScreen extends BaseGameScreen<GameActionScreenInp
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
     drawTurnStats(
-      state.getCurrentPlayer().name,
+      state.getCurrentPlayer()?.name,
       state.turn,
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
