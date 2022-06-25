@@ -9,6 +9,7 @@ import ScoresheetScreen from "./ScoresheetScreen";
 import { scoreLabels } from "../modules/Scoresheet";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
+import Statistics from "../modules/Statistics";
 
 export type ScoreJokerScreenInput = YahtzeeScoreCategory;
 
@@ -39,13 +40,12 @@ const numberCategories = [
    */
 export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInput> {
 
-  getGameOverScreen(state: GameState): BaseGameScreen<any> {
+  getGameOverScreen(state: GameState, config: IConfig): BaseGameScreen<any> {
     if (state.players.length === 1) {
       state.setCurrentPlayer(0);
-      // const stats = statsLoader.getData();
-      // const score = state.getCurrentPlayer().totalScore;
-      // stats.scores.push(({ score, timestamp: Date.now() }));
-      // statsLoader.setData(stats);
+      const player = state.getCurrentPlayer();
+      const statsModule = new Statistics(config);
+      statsModule.saveGameStatistics({ score: player.totalScore });
       return new GameOverSinglePlayerScreen();
     } else if (state.players.length > 1) {
       return new GameOverMultiplayerScreen();
@@ -105,7 +105,7 @@ export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInp
         choices.push(choice);
       } else if (yahtzeeOtherNumberCategories.includes(category)) {
         const choice = constructChoice(category, choiceLabels);
-        choice.hint = score[category] === null ? "0" : `[${score[category]}]`,
+        choice.hint = score[category] === null ? "" : `[${score[category]}]`,
         choice.disabled = score[category] !== null
           || score[yahtzeeNumberCategory] === null
           || [
@@ -170,7 +170,7 @@ export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInp
     const nextScreen = state.nextPlayer(); 
 
     if (nextScreen === GameMode.GAME_OVER) {
-      return this.getGameOverScreen(state);
+      return this.getGameOverScreen(state, config);
     } else if (nextScreen === GameMode.VIEW_SCORE) {
       return new ScoresheetScreen();
     }

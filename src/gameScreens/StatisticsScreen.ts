@@ -20,6 +20,7 @@ export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInp
   draw(state: GameState, config: IConfig) {
     const statsModule = new Statistics(config);
     const stats = statsModule.getGameStatistics();
+    console.log("Single player game statistics:\n")
     console.log(`Games played: ${stats.gamesPlayed}`);
     console.log(`High score: ${stats.highScore}`);
     console.log(`Low score: ${stats.lowScore}`);

@@ -16,10 +16,12 @@ import ScoreJokerScreen from "./ScoreJokerScreen";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 import { defaultScore } from "../modules/Player";
+import Statistics from "../modules/Statistics";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
 jest.mock("../modules/DiceScorer");
+jest.mock("../modules/Statistics");
 jest.mock("./GameActionScreen");
 jest.mock("./ScoresheetScreen");
 jest.mock("./ScoreJokerScreen");
@@ -29,6 +31,7 @@ jest.mock("./GameOverMultiplayerScreen");
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
+const MockStatistics = Statistics as jest.MockedClass<typeof Statistics>;
 const MockGameActionScreen = GameActionScreen as jest.MockedClass<typeof GameActionScreen>;
 const MockScoresheetScreen = ScoresheetScreen as jest.MockedClass<typeof ScoresheetScreen>;
 const MockScoreJokerScreen = ScoreJokerScreen as jest.MockedClass<typeof ScoreJokerScreen>;
@@ -107,11 +110,18 @@ describe("ScoreDiceScreen", () => {
     beforeEach(() => {
       MockGameOverSinglePlayerScreen.mockClear();
       MockGameOverMultiplayerScreen.mockClear();
+      MockStatistics.mockClear();
+      mockGameState.getCurrentPlayer.mockClear();
     });
 
-    test("returns correct screen for a singleplayer game", () => {
+    test("returns correct screen and saves stats for a singleplayer game", () => {
+      mockGameState.getCurrentPlayer.mockImplementation(() => mockPlayer);
       const screen = new ScoreDiceScreen();
-      const gameOverScreen = screen.getGameOverScreen(mockGameState);
+      const gameOverScreen = screen.getGameOverScreen(mockGameState, mockConfig);
+      expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(0);
+      expect(mockGameState.getCurrentPlayer).toHaveBeenCalledOnce();
+      expect(MockStatistics).toHaveBeenCalledOnce();
+      expect(MockStatistics.mock.instances[0].saveGameStatistics).toHaveBeenCalledWith({ score: 0 });
       expect(MockGameOverSinglePlayerScreen).toHaveBeenCalledTimes(1);
       expect(gameOverScreen).toBe(MockGameOverSinglePlayerScreen.mock.instances[0]);
     });
@@ -123,7 +133,7 @@ describe("ScoreDiceScreen", () => {
         { ...mockPlayer, name: "Player 2" },
       ];
       const screen = new ScoreDiceScreen();
-      const gameOverScreen = screen.getGameOverScreen(mockState);
+      const gameOverScreen = screen.getGameOverScreen(mockState, mockConfig);
       expect(MockGameOverMultiplayerScreen).toHaveBeenCalledTimes(1);
       expect(gameOverScreen).toBe(MockGameOverMultiplayerScreen.mock.instances[0]);
     });
@@ -133,7 +143,7 @@ describe("ScoreDiceScreen", () => {
       mockState.players = [];
       const screen = new ScoreDiceScreen();
       try {
-        screen.getGameOverScreen(mockState);
+        screen.getGameOverScreen(mockState, mockConfig);
         throw new Error("Expected error to be thrown");
       } catch (err) {
         expect(err.message).toBe("Cannot handle game over with no players");
@@ -235,6 +245,36 @@ describe("ScoreDiceScreen", () => {
         { name: "yahtzee", value: "yahtzee", message: "Yahtzee", disabled: true, hint: "[50]" },
         { name: "chance", value: "chance", message: "Chance", disabled: false, hint: "1" },
         { name: "yahtzeeBonus", value: "yahtzeeBonus", message: "Bonus Yahtzees", disabled: false, hint: "[0] + 100" },
+      ]);
+    });
+
+    test("displays no hint when the category would score a 0", () => {
+      const mockState = { ...mockGameState };
+      mockState.getDiceRollsLeft.mockImplementation(() => 1);
+      mockState.getCurrentPlayer.mockImplementation(() => mockPlayer);
+      mockState.dice = { ...mockDice, values: [1, 2, 3, 4, 5] };
+
+      MockDiceScorer.prototype.scoreCategory.mockImplementation(() => 0);
+
+      const screen = new ScoreDiceScreen();
+      const choices = screen.getChoices(mockState, mockConfig);
+
+      expect(choices).toEqual([
+        { name: "ones", value: "ones", message: "Aces", disabled: false, hint: "" },
+        { name: "twos", value: "twos", message: "Twos", disabled: false, hint: "" },
+        { name: "threes", value: "threes", message: "Threes", disabled: false, hint: "" },
+        { name: "fours", value: "fours", message: "Fours", disabled: false, hint: "" },
+        { name: "fives", value: "fives", message: "Fives", disabled: false, hint: "" },
+        { name: "sixes", value: "sixes", message: "Sixes", disabled: false, hint: "" },
+        { name: "threeOfAKind", value: "threeOfAKind", message: "Three of a Kind", disabled: false, hint: "" },
+        { name: "fourOfAKind", value: "fourOfAKind", message: "Four of a Kind", disabled: false, hint: "" },
+        { name: "fullHouse", value: "fullHouse", message: "Full House", disabled: false, hint: "" },
+        { name: "smallStraight", value: "smallStraight", message: "Small Straight", disabled: false, hint: "" },
+        { name: "largeStraight", value: "largeStraight", message: "Large Straight", disabled: false, hint: "" },
+        { name: "yahtzee", value: "yahtzee", message: "Yahtzee", disabled: false, hint: "" },
+        { name: "chance", value: "chance", message: "Chance", disabled: false, hint: "" },
+        { name: "yahtzeeBonus", value: "yahtzeeBonus", message: "Bonus Yahtzees", disabled: true, hint: "[0]" },
+        { name: "cancel", value: "cancel", message: "Cancel" },
       ]);
     });
   });

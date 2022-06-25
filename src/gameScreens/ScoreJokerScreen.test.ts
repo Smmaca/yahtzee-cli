@@ -15,10 +15,12 @@ import ScoresheetScreen from "./ScoresheetScreen";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 import { defaultScore } from "../modules/Player";
+import Statistics from "../modules/Statistics";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
 jest.mock("../modules/DiceScorer");
+jest.mock("../modules/Statistics");
 jest.mock("./GameActionScreen");
 jest.mock("./ScoresheetScreen");
 jest.mock("./GameOverSinglePlayerScreen");
@@ -27,6 +29,7 @@ jest.mock("./GameOverMultiplayerScreen");
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
+const MockStatistics = Statistics as jest.MockedClass<typeof Statistics>;
 const MockGameActionScreen = GameActionScreen as jest.MockedClass<typeof GameActionScreen>;
 const MockScoresheetScreen = ScoresheetScreen as jest.MockedClass<typeof ScoresheetScreen>;
 const MockGameOverSinglePlayerScreen = GameOverSinglePlayerScreen as jest.MockedClass<typeof GameOverSinglePlayerScreen>;
@@ -104,11 +107,18 @@ describe("ScoreJokerScreen", () => {
     beforeEach(() => {
       MockGameOverSinglePlayerScreen.mockClear();
       MockGameOverMultiplayerScreen.mockClear();
+      mockGameState.getCurrentPlayer.mockClear();
+      mockGameState.setCurrentPlayer.mockClear();
     });
 
-    test("returns correct screen for a singleplayer game", () => {
+    test("returns correct screen and saves stats for a singleplayer game", () => {
+      mockGameState.getCurrentPlayer.mockImplementation(() => mockPlayer);
       const screen = new ScoreJokerScreen();
-      const gameOverScreen = screen.getGameOverScreen(mockGameState);
+      const gameOverScreen = screen.getGameOverScreen(mockGameState, mockConfig);
+      expect(mockGameState.setCurrentPlayer).toHaveBeenCalledWith(0);
+      expect(mockGameState.getCurrentPlayer).toHaveBeenCalledOnce();
+      expect(MockStatistics).toHaveBeenCalledOnce();
+      expect(MockStatistics.mock.instances[0].saveGameStatistics).toHaveBeenCalledWith({ score: 0 });
       expect(MockGameOverSinglePlayerScreen).toHaveBeenCalledTimes(1);
       expect(gameOverScreen).toBe(MockGameOverSinglePlayerScreen.mock.instances[0]);
     });
@@ -120,7 +130,7 @@ describe("ScoreJokerScreen", () => {
         { ...mockPlayer, name: "Player 2" },
       ];
       const screen = new ScoreJokerScreen();
-      const gameOverScreen = screen.getGameOverScreen(mockState);
+      const gameOverScreen = screen.getGameOverScreen(mockState, mockConfig);
       expect(MockGameOverMultiplayerScreen).toHaveBeenCalledTimes(1);
       expect(gameOverScreen).toBe(MockGameOverMultiplayerScreen.mock.instances[0]);
     });
@@ -130,7 +140,7 @@ describe("ScoreJokerScreen", () => {
       mockState.players = [];
       const screen = new ScoreJokerScreen();
       try {
-        screen.getGameOverScreen(mockState);
+        screen.getGameOverScreen(mockState, mockConfig);
         throw new Error("Expected error to be thrown");
       } catch (err) {
         expect(err.message).toBe("Cannot handle game over with no players");
@@ -167,11 +177,11 @@ describe("ScoreJokerScreen", () => {
         { name: "largeStraight", value: "largeStraight", message: "Large Straight", disabled: true, hint: "25" },
         { name: "chance", value: "chance", message: "Chance", disabled: true, hint: "5" },
         { name: 9, value: 9, message: ">> Score zero in any number category <<", role: "separator" },
-        { name: "twos", value: "twos", message: "Twos", disabled: true, hint: "0" },
-        { name: "threes", value: "threes", message: "Threes", disabled: true, hint: "0" },
-        { name: "fours", value: "fours", message: "Fours", disabled: true, hint: "0" },
-        { name: "fives", value: "fives", message: "Fives", disabled: true, hint: "0" },
-        { name: "sixes", value: "sixes", message: "Sixes", disabled: true, hint: "0" },
+        { name: "twos", value: "twos", message: "Twos", disabled: true, hint: "" },
+        { name: "threes", value: "threes", message: "Threes", disabled: true, hint: "" },
+        { name: "fours", value: "fours", message: "Fours", disabled: true, hint: "" },
+        { name: "fives", value: "fives", message: "Fives", disabled: true, hint: "" },
+        { name: "sixes", value: "sixes", message: "Sixes", disabled: true, hint: "" },
       ]);
     });
 
@@ -198,11 +208,11 @@ describe("ScoreJokerScreen", () => {
         { name: "largeStraight", value: "largeStraight", message: "Large Straight", disabled: false, hint: "25" },
         { name: "chance", value: "chance", message: "Chance", disabled: false, hint: "5" },
         { name: 9, value: 9, message: ">> Score zero in any number category <<", role: "separator" },
-        { name: "twos", value: "twos", message: "Twos", disabled: true, hint: "0" },
-        { name: "threes", value: "threes", message: "Threes", disabled: true, hint: "0" },
-        { name: "fours", value: "fours", message: "Fours", disabled: true, hint: "0" },
-        { name: "fives", value: "fives", message: "Fives", disabled: true, hint: "0" },
-        { name: "sixes", value: "sixes", message: "Sixes", disabled: true, hint: "0" },
+        { name: "twos", value: "twos", message: "Twos", disabled: true, hint: "" },
+        { name: "threes", value: "threes", message: "Threes", disabled: true, hint: "" },
+        { name: "fours", value: "fours", message: "Fours", disabled: true, hint: "" },
+        { name: "fives", value: "fives", message: "Fives", disabled: true, hint: "" },
+        { name: "sixes", value: "sixes", message: "Sixes", disabled: true, hint: "" },
       ]);
     });
 
@@ -243,10 +253,10 @@ describe("ScoreJokerScreen", () => {
         { name: "chance", value: "chance", message: "Chance", disabled: true, hint: "[5]" },
         { name: 9, value: 9, message: ">> Score zero in any number category <<", role: "separator" },
         { name: "twos", value: "twos", message: "Twos", disabled: true, hint: "[10]" },
-        { name: "threes", value: "threes", message: "Threes", disabled: false, hint: "0" },
-        { name: "fours", value: "fours", message: "Fours", disabled: false, hint: "0" },
-        { name: "fives", value: "fives", message: "Fives", disabled: false, hint: "0" },
-        { name: "sixes", value: "sixes", message: "Sixes", disabled: false, hint: "0" },
+        { name: "threes", value: "threes", message: "Threes", disabled: false, hint: "" },
+        { name: "fours", value: "fours", message: "Fours", disabled: false, hint: "" },
+        { name: "fives", value: "fives", message: "Fives", disabled: false, hint: "" },
+        { name: "sixes", value: "sixes", message: "Sixes", disabled: false, hint: "" },
       ]);
     });
   });

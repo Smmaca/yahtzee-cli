@@ -94,10 +94,11 @@ describe("StatisticsScreen", () => {
       screen.draw(mockGameState, mockConfig);
       expect(MockStatistics).toHaveBeenCalledTimes(1);
       expect(MockStatistics.mock.instances[0].getGameStatistics).toHaveBeenCalledTimes(1);
-      expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "Games played: 45");
-      expect(consoleLogSpy).toHaveBeenNthCalledWith(2, "High score: 400");
-      expect(consoleLogSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
-      expect(consoleLogSpy).toHaveBeenNthCalledWith(4, "Average score: 200\n");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "Single player game statistics:\n");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(2, "Games played: 45");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(3, "High score: 400");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(4, "Low score: 5");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(5, "Average score: 200\n");
     });
   });
 
