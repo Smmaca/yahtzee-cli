@@ -13,6 +13,9 @@ import mockPlayer from "../testUtils/MockPlayer";
 import GameActionScreen from "./GameActionScreen";
 import ScoresheetScreen from "./ScoresheetScreen";
 import ScoreJokerScreen from "./ScoreJokerScreen";
+import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
+import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
+import { defaultScore } from "../Player";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
@@ -20,6 +23,8 @@ jest.mock("../DiceScorer");
 jest.mock("./GameActionScreen");
 jest.mock("./ScoresheetScreen");
 jest.mock("./ScoreJokerScreen");
+jest.mock("./GameOverSinglePlayerScreen");
+jest.mock("./GameOverMultiplayerScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
@@ -27,6 +32,8 @@ const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
 const MockGameActionScreen = GameActionScreen as jest.MockedClass<typeof GameActionScreen>;
 const MockScoresheetScreen = ScoresheetScreen as jest.MockedClass<typeof ScoresheetScreen>;
 const MockScoreJokerScreen = ScoreJokerScreen as jest.MockedClass<typeof ScoreJokerScreen>;
+const MockGameOverSinglePlayerScreen = GameOverSinglePlayerScreen as jest.MockedClass<typeof GameOverSinglePlayerScreen>;
+const MockGameOverMultiplayerScreen = GameOverMultiplayerScreen as jest.MockedClass<typeof GameOverMultiplayerScreen>;
 
 describe("ScoreDiceScreen", () => {
   describe("drawScreenStart", () => {
@@ -96,6 +103,44 @@ describe("ScoreDiceScreen", () => {
     });
   });
 
+  describe("getGameOverScreen", () => {
+    beforeEach(() => {
+      MockGameOverSinglePlayerScreen.mockClear();
+      MockGameOverMultiplayerScreen.mockClear();
+    });
+
+    test("returns correct screen for a singleplayer game", () => {
+      const screen = new ScoreDiceScreen();
+      const gameOverScreen = screen.getGameOverScreen(mockGameState);
+      expect(MockGameOverSinglePlayerScreen).toHaveBeenCalledTimes(1);
+      expect(gameOverScreen).toBe(MockGameOverSinglePlayerScreen.mock.instances[0]);
+    });
+
+    test("returns correct screen for a multiplayer game", () => {
+      const mockState = { ...mockGameState };
+      mockState.players = [
+        { ...mockPlayer },
+        { ...mockPlayer, name: "Player 2" },
+      ];
+      const screen = new ScoreDiceScreen();
+      const gameOverScreen = screen.getGameOverScreen(mockState);
+      expect(MockGameOverMultiplayerScreen).toHaveBeenCalledTimes(1);
+      expect(gameOverScreen).toBe(MockGameOverMultiplayerScreen.mock.instances[0]);
+    });
+
+    test("throws an error if there are no players", () => {
+      const mockState = { ...mockGameState };
+      mockState.players = [];
+      const screen = new ScoreDiceScreen();
+      try {
+        screen.getGameOverScreen(mockState);
+        throw new Error("Expected error to be thrown");
+      } catch (err) {
+        expect(err.message).toBe("Cannot handle game over with no players");
+      }
+    });
+  });
+
   describe("getChoices", () => {
     beforeEach(() => {
       MockDiceScorer.mockClear();
@@ -133,7 +178,7 @@ describe("ScoreDiceScreen", () => {
       ]);
     });
 
-    test("when there aren no rolls left, gives option to score categories", () => {
+    test("when there are no rolls left, gives option to score categories", () => {
       const mockState = { ...mockGameState };
       mockState.getDiceRollsLeft.mockImplementation(() => 0);
       mockState.getCurrentPlayer.mockImplementation(() => mockPlayer);
@@ -159,6 +204,37 @@ describe("ScoreDiceScreen", () => {
         { name: "yahtzee", value: "yahtzee", message: "Yahtzee", disabled: false, hint: "1" },
         { name: "chance", value: "chance", message: "Chance", disabled: false, hint: "1" },
         { name: "yahtzeeBonus", value: "yahtzeeBonus", message: "Bonus Yahtzees", disabled: true, hint: "[0]" },
+      ]);
+    });
+
+    test("allows scoring bonus yahtzee if yahtzee is rolled and already scored", () => {
+      const mockState = { ...mockGameState };
+      mockState.getDiceRollsLeft.mockImplementation(() => 0);
+      const mockPlayer1 = { ...mockPlayer, score: { ...defaultScore, [YahtzeeScoreCategory.Yahtzee]: 50 } };
+      mockState.getCurrentPlayer.mockImplementation(() => mockPlayer1);
+      mockState.dice = { ...mockDice, values: [1, 1, 1, 1, 1] };
+
+      MockDiceScorer.prototype.scoreCategory.mockImplementation(() => 1);
+      MockDiceScorer.prototype.scoreYahtzeeBonus.mockImplementation(() => 100);
+
+      const screen = new ScoreDiceScreen();
+      const choices = screen.getChoices(mockState, mockConfig);
+
+      expect(choices).toEqual([
+        { name: "ones", value: "ones", message: "Aces", disabled: false, hint: "1" },
+        { name: "twos", value: "twos", message: "Twos", disabled: false, hint: "1" },
+        { name: "threes", value: "threes", message: "Threes", disabled: false, hint: "1" },
+        { name: "fours", value: "fours", message: "Fours", disabled: false, hint: "1" },
+        { name: "fives", value: "fives", message: "Fives", disabled: false, hint: "1" },
+        { name: "sixes", value: "sixes", message: "Sixes", disabled: false, hint: "1" },
+        { name: "threeOfAKind", value: "threeOfAKind", message: "Three of a Kind", disabled: false, hint: "1" },
+        { name: "fourOfAKind", value: "fourOfAKind", message: "Four of a Kind", disabled: false, hint: "1" },
+        { name: "fullHouse", value: "fullHouse", message: "Full House", disabled: false, hint: "1" },
+        { name: "smallStraight", value: "smallStraight", message: "Small Straight", disabled: false, hint: "1" },
+        { name: "largeStraight", value: "largeStraight", message: "Large Straight", disabled: false, hint: "1" },
+        { name: "yahtzee", value: "yahtzee", message: "Yahtzee", disabled: true, hint: "[50]" },
+        { name: "chance", value: "chance", message: "Chance", disabled: false, hint: "1" },
+        { name: "yahtzeeBonus", value: "yahtzeeBonus", message: "Bonus Yahtzees", disabled: false, hint: "[0] + 100" },
       ]);
     });
   });
