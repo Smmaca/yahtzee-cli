@@ -18,7 +18,7 @@ export enum ScoreDiceScreenInput {
 
 type ScoreDiceScreenInputs = ScoreDiceScreenInput | YahtzeeScoreCategory;
 
-const choiceLabels: Record<ScoreDiceScreenInputs, string> = {
+export const choiceLabels: Record<ScoreDiceScreenInputs, string> = {
   ...scoreLabels,
   [ScoreDiceScreenInput.CANCEL]: "Cancel",
 };
@@ -43,7 +43,7 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
     drawTurnStats(
-      state.getCurrentPlayer().name,
+      state.getCurrentPlayer()?.name,
       state.turn,
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
@@ -106,19 +106,19 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
         player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
       );
       return new ScoreJokerScreen();
+    } else if (Object.keys(scoreLabels).includes(category)) {
+      player.setScore(category, diceScorer.scoreCategory(category));
+
+      // TODO: fix this way of getting next screen
+     const nextScreen = state.nextPlayer(); 
+
+     if (nextScreen === GameMode.GAME_OVER) {
+       return this.getGameOverScreen(state);
+     } else if (nextScreen === GameMode.VIEW_SCORE) {
+       return new ScoresheetScreen();
+     }
     }
-    
-    player.setScore(category, diceScorer.scoreCategory(category));
-    // TODO: fix this way of getting next screen
-    const nextScreen = state.nextPlayer(); 
-    
-    switch (nextScreen) {
-      case GameMode.GAME_OVER:
-        return this.getGameOverScreen(state);
-      case GameMode.VIEW_SCORE:
-        return new ScoresheetScreen();
-      default:
-        return this;
-    }
+
+    return this;
   }
 }

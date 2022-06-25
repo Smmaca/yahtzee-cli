@@ -92,6 +92,16 @@ describe("QuitConfirmScreen", () => {
       const input = await screen.getInput(mockPrompter, mockGameState, mockConfig);
       expect(input).toBe(true);
     });
+
+    test("gets select input from player - soft quit", async () => {
+      const screen = new QuitConfirmScreen({ previousScreen: new GameActionScreen(), softQuit: true });
+      const mockPrompter = new MockPrompter([{
+        promptName: Screen.QUIT_CONFIRM,
+        answer: false,
+      }]);
+      const input = await screen.getInput(mockPrompter, mockGameState, mockConfig);
+      expect(input).toBe(false);
+    });
   });
 
   describe("handleInput", () => {
