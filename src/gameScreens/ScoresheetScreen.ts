@@ -11,7 +11,7 @@ export enum ScoresheetScreenInput {
   CONTINUE = "continue",
 }
 
-const choiceLabels: Record<ScoresheetScreenInput, string> = {
+export const choiceLabels: Record<ScoresheetScreenInput, string> = {
   [ScoresheetScreenInput.CONTINUE]: "Continue",
 };
 
@@ -19,13 +19,15 @@ export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInp
 
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
+    const player = state.getCurrentPlayer();
     drawTurnStats(
-      state.getCurrentPlayer().name,
+      player.name,
       state.turn,
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
     drawDiceValues(state.dice.values, state.dice.lock);
+    player.renderScoresheet();
   }
 
   getChoices() {
