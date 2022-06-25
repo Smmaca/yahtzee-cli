@@ -38,10 +38,10 @@ export default abstract class BaseGameScreen<T> {
 
   abstract handleInput(input: T, state: GameState, config: IConfig): BaseGameScreen<any>;
   
-  async run({ config, prompter, state }: IRunParams) {
+  async run({ config, prompter, state }: IRunParams): Promise<BaseGameScreen<any>> {
     this.drawScreenStart();
     this.draw(state, config);
     const input = await this.getInput(prompter, state, config);
-    this.handleInput(input, state, config);
+    return this.handleInput(input, state, config);
   }
 }

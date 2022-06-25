@@ -25,6 +25,18 @@ const numberCategories = [
   YahtzeeScoreCategory.Sixes,
 ];
 
+/**
+   * Joker rules
+   * Score the total of all 5 dice in the appropriate upper section box.
+   * If this box has already been filled in, score as follows in any open
+   * lower section box:
+   * - 3 of a kind: total of all five dice
+   * - 4 of a kind: total of all five dice
+   * - full house: 25
+   * - small straight: 30
+   * - large straight: 40
+   * - chance: total of all five dice
+   */
 export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInput> {
 
   getGameOverScreen(state: GameState): BaseGameScreen<any> {

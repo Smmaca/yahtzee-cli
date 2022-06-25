@@ -41,7 +41,7 @@ const mockPlayerData = {
   toJSON: jest.fn(),
 };
 
-describe("Game", () => {
+describe("GameOld", () => {
   test("saves the config and creates a new game state on instantiation", () => {
     const game = new Game(fakeConfig, new MockPrompter());
 
