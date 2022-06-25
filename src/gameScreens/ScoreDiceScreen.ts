@@ -71,7 +71,7 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
         choice.disabled = score[category] !== null;
         choice.hint = score[category] !== null
           ? `[${score[category]}]`
-          : `${diceScorer.scoreCategory(category)}`;
+          : `${diceScorer.scoreCategory(category) || ""}`;
         choices.push(choice);
       }
     });
