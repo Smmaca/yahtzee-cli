@@ -6,12 +6,12 @@ import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
 import LockDiceScreen from "./LockDiceScreen";
 import GameActionScreen from "./GameActionScreen";
-import DiceScorer from "../DiceScorer";
+import DiceScorer from "../modules/DiceScorer";
 import mockDice from "../testUtils/MockDice";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
-jest.mock("../DiceScorer");
+jest.mock("../modules/DiceScorer");
 jest.mock("./GameActionScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;

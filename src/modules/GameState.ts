@@ -1,7 +1,7 @@
 import Table from "cli-table";
 import Dice from "./Dice";
 import Player from "./Player";
-import { GameMode, IConfig } from "./types";
+import { GameMode, IConfig } from "../types";
 
 export default class GameState {
   config: IConfig;

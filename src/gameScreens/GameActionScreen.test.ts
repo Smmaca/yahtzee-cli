@@ -4,7 +4,7 @@ import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
 import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
-import DiceScorer from "../DiceScorer";
+import DiceScorer from "../modules/DiceScorer";
 import GameActionScreen, { GameActionScreenInput, choiceLabels } from "./GameActionScreen";
 import mockDice from "../testUtils/MockDice";
 import LockDiceScreen from "./LockDiceScreen";
@@ -15,7 +15,7 @@ import { constructChoice } from "../utils/screenUtils";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
-jest.mock("../DiceScorer");
+jest.mock("../modules/DiceScorer");
 jest.mock("./LockDiceScreen");
 jest.mock("./ScoresheetScreen");
 jest.mock("./ScoreDiceScreen");

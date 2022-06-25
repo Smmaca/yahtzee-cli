@@ -1,4 +1,4 @@
-import { YahtzeeScore, YahtzeeScoreCategory } from "./types";
+import { YahtzeeScore, YahtzeeScoreCategory } from "../types";
 import Scoresheet from "./Scoresheet";
 
 export const defaultScore = {

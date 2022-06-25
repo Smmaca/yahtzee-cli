@@ -1,12 +1,12 @@
 import clear from "clear";
 import util from "util";
-import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "./types";
-import { drawDiceValues, drawTitle, drawTurnStats } from "./utils/draw";
+import { GameMode, IConfig, RollModeChoice, YahtzeeScoreCategory } from "../types";
+import { drawDiceValues, drawTitle, drawTurnStats } from "../utils/draw";
 import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
-import BasePrompter, { IChoice } from "./prompters/BasePrompter";
-import DataLoader, { StatsData } from "./dataLoaders/DataLoader";
+import BasePrompter, { IChoice } from "../prompters/BasePrompter";
+import DataLoader, { StatsData } from "./DataLoader";
 
 
 export default class Game {

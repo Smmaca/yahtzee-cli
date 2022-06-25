@@ -1,4 +1,4 @@
-import Dice from "../Dice";
+import Dice from "../modules/Dice";
 
 const mockDice: Dice = {
   diceCount: 5,

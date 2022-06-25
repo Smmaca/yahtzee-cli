@@ -1,9 +1,15 @@
-import BasePrompter, { IChoice, IConfirmParams, IInputParams, IMultiselectParams, ISelectParams } from "./BasePrompter"
+import BasePrompter, {
+  IChoice,
+  IConfirmParams,
+  IInputParams,
+  IMultiselectParams,
+  ISelectParams,
+} from "./BasePrompter"
 
 
 export interface IMockAnswer {
- promptName: string;
- answer: any;
+  promptName: string;
+  answer: any;
 }
 
 /**
@@ -88,7 +94,7 @@ export default class MockPrompter extends BasePrompter {
       acc[curr.name] = curr.value;
       return acc;
     }, {});
-    
+
     Object.keys(answer).forEach((answerKey: K) => {
       if (!choices.map(c => c.name).includes(answerKey)
         || choices.find(c => c.name === answerKey).value !== answer[answerKey]) {

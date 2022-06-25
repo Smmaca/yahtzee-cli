@@ -1,4 +1,4 @@
-import { IConfig, YahtzeeScoreCategory } from "./types";
+import { IConfig, YahtzeeScoreCategory } from "../types";
 
 export default class DiceScorer {
   values: number[];

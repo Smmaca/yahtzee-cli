@@ -7,12 +7,12 @@ import * as drawUtils from "../utils/draw";
 import { constructChoice } from "../utils/screenUtils";
 import ScoresheetScreen, { choiceLabels, ScoresheetScreenInput } from "./ScoresheetScreen";
 import GameActionScreen from "./GameActionScreen";
-import DiceScorer from "../DiceScorer";
+import DiceScorer from "../modules/DiceScorer";
 import mockPlayer from "../testUtils/MockPlayer";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
-jest.mock("../DiceScorer");
+jest.mock("../modules/DiceScorer");
 jest.mock("./GameActionScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;

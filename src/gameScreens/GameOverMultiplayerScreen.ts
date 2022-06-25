@@ -1,4 +1,4 @@
-import GameState from "../GameState";
+import GameState from "../modules/GameState";
 import { IPrompter } from "../prompters/BasePrompter";
 import { IConfig } from "../types";
 import { constructChoice } from "../utils/screenUtils";

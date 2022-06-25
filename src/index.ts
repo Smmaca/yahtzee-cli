@@ -1,4 +1,4 @@
-import Game from "./Game";
+import Game from "./modules/Game";
 import config from "./config";
 import CLIPrompter from "./prompters/CLIPrompter";
 

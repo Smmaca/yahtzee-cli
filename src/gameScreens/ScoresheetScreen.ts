@@ -1,10 +1,10 @@
-import GameState from "../GameState";
+import GameState from "../modules/GameState";
 import { IPrompter } from "../prompters/BasePrompter";
 import { IConfig } from "../types";
 import BaseGameScreen, { Screen } from "./BaseGameScreen";
 import { constructChoice } from "../utils/screenUtils";
 import GameActionScreen from "./GameActionScreen";
-import DiceScorer from "../DiceScorer";
+import DiceScorer from "../modules/DiceScorer";
 import { drawDiceValues, drawTurnStats } from "../utils/draw";
 
 export enum ScoresheetScreenInput {

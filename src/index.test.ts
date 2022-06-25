@@ -1,9 +1,9 @@
 import config from "./config";
-import Game from "./Game";
+import Game from "./modules/Game";
 import { main } from "./index";
 import CLIPrompter from "./prompters/CLIPrompter";
 
-jest.mock("./Game");
+jest.mock("./modules/Game");
 jest.mock("./prompters/CLIPrompter");
 
 const MockGame = Game as jest.MockedClass<typeof Game>;

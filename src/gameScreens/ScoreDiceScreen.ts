@@ -1,12 +1,12 @@
-import GameState from "../GameState";
+import GameState from "../modules/GameState";
 import { IPrompter } from "../prompters/BasePrompter";
 import { GameMode, IConfig, YahtzeeScoreCategory } from "../types";
 import BaseGameScreen, { Screen } from "./BaseGameScreen";
 import { constructChoice } from "../utils/screenUtils";
-import DiceScorer from "../DiceScorer";
+import DiceScorer from "../modules/DiceScorer";
 import { drawDiceValues, drawTurnStats } from "../utils/draw";
 import ScoresheetScreen from "./ScoresheetScreen";
-import { scoreLabels } from "../Scoresheet";
+import { scoreLabels } from "../modules/Scoresheet";
 import GameActionScreen from "./GameActionScreen";
 import ScoreJokerScreen from "./ScoreJokerScreen";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";

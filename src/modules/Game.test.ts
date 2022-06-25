@@ -1,22 +1,22 @@
 import clear from "clear";
-import config from "./config";
+import config from "../config";
 import Game from "./Game";
 import GameState from "./GameState";
 import Player from "./Player";
-import { GameMode, RollModeChoice, YahtzeeScoreCategory } from "./types";
-import * as drawUtils from "./utils/draw";
-import MockPrompter from "./prompters/MockPrompter";
+import { GameMode, RollModeChoice, YahtzeeScoreCategory } from "../types";
+import * as drawUtils from "../utils/draw";
+import MockPrompter from "../prompters/MockPrompter";
 import DiceScorer from "./DiceScorer";
 import Dice from "./Dice";
-import DataLoader from "./dataLoaders/DataLoader";
+import DataLoader from "./DataLoader";
 
 jest.mock("./GameState");
-jest.mock("./dataLoaders/DataLoader");
+jest.mock("./DataLoader");
 jest.mock("./Player");
 jest.mock("./Dice");
 jest.mock("./DiceScorer");
 jest.mock("clear");
-jest.mock("./utils/draw");
+jest.mock("../utils/draw");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;

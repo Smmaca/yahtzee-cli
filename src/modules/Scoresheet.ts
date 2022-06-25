@@ -1,5 +1,5 @@
 import Table from "cli-table";
-import { YahtzeeScore, YahtzeeScoreCategory } from "./types";
+import { YahtzeeScore, YahtzeeScoreCategory } from "../types";
 
 export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
   [YahtzeeScoreCategory.Ones]: "Aces",

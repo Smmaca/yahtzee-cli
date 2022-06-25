@@ -1,4 +1,4 @@
-import Player, { defaultScore } from "../Player";
+import Player, { defaultScore } from "../modules/Player";
 
 const mockPlayer: Player = {
   name: "Player 1",
