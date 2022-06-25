@@ -1,6 +1,6 @@
 import clear from "clear";
 import config from "../config";
-import Game from "./Game";
+import Game from "./GameOld";
 import GameState from "./GameState";
 import Player from "./Player";
 import { GameMode, RollModeChoice, YahtzeeScoreCategory } from "../types";
