@@ -7,13 +7,16 @@ import * as drawUtils from "../utils/draw";
 import { constructChoice } from "../utils/screen";
 import StatisticsScreen, { choiceLabels, StatisticsScreenInput } from "./StatisticsScreen";
 import MainMenuScreen from "./MainMenuScreen";
+import Statistics from "../modules/Statistics";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
+jest.mock("../modules/Statistics");
 jest.mock("./MainMenuScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
+const MockStatistics = Statistics as jest.MockedClass<typeof Statistics>;
 const MockMainMenuScreen = MainMenuScreen as jest.MockedClass<typeof MainMenuScreen>;
 
 describe("StatisticsScreen", () => {
@@ -69,7 +72,33 @@ describe("StatisticsScreen", () => {
   });
 
   describe("draw", () => {
-    test.todo("draws stats");
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    beforeEach(() => {
+      MockStatistics.mockClear();
+      consoleLogSpy.mockClear().mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleLogSpy.mockRestore();
+    });
+
+    test("draws stats", () => {
+      MockStatistics.prototype.getGameStatistics.mockImplementation(() => ({
+        gamesPlayed: 45,
+        highScore: 400,
+        lowScore: 5,
+        averageScore: 200,
+      }));
+      const screen = new StatisticsScreen();
+      screen.draw(mockGameState, mockConfig);
+      expect(MockStatistics).toHaveBeenCalledTimes(1);
+      expect(MockStatistics.mock.instances[0].getGameStatistics).toHaveBeenCalledTimes(1);
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "Games played: 45");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(2, "High score: 400");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
+      expect(consoleLogSpy).toHaveBeenNthCalledWith(4, "Average score: 200\n");
+    });
   });
 
   describe("getChoices", () => {
@@ -79,6 +108,7 @@ describe("StatisticsScreen", () => {
 
       expect(choices).toEqual([
         constructChoice(StatisticsScreenInput.BACK, choiceLabels),
+        constructChoice(StatisticsScreenInput.CLEAR_STATS, choiceLabels),
       ]);
     });
   });
@@ -111,20 +141,27 @@ describe("StatisticsScreen", () => {
   describe("handleInput", () => {
     beforeEach(() => {
       MockMainMenuScreen.mockClear();
+      MockStatistics.mockClear();
     });
 
     test("handles selecting option: Back", () => {
       const screen = new StatisticsScreen();
-      const nextScreen = screen.handleInput(StatisticsScreenInput.BACK);
+      const nextScreen = screen.handleInput(StatisticsScreenInput.BACK, mockGameState, mockConfig);
       expect(MockMainMenuScreen).toHaveBeenCalledTimes(1);
       expect(nextScreen).toBe(MockMainMenuScreen.mock.instances[0]);
     });
 
-    test.todo("handles selecting option: Clear stats");
+    test("handles selecting option: Clear stats", () => {
+      const screen = new StatisticsScreen();
+      const nextScreen = screen.handleInput(StatisticsScreenInput.CLEAR_STATS, mockGameState, mockConfig);
+      expect(MockStatistics).toHaveBeenCalledTimes(1);
+      expect(MockStatistics.mock.instances[0].clearGameStatistics).toHaveBeenCalledTimes(1);
+      expect(nextScreen).toBe(screen);
+    });
 
     test("handles no selected option", () => {
       const screen = new StatisticsScreen();
-      const nextScreen = screen.handleInput(undefined);
+      const nextScreen = screen.handleInput(undefined, mockGameState, mockConfig);
       expect(nextScreen).toBe(screen);
     });
   });
