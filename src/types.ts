@@ -82,4 +82,6 @@ export interface IConfig {
     [YahtzeeScoreCategory.Yahtzee]: number;
     [YahtzeeScoreCategory.YahtzeeBonus]: number;
   };
+  dataFolder: string;
+  statsFilename: string;
 }

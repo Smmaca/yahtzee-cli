@@ -28,6 +28,8 @@ const config: IConfig = {
     [YahtzeeScoreCategory.Yahtzee]: 50,
     [YahtzeeScoreCategory.YahtzeeBonus]: 100,
   },
+  dataFolder: "data",
+  statsFilename: "stats.json",
 };
 
 export default config;

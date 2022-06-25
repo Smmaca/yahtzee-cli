@@ -8,23 +8,23 @@ import * as drawUtils from "../utils/draw";
 import MockPrompter from "../prompters/MockPrompter";
 import DiceScorer from "./DiceScorer";
 import Dice from "./Dice";
-import DataLoader from "./DataLoader";
+import Statistics from "./Statistics";
 
 jest.mock("./GameState");
-jest.mock("./DataLoader");
 jest.mock("./Player");
 jest.mock("./Dice");
 jest.mock("./DiceScorer");
 jest.mock("clear");
 jest.mock("../utils/draw");
+jest.mock("./Statistics");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;
 const MockPlayer = Player as jest.MockedClass<typeof Player>;
 const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
 const MockDice = Dice as jest.MockedClass<typeof Dice>;
-const MockDataLoader = DataLoader as jest.MockedClass<typeof DataLoader>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
+const MockStatistics = Statistics as jest.MockedClass<typeof Statistics>;
 
 const fakeConfig = {
   ...config,
@@ -47,22 +47,19 @@ describe("Game", () => {
 
     expect(game.config).toMatchObject(fakeConfig);
     expect(MockGameState).toHaveBeenCalledWith(fakeConfig);
-    expect(MockDataLoader).toHaveBeenCalledWith("data", "stats.json", {
-      scores: [],
-    });
   });
 
   describe("init", () => {
     beforeEach(() => {
       MockGameState.mockClear();
-      MockDataLoader.mockClear();
     });
 
-    test("inits the stats data loader", async () => {
+    test("sets up the stats module", async () => {
       const game = new Game(fakeConfig, new MockPrompter());
       game.init();
-      const mockDataLoader = MockDataLoader.mock.instances[0];
-      expect(mockDataLoader.init).toHaveBeenCalledTimes(1);
+      expect(MockStatistics).toHaveBeenCalledTimes(1);
+      const mockstatistics = MockStatistics.mock.instances[0];
+      expect(mockstatistics.setup).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -309,7 +306,7 @@ describe("Game", () => {
 
     beforeEach(() => {
       MockGameState.mockClear();
-      MockDataLoader.mockClear();
+      MockStatistics.mockClear();
       logSpy = jest.spyOn(console, "log").mockClear().mockImplementation(() => {});
     });
 
@@ -318,11 +315,11 @@ describe("Game", () => {
     });
 
     test("shows stats and handles selecting option: Back", async () => {
-      MockDataLoader.prototype.getData.mockImplementation(() => ({
-        scores: [
-          { score: 300, timestamp: 123456789 },
-          { score: 5, timestamp: 123456789 },
-        ],
+      MockStatistics.prototype.getGameStatistics.mockImplementation(() => ({
+        gamesPlayed: 2,
+        highScore: 300,
+        lowScore: 5,
+        averageScore: 152.5,
       }));
 
       const prompter = new MockPrompter([{
@@ -345,13 +342,12 @@ describe("Game", () => {
     });
 
     test("shows stats and handles selecting option: Clear stats", async () => {
-      MockDataLoader.prototype.getData.mockImplementation(() => ({
-        scores: [
-          { score: 300, timestamp: 123456789 },
-          { score: 5, timestamp: 123456789 },
-        ],
+      MockStatistics.prototype.getGameStatistics.mockImplementation(() => ({
+        gamesPlayed: 2,
+        highScore: 300,
+        lowScore: 5,
+        averageScore: 152.5,
       }));
-      MockDataLoader.prototype.defaultData = { gamesPlayed: 0 };
 
       const prompter = new MockPrompter([{
         promptName: "statistics",
@@ -367,7 +363,7 @@ describe("Game", () => {
       expect(logSpy).toHaveBeenNthCalledWith(3, "Low score: 5");
       expect(logSpy).toHaveBeenNthCalledWith(4, "Average score: 152.5");
       expect(logSpy).toHaveBeenNthCalledWith(5, " ");
-      expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith({ gamesPlayed: 0 });
+      expect(MockStatistics.prototype.clearGameStatistics).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -967,7 +963,7 @@ describe("Game", () => {
     beforeEach(() => {
       singlePlayerGameOverSpy.mockClear().mockImplementation(async () => false);
       multiplayerGameOverSpy.mockClear().mockImplementation(async () => false);
-      MockDataLoader.mockClear();
+      MockStatistics.mockClear();
       dateSpy.mockClear().mockImplementation(() => 123456789);
     });
 
@@ -980,20 +976,14 @@ describe("Game", () => {
       const mockPlayer = { ...mockPlayerData, name: "Player 1", totalScore: 100 };
       MockGameState.prototype.players = [mockPlayer];
       MockGameState.prototype.getCurrentPlayer.mockImplementation(() => mockPlayer);
-      MockDataLoader.prototype.getData.mockImplementation(() => ({
-        scores: [],
-      }));
 
       const game = new Game(fakeConfig, new MockPrompter());
 
       await game.handleGameOver();
 
-      const mockDataLoader = MockDataLoader.mock.instances[0];
+      const mockStatistics = MockStatistics.mock.instances[0];
 
-      expect(mockDataLoader.getData).toHaveBeenCalledTimes(1);
-      expect(mockDataLoader.setData).toHaveBeenCalledWith({
-        scores: [{ score: 100, timestamp: 123456789 }],
-      });
+      expect(mockStatistics.saveGameStatistics).toHaveBeenCalledWith({ score: 100 });
       expect(singlePlayerGameOverSpy).toHaveBeenCalledTimes(1);
       expect(multiplayerGameOverSpy).not.toHaveBeenCalled();
     });

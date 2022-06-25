@@ -27,6 +27,8 @@ const mockConfig: IConfig = {
     quitConfirmPrompt: "quit confirm prompt",
     quitToMainMenuConfirmPrompt: "quit to main menu confirm prompt",
   },
+  dataFolder: "",
+  statsFilename: "",
 };
 
 export default mockConfig as jest.Mocked<typeof mockConfig>;

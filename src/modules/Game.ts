@@ -7,7 +7,7 @@ import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
 import BasePrompter, { IChoice } from "../prompters/BasePrompter";
 import DataLoader from "./DataLoader";
-import { IStatsData } from "./Statistics";
+import Statistics, { IStatsData } from "./Statistics";
 
 
 export default class Game {
@@ -15,19 +15,15 @@ export default class Game {
   state: GameState;
   prompter: BasePrompter;
 
-  statsLoader: DataLoader<IStatsData>;
-
   constructor(config: IConfig, prompter: BasePrompter) {
     this.config = config;
     this.prompter = prompter;
     this.state = new GameState(config);
-    this.statsLoader = new DataLoader("data", "stats.json", {
-      scores: [],
-    });
   }
 
   init() {
-    this.statsLoader.init();
+    const statsModules = new Statistics(this.config);
+    statsModules.setup();
   }
 
   async loop() {
@@ -126,11 +122,12 @@ export default class Game {
 
   async handleStatistics(): Promise<boolean> {
     // Draw stuff
-    const stats = this.statsLoader.getData();
-    console.log(`Games played: ${stats.scores.length}`);
-    console.log(`High score: ${stats.scores.sort((a, b) => b.score - a.score)[0].score}`);
-    console.log(`Low score: ${stats.scores.sort((a, b) => a.score - b.score)[0].score}`);
-    console.log(`Average score: ${Math.round(stats.scores.reduce((acc, cur) => acc + cur.score, 0) / stats.scores.length * 10) / 10}`);
+    const statsModule = new Statistics(this.config);
+    const stats = statsModule.getGameStatistics();
+    console.log(`Games played: ${stats.gamesPlayed}`);
+    console.log(`High score: ${stats.highScore}`);
+    console.log(`Low score: ${stats.lowScore}`);
+    console.log(`Average score: ${stats.averageScore}`);
     console.log(" ");
 
     // Get input
@@ -149,7 +146,7 @@ export default class Game {
       return true;
     }
     if (answer === "Clear stats") {
-      this.statsLoader.setData(this.statsLoader.defaultData);
+      statsModule.clearGameStatistics();
       return true;
     }
     return true;
@@ -373,10 +370,8 @@ export default class Game {
   async handleGameOver(): Promise<boolean> {
     if (this.state.players.length === 1) {
       this.state.setCurrentPlayer(0);
-      const stats = this.statsLoader.getData();
-      const score = this.state.getCurrentPlayer().totalScore;
-      stats.scores.push(({ score, timestamp: Date.now() }));
-      this.statsLoader.setData(stats);
+      const statsModule = new Statistics(this.config);
+      statsModule.saveGameStatistics({ score: this.state.getCurrentPlayer().totalScore });
       return this.handleSinglePlayerGameOver();
     } else if (this.state.players.length > 1) {
       return this.handleMultiplayerGameOver();
