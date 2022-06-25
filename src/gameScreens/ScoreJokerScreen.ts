@@ -10,9 +10,9 @@ import { scoreLabels } from "../Scoresheet";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 
-type ScoreJokerScreenInput = YahtzeeScoreCategory;
+export type ScoreJokerScreenInput = YahtzeeScoreCategory;
 
-const choiceLabels: Record<ScoreJokerScreenInput, string> = {
+export const choiceLabels: Record<ScoreJokerScreenInput, string> = {
   ...scoreLabels,
 };
 
@@ -45,7 +45,7 @@ export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInp
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
     drawTurnStats(
-      state.getCurrentPlayer().name,
+      state.getCurrentPlayer()?.name,
       state.turn,
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
@@ -75,14 +75,13 @@ export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInp
       YahtzeeScoreCategory.Chance,
       ">> Score zero in any number category <<",
       ...yahtzeeOtherNumberCategories,
-    ].forEach(key => {
+    ].forEach((key, i) => {
       const category = key as YahtzeeScoreCategory;
       if (key.startsWith(">>")) {
         choices.push({
           message: key,
-          name: key,
-          value: key,
-          hint: "",
+          name: i,
+          value: i,
           role: "separator",
         });
       } else if (category === yahtzeeNumberCategory) {
@@ -149,20 +148,21 @@ export default class ScoreJokerScreen extends BaseGameScreen<ScoreJokerScreenInp
       YahtzeeScoreCategory.LargeStraight,
     ].includes(category)) {
       player.setScore(category, config.scoreValues[category]);
-    } else {
+    } else if (Object.keys(scoreLabels).includes(category)) {
       player.setScore(category, diceScorer.scoreCategory(category));
+    } else {
+      return this;
     }
     
     // TODO: fix this way of getting next screen
     const nextScreen = state.nextPlayer(); 
-    
-    switch (nextScreen) {
-      case GameMode.GAME_OVER:
-        return this.getGameOverScreen(state);
-      case GameMode.VIEW_SCORE:
-        return new ScoresheetScreen();
-      default:
-        return this;
+
+    if (nextScreen === GameMode.GAME_OVER) {
+      return this.getGameOverScreen(state);
+    } else if (nextScreen === GameMode.VIEW_SCORE) {
+      return new ScoresheetScreen();
     }
+
+    return this;
   }
 }
