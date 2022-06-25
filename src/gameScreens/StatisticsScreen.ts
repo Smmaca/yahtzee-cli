@@ -10,7 +10,7 @@ export enum StatisticsScreenInput {
   CLEAR_STATS = "clearStats",
 }
 
-const choiceLabels: Record<StatisticsScreenInput, string> = {
+export const choiceLabels: Record<StatisticsScreenInput, string> = {
   [StatisticsScreenInput.BACK]: "Back",
   [StatisticsScreenInput.CLEAR_STATS]: "Clear stats",
 };
@@ -23,7 +23,7 @@ export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInp
   getChoices(): IChoice<StatisticsScreenInput, StatisticsScreenInput>[] {
     return [
       constructChoice(StatisticsScreenInput.BACK, choiceLabels),
-      constructChoice(StatisticsScreenInput.CLEAR_STATS, choiceLabels),
+      // constructChoice(StatisticsScreenInput.CLEAR_STATS, choiceLabels),
     ];
   }
 
@@ -35,13 +35,10 @@ export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInp
     });
   }
 
-  handleInput(input: StatisticsScreenInput, state: GameState, config: IConfig): BaseGameScreen<any> {
+  handleInput(input: StatisticsScreenInput): BaseGameScreen<any> {
     switch (input) {
       case StatisticsScreenInput.BACK:
         return new MainMenuScreen();
-      case StatisticsScreenInput.CLEAR_STATS:
-        // TODO: Clear stats
-        return this;
       default:
         return this;
     }
