@@ -7,7 +7,7 @@ import * as drawUtils from "../utils/draw";
 import DiceScorer from "../modules/DiceScorer";
 import ScoreDiceScreen, { ScoreDiceScreenInput, choiceLabels } from "./ScoreDiceScreen";
 import mockDice from "../testUtils/MockDice";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 import { GameMode, YahtzeeScoreCategory } from "../types";
 import mockPlayer from "../testUtils/MockPlayer";
 import GameActionScreen from "./GameActionScreen";

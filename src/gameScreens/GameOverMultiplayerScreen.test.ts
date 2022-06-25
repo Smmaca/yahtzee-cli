@@ -5,7 +5,7 @@ import mockGameState from "../testUtils/MockGameState";
 import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
 import QuitConfirmScreen from "./QuitConfirmScreen";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 import mockPlayer from "../testUtils/MockPlayer";
 import GameOverMultiplayerScreen, { choiceLabels, GameOverMultiplayerScreenInput } from "./GameOverMultiplayerScreen";
 import GameActionScreen from "./GameActionScreen";

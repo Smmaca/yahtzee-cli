@@ -2,7 +2,7 @@ import GameState from "../modules/GameState";
 import { IPrompter } from "../prompters/BasePrompter";
 import { IConfig } from "../types";
 import BaseGameScreen, { Screen } from "./BaseGameScreen";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 import GameActionScreen from "./GameActionScreen";
 import DiceScorer from "../modules/DiceScorer";
 import { drawDiceValues, drawTurnStats } from "../utils/draw";

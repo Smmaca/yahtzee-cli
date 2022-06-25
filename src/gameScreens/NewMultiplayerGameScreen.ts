@@ -3,7 +3,7 @@ import { IPrompter } from "../prompters/BasePrompter";
 import { IConfig } from "../types";
 import BaseGameScreen, { Screen } from "./BaseGameScreen";
 import NewGameScreen from "./NewGameScreen";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 import GameActionScreen from "./GameActionScreen";
 import AddPlayerScreen from "./AddPlayerScreen";
 

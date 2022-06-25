@@ -7,15 +7,6 @@ import {
   writeFileSync,
 } from "fs";
 
-export interface IScore {
-  score: number;
-  timestamp: number;
-}
-
-export interface StatsData {
-  scores: IScore[];
-}
-
 export default class DataLoader<T> {
   dataFolder: string;
   fileName: string;

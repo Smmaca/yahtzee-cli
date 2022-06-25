@@ -6,7 +6,8 @@ import { scoreLabels } from "./Scoresheet";
 import GameState from "./GameState";
 import DiceScorer from "./DiceScorer";
 import BasePrompter, { IChoice } from "../prompters/BasePrompter";
-import DataLoader, { StatsData } from "./DataLoader";
+import DataLoader from "./DataLoader";
+import { IStatsData } from "./Statistics";
 
 
 export default class Game {
@@ -14,7 +15,7 @@ export default class Game {
   state: GameState;
   prompter: BasePrompter;
 
-  statsLoader: DataLoader<StatsData>;
+  statsLoader: DataLoader<IStatsData>;
 
   constructor(config: IConfig, prompter: BasePrompter) {
     this.config = config;

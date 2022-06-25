@@ -11,7 +11,7 @@ import LockDiceScreen from "./LockDiceScreen";
 import ScoresheetScreen from "./ScoresheetScreen";
 import ScoreDiceScreen from "./ScoreDiceScreen";
 import QuitConfirmScreen from "./QuitConfirmScreen";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

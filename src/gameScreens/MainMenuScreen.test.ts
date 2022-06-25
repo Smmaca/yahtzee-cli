@@ -4,7 +4,7 @@ import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
 import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
-import { constructChoice } from "../utils/screenUtils";
+import { constructChoice } from "../utils/screen";
 import MainMenuScreen, { choiceLabels, MainMenuScreenInput } from "./MainMenuScreen";
 import NewGameScreen from "./NewGameScreen";
 import StatisticsScreen from "./StatisticsScreen";
