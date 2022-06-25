@@ -18,6 +18,9 @@
   "collectCoverageFrom": [
     "src/**/*.ts"
   ],
+  "coveragePathIgnorePatterns": [
+    "/src/testUtils/"
+  ],
   "coverageReporters": [
     "json-summary",
     "lcov",
