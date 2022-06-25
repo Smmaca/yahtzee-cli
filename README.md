@@ -50,8 +50,9 @@ Run `npm test`
   - [ ] Get a final score over 300
   - [ ] Get a final score over 400
   - [ ] Play an entire game without rerolling
-- [ ] 100% unit test coverage
+- [X] 100% unit test coverage
 - [ ] E2E tests using MockPrompter
+- [ ] Fix turn stats being incremented before showing the scoresheet at end of turn
 
 ## Related links
 
