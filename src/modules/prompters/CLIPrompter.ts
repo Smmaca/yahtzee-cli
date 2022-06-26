@@ -2,17 +2,18 @@ import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import Confirm from "enquirer/lib/prompts/Confirm";
 import Select from "enquirer/lib/prompts/Select";
 import Input from "enquirer/lib/prompts/Input";
-import BasePrompter, {
+import {
   IConfirmParams,
   IInputParams,
   IMultiselectParams,
+  IPrompter,
   ISelectParams,
-} from "./BasePrompter";
+} from "./types";
 
 /**
  * Prompter child class that uses enquirer to prompt the user for certain kinds of input.
  */
-export default class CLIPrompter extends BasePrompter {
+export default class CLIPrompter implements IPrompter {
   async getInput({ name, message, initial }: IInputParams): Promise<string> {
     const prompt = new Input({ name, message, initial });
     return prompt.run();

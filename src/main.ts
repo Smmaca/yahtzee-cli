@@ -1,10 +1,10 @@
 import Game from "./modules/Game";
 import MainMenuScreen from "./gameScreens/MainMenuScreen";
 import { IConfig } from "./types";
-import BasePrompter from "./modules/prompters/BasePrompter";
 import GameState from "./modules/GameState";
+import { IPrompter } from "./modules/prompters/types";
 
-export default async function main(_config: IConfig, _prompter: BasePrompter): Promise<GameState> {
+export default async function main(_config: IConfig, _prompter: IPrompter): Promise<GameState> {
   const game = new Game(_config, _prompter);
 
   game.init();

@@ -1,10 +1,11 @@
-import BasePrompter, {
+import {
   IChoice,
   IConfirmParams,
   IInputParams,
   IMultiselectParams,
+  IPrompter,
   ISelectParams,
-} from "./BasePrompter"
+} from "./types"
 
 
 export interface IMockAnswer {
@@ -15,10 +16,8 @@ export interface IMockAnswer {
 /**
  * Prompter child class that returns mocked answers passed in at instantiation rather than prompting the user.
  */
-export default class MockPrompter extends BasePrompter {
-  constructor(private answers: IMockAnswer[] = []) {
-    super();
-  }
+export default class MockPrompter implements IPrompter {
+  constructor(private answers: IMockAnswer[] = []) {}
 
   async getInput({ name }: IInputParams): Promise<string> {
     const mockAnswer = this.answers.shift();

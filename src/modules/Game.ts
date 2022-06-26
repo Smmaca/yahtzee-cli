@@ -1,16 +1,16 @@
 import util from "util";
 import { IConfig } from "../types";
 import GameState from "./GameState";
-import BasePrompter from "./prompters/BasePrompter";
 import Statistics from "./Statistics";
 import BaseGameScreen from "../gameScreens/BaseGameScreen";
+import { IPrompter } from "./prompters/types";
 
 export default class Game {
   config: IConfig;
   state: GameState;
-  prompter: BasePrompter;
+  prompter: IPrompter;
 
-  constructor(config: IConfig, prompter: BasePrompter) {
+  constructor(config: IConfig, prompter: IPrompter) {
     this.config = config;
     this.prompter = prompter;
     this.state = new GameState(config);
