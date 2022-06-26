@@ -1,11 +1,14 @@
 import Dice from "./Dice";
 
 export default class MockDice extends Dice {
-  constructor(private rolls: number[][]) {
+  constructor(private rolls: number[][] = []) {
     super();
   }
 
   roll() {
-    this.setValues(this.rolls.shift());
+    const nextRoll = this.rolls.shift();
+    if (nextRoll) {
+      this.setValues(nextRoll);
+    }
   }
 }

@@ -1,13 +1,11 @@
 import config from "../config";
+import mockDice from "../testUtils/MockDice";
 import { Screen } from "../types";
-import Dice from "./dice/Dice";
 import GameState from "./GameState";
 import Player from "./Player";
 
-jest.mock("./dice/Dice");
 jest.mock("./Player");
 
-const MockDice = Dice as jest.MockedClass<typeof Dice>;
 const MockPlayer = Player as jest.MockedClass<typeof Player>;
 
 const fakeConfig = {
@@ -19,11 +17,10 @@ const fakeConfig = {
 describe("GameState", () => {
   beforeEach(() => {
     MockPlayer.mockClear();
-    MockDice.mockClear();
   });
 
   test("sets intitial values and creates the dice on instantiation", () => {
-    const gameState = new GameState(fakeConfig);
+    const gameState = new GameState(fakeConfig, mockDice);
 
     expect(gameState.config).toEqual(fakeConfig);
     expect(gameState.turn).toBe(0);
@@ -31,7 +28,7 @@ describe("GameState", () => {
     expect(gameState.rollNumber).toBe(0);
     expect(gameState.screenHistory).toEqual([]);
     expect(gameState.players).toEqual([]);
-    expect(gameState.dice).toBeInstanceOf(MockDice);
+    expect(gameState.dice).toBe(mockDice);
   });
 
   describe("addPlayer", () => {
@@ -40,7 +37,7 @@ describe("GameState", () => {
     });
 
     test("adds player with given name", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
       gameState.addPlayer("Player 1");
 
       expect(MockPlayer).toHaveBeenCalledOnce();
@@ -50,7 +47,7 @@ describe("GameState", () => {
     });
 
     test("adds a player when there are existing players", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
 
@@ -65,7 +62,7 @@ describe("GameState", () => {
 
   describe("initSinglePlayer", () => {
     test("adds a player called player 1", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       const spy = jest.spyOn(gameState, "addPlayer");
 
@@ -77,13 +74,13 @@ describe("GameState", () => {
 
   describe("getDiceRollsLeft", () => {
     test("returns the number of rolls left", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       expect(gameState.getDiceRollsLeft()).toBe(4);
     });
 
     test("returns the number of rolls left after rolling", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setRollNumber(2);
 
@@ -97,7 +94,7 @@ describe("GameState", () => {
     });
 
     test("returns the current player", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addPlayer("Player 1");
 
@@ -106,7 +103,7 @@ describe("GameState", () => {
     });
 
     test("returns the current player for multiplayer game", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
@@ -120,7 +117,7 @@ describe("GameState", () => {
 
   describe("setTurn", () => {
     test("sets the turn", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setTurn(3);
 
@@ -130,7 +127,7 @@ describe("GameState", () => {
 
   describe("setRollNumber", () => {
     test("sets the roll number", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setRollNumber(3);
 
@@ -140,7 +137,7 @@ describe("GameState", () => {
 
   describe("setCurrentPlayer", () => {
     test("sets the current player index", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setCurrentPlayer(1);
       
@@ -150,7 +147,7 @@ describe("GameState", () => {
 
   describe("incrementTurn", () => {
     test("increments the turn", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setTurn(2);
       gameState.incrementTurn();
@@ -161,7 +158,7 @@ describe("GameState", () => {
 
   describe("incrementRollNumber", () => {
     test("increments the roll number", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.setRollNumber(4);
       gameState.incrementRollNumber();
@@ -172,7 +169,7 @@ describe("GameState", () => {
 
   describe("addScreenToHistory", () => {
     test("adds screen to end of screen history array", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addScreenToHistory(Screen.GAME_ACTION);
       gameState.addScreenToHistory(Screen.NEW_GAME);
@@ -182,8 +179,12 @@ describe("GameState", () => {
   });
 
   describe("resetGame", () => {
+    beforeEach(() => {
+      mockDice.reset.mockClear();
+    });
+    
     test("resets the game state including each player state", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       // Change the initial game state
       gameState.addPlayer("Player 1");
@@ -200,8 +201,7 @@ describe("GameState", () => {
       expect(gameState.rollNumber).toBe(0);
       expect(gameState.currentPlayerIndex).toBe(0);
       
-      const mockDiceInstance = MockDice.mock.instances[0];
-      expect(mockDiceInstance.reset).toHaveBeenCalledOnce();
+      expect(mockDice.reset).toHaveBeenCalledOnce();
 
       gameState.players.forEach(player => {
         expect(player.resetScore).toHaveBeenCalledOnce();
@@ -210,8 +210,12 @@ describe("GameState", () => {
   });
 
   describe("newGame", () => {
+    beforeEach(() => {
+      mockDice.reset.mockClear();
+    });
+
     test("resets the game state and removes players", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       // Change the initial game state
       gameState.addPlayer("Player 1");
@@ -227,9 +231,7 @@ describe("GameState", () => {
       expect(gameState.turn).toBe(0);
       expect(gameState.rollNumber).toBe(0);
       expect(gameState.currentPlayerIndex).toBe(0);
-      
-      const mockDiceInstance = MockDice.mock.instances[0];
-      expect(mockDiceInstance.reset).toHaveBeenCalledOnce();
+      expect(mockDice.reset).toHaveBeenCalledOnce();
     });
   });
 
@@ -241,7 +243,7 @@ describe("GameState", () => {
     });
 
     test("renders the player scores", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
       
       const mockPlayer = {
         name: "",
@@ -272,7 +274,7 @@ describe("GameState", () => {
 
   describe("winner", () => {
     test("gets the player with the highest score", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
       
       const mockPlayer = {
         name: "",
@@ -300,7 +302,7 @@ describe("GameState", () => {
 
   describe("toJSON", () => {
     test("ouputs itself as json", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       // Change the initial game state
       gameState.addPlayer("Player 1");
@@ -321,17 +323,20 @@ describe("GameState", () => {
       });
 
       const [mockPlayer1, mockPlayer2] = MockPlayer.mock.instances;
-      const dice = MockDice.mock.instances[0];
 
       expect(mockPlayer1.toJSON).toHaveBeenCalledOnce();
       expect(mockPlayer2.toJSON).toHaveBeenCalledOnce();
-      expect(dice.toJSON).toHaveBeenCalledOnce();
+      expect(mockDice.toJSON).toHaveBeenCalledOnce();
     });
   });
 
   describe("nextPlayer", () => {
+    beforeEach(() => {
+      mockDice.reset.mockClear();
+    });
+
     test("sets the current player to the next player", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
@@ -340,17 +345,15 @@ describe("GameState", () => {
 
       const gameOver = gameState.nextPlayer();
 
-      const dice = MockDice.mock.instances[0];
-
       expect(gameState.currentPlayerIndex).toBe(1);
       expect(gameOver).toBeFalse();
       expect(gameState.turn).toBe(2);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledOnce();
+      expect(mockDice.reset).toHaveBeenCalledOnce();
     });
 
     test("sets the current player to the first player and increments the turn if the last player has rolled", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
@@ -360,17 +363,15 @@ describe("GameState", () => {
 
       const gameOver = gameState.nextPlayer();
 
-      const dice = MockDice.mock.instances[0];
-
       expect(gameState.currentPlayerIndex).toBe(0);
       expect(gameOver).toBeFalse();
       expect(gameState.turn).toBe(3);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledOnce();
+      expect(mockDice.reset).toHaveBeenCalledOnce();
     });
 
     test("sets the current player to null and the mode to game over if the last player has rolled for the last turn", () => {
-      const gameState = new GameState(fakeConfig);
+      const gameState = new GameState(fakeConfig, mockDice);
 
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
@@ -380,13 +381,11 @@ describe("GameState", () => {
 
       const gameOver = gameState.nextPlayer();
 
-      const dice = MockDice.mock.instances[0];
-
       expect(gameState.currentPlayerIndex).toBe(null);
       expect(gameOver).toBeTrue();
       expect(gameState.turn).toBe(14);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledOnce();
+      expect(mockDice.reset).toHaveBeenCalledOnce();
     });
   });
 });

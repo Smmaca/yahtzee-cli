@@ -1,10 +1,11 @@
 import main from "../../src/main";
-import { Screen } from "../../src/gameScreens/BaseGameScreen";
 import MockPrompter from "../../src/modules/prompters/MockPrompter";
+import MockDice from "../../src/modules/dice/MockDice";
 import { MainMenuScreenInput } from "../../src/gameScreens/MainMenuScreen";
 import testConfig from "../testConfig";
 import { StatisticsScreenInput } from "../../src/gameScreens/StatisticsScreen";
 import { NewGameScreenInput } from "../../src/gameScreens/NewGameScreen";
+import { Screen } from "../../src/types";
 
 describe("Main menu options", () => {
   test("quit, cancel, then actually quit from main menu", async () => {
@@ -15,7 +16,9 @@ describe("Main menu options", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -33,7 +36,9 @@ describe("Main menu options", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -52,7 +57,9 @@ describe("Main menu options", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -71,7 +78,9 @@ describe("Main menu options", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,

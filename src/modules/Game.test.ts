@@ -5,6 +5,7 @@ import MockPrompter from "./prompters/MockPrompter";
 import GameState from "./GameState";
 import Statistics from "./Statistics";
 import MainMenuScreen from "../gameScreens/MainMenuScreen";
+import mockDice from "../testUtils/MockDice";
 
 jest.mock("util");
 jest.mock("./GameState");
@@ -18,10 +19,10 @@ const MockMainMenuScreen = MainMenuScreen as jest.MockedClass<typeof MainMenuScr
 
 describe("Game", () => {
   test("saves the config and creates a new game state on instantiation", () => {
-    const game = new Game(mockConfig, new MockPrompter());
+    const game = new Game(mockConfig, new MockPrompter(), mockDice);
 
     expect(game.config).toMatchObject(mockConfig);
-    expect(MockGameState).toHaveBeenCalledWith(mockConfig);
+    expect(MockGameState).toHaveBeenCalledWith(mockConfig, mockDice);
   });
 
   describe("init", () => {
@@ -30,7 +31,7 @@ describe("Game", () => {
     });
 
     test("sets up the stats module", async () => {
-      const game = new Game(mockConfig, new MockPrompter());
+      const game = new Game(mockConfig, new MockPrompter(), mockDice);
       game.init();
       expect(MockStatistics).toHaveBeenCalledOnce();
       const mockstatistics = MockStatistics.mock.instances[0];
@@ -52,7 +53,7 @@ describe("Game", () => {
     });
 
     test("runs screen successfully", async () => {
-      const game = new Game(mockConfig, new MockPrompter());
+      const game = new Game(mockConfig, new MockPrompter(), mockDice);
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
       expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
@@ -62,7 +63,7 @@ describe("Game", () => {
 
     test("runs screen successfully and loops if another screen is created", async () => {
       MockMainMenuScreen.prototype.run.mockImplementationOnce(async () => new MockMainMenuScreen());
-      const game = new Game(mockConfig, new MockPrompter());
+      const game = new Game(mockConfig, new MockPrompter(), mockDice);
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
       expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
@@ -75,7 +76,7 @@ describe("Game", () => {
       MockMainMenuScreen.prototype.run.mockImplementationOnce(async () => {
         throw error;
       });
-      const game = new Game(mockConfig, new MockPrompter());
+      const game = new Game(mockConfig, new MockPrompter(), mockDice);
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
       expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
@@ -90,7 +91,7 @@ describe("Game", () => {
       MockMainMenuScreen.prototype.run.mockImplementationOnce(async () => {
         throw error;
       });
-      const game = new Game(config, new MockPrompter());
+      const game = new Game(config, new MockPrompter(), mockDice);
       const mockScreen = new MockMainMenuScreen();
       try {
         await game.loop(mockScreen);

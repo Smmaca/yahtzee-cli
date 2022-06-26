@@ -1,9 +1,10 @@
-import { Screen } from "../../src/gameScreens/BaseGameScreen";
 import { MainMenuScreenInput } from "../../src/gameScreens/MainMenuScreen";
 import { NewGameScreenInput } from "../../src/gameScreens/NewGameScreen";
 import { NewMultiplayerGameScreenInput } from "../../src/gameScreens/NewMultiplayerGameScreen";
 import main from "../../src/main";
+import MockDice from "../../src/modules/dice/MockDice";
 import MockPrompter from "../../src/modules/prompters/MockPrompter";
+import { Screen } from "../../src/types";
 import testConfig from "../testConfig";
 
 describe("Multiplayer game", () => {
@@ -17,7 +18,9 @@ describe("Multiplayer game", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,

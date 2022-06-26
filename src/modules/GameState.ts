@@ -1,7 +1,7 @@
 import Table from "cli-table";
-import Dice from "./dice/Dice";
 import Player from "./Player";
 import { IConfig, Screen } from "../types";
+import { IDice } from "./dice/types";
 
 export default class GameState {
   config: IConfig;
@@ -12,9 +12,9 @@ export default class GameState {
   screenHistory: Screen[];
 
   players: Player[];
-  dice: Dice;
+  dice: IDice;
 
-  constructor(config: IConfig) {
+  constructor(config: IConfig, dice: IDice) {
     this.config = config;
 
     this.turn = 0;
@@ -23,7 +23,7 @@ export default class GameState {
     this.screenHistory = [];
     this.players = [];
 
-    this.dice = new Dice();
+    this.dice = dice;
   }
 
   initSinglePlayer() {

@@ -1,10 +1,11 @@
-import { Screen } from "../../src/gameScreens/BaseGameScreen";
 import { GameActionScreenInput } from "../../src/gameScreens/GameActionScreen";
 import { MainMenuScreenInput } from "../../src/gameScreens/MainMenuScreen";
 import { NewGameScreenInput } from "../../src/gameScreens/NewGameScreen";
 import { ScoreDiceScreenInput } from "../../src/gameScreens/ScoreDiceScreen";
 import main from "../../src/main";
+import MockDice from "../../src/modules/dice/MockDice";
 import MockPrompter from "../../src/modules/prompters/MockPrompter";
+import { Screen } from "../../src/types";
 import testConfig from "../testConfig";
 
 describe("Single player game", () => {
@@ -18,7 +19,9 @@ describe("Single player game", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -41,7 +44,9 @@ describe("Single player game", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -66,7 +71,9 @@ describe("Single player game", () => {
       { promptName: Screen.QUIT_CONFIRM, answer: true },
     ]);
 
-    const endGameState = await main(testConfig, prompter);
+    const dice = new MockDice();
+
+    const endGameState = await main(testConfig, prompter, dice);
 
     expect(endGameState.screenHistory).toEqual([
       Screen.MAIN_MENU,
@@ -91,8 +98,10 @@ describe("Single player game", () => {
       { promptName: Screen.SCORE_DICE, answer: ScoreDiceScreenInput.CANCEL },
     ]);
 
+    const dice = new MockDice();
+
     try {
-      await main(testConfig, prompter);
+      await main(testConfig, prompter, dice);
       throw new Error("Expected to throw an error");
     } catch (err) {
       expect(err.message).toEqual(

@@ -3,6 +3,7 @@ import main from "./main";
 import MainMenuScreen from "./gameScreens/MainMenuScreen";
 import mockConfig from "./testUtils/MockConfig";
 import MockPrompter from "./modules/prompters/MockPrompter";
+import mockDice from "./testUtils/MockDice";
 
 jest.mock("./modules/Game");
 jest.mock("./gameScreens/MainMenuScreen");
@@ -18,9 +19,9 @@ describe("main", () => {
   
   test("inits and loops the game", async () => {
     const mockPrompter = new MockPrompter();
-    await main(mockConfig, mockPrompter);
+    await main(mockConfig, mockPrompter, mockDice);
     
-    expect(MockGame).toHaveBeenCalledWith(mockConfig, mockPrompter);
+    expect(MockGame).toHaveBeenCalledWith(mockConfig, mockPrompter, mockDice);
     expect(MockGame.mock.instances[0].init).toHaveBeenCalled();
     expect(MockMainMenuScreen).toHaveBeenCalledOnce();
     expect(MockGame.mock.instances[0].loop).toHaveBeenCalledWith(MockMainMenuScreen.mock.instances[0]);

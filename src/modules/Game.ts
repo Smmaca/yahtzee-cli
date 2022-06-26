@@ -4,16 +4,17 @@ import GameState from "./GameState";
 import Statistics from "./Statistics";
 import BaseGameScreen from "../gameScreens/BaseGameScreen";
 import { IPrompter } from "./prompters/types";
+import { IDice } from "./dice/types";
 
 export default class Game {
   config: IConfig;
   state: GameState;
   prompter: IPrompter;
 
-  constructor(config: IConfig, prompter: IPrompter) {
+  constructor(config: IConfig, prompter: IPrompter, dice: IDice) {
     this.config = config;
     this.prompter = prompter;
-    this.state = new GameState(config);
+    this.state = new GameState(config, dice);
   }
 
   init() {
