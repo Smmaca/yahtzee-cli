@@ -72,4 +72,5 @@ export interface IConfig {
   };
   dataFolder: string;
   statsFilename: string;
+  settingsFilename: string;
 }

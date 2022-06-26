@@ -37,7 +37,7 @@ Run `npm test`
 - [ ] Confirm before clearing game stats
 - [ ] User profile to save player's name and player's play history over sessions
 - [ ] Print scoresheet to file
-- [ ] Settings
+- [X] Settings
   - [ ] Change dice style between pips and digits
 - [ ] Achievements
   - [ ] Get the lowest possible score (5)
@@ -51,11 +51,10 @@ Run `npm test`
   - [ ] Get a final score over 400
   - [ ] Play an entire game without rerolling
 - [X] 100% unit test coverage
-- [ ] E2E tests using MockPrompter
+- [X] E2E tests using MockPrompter
   - [ ] Full game - single player
   - [ ] Full game - multiplayer
-  - [ ] Look at game stats
-  - [ ] Quit game
+  - [X] Main menu
 - [ ] Fix turn stats being incremented before showing the scoresheet at end of turn
 
 ## Related links

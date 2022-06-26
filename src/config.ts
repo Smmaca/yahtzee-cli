@@ -30,6 +30,7 @@ const config: IConfig = {
   },
   dataFolder: "data",
   statsFilename: "stats.json",
+  settingsFilename: "settings.json",
 };
 
 export default config;

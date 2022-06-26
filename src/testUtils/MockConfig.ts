@@ -29,6 +29,7 @@ const mockConfig: IConfig = {
   },
   dataFolder: "",
   statsFilename: "",
+  settingsFilename: "",
 };
 
 export default mockConfig as jest.Mocked<typeof mockConfig>;
