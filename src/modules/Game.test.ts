@@ -1,7 +1,7 @@
 import util from "util";
 import Game from "./Game";
 import mockConfig from "../testUtils/MockConfig"
-import MockPrompter from "../prompters/MockPrompter";
+import MockPrompter from "./prompters/MockPrompter";
 import GameState from "./GameState";
 import Statistics from "./Statistics";
 import MainMenuScreen from "../gameScreens/MainMenuScreen";
@@ -42,7 +42,6 @@ describe("Game", () => {
     const loopSpy = jest.spyOn(Game.prototype, "loop");
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     const consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-    const processExitSpy = jest.spyOn(process, "exit").mockImplementation(() => null as never);
 
     beforeEach(() => {
       MockGameState.mockClear();
@@ -50,7 +49,6 @@ describe("Game", () => {
       loopSpy.mockClear();
       consoleErrorSpy.mockClear();
       consoleLogSpy.mockClear();
-      processExitSpy.mockClear();
     });
 
     test("runs screen successfully", async () => {
@@ -84,7 +82,6 @@ describe("Game", () => {
       expect(mockScreen.run).toHaveBeenCalledOnce();
       expect(loopSpy).toHaveBeenCalledOnce();
       expect(consoleErrorSpy).toHaveBeenCalledWith("Something went wrong :(");
-      expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
     test("catches screen run error and prints game state before exiting in debug mode", async () => {
@@ -95,15 +92,18 @@ describe("Game", () => {
       });
       const game = new Game(config, new MockPrompter());
       const mockScreen = new MockMainMenuScreen();
-      await game.loop(mockScreen);
-      expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
-      expect(mockScreen.run).toHaveBeenCalledOnce();
-      expect(loopSpy).toHaveBeenCalledOnce();
-      expect(MockGameState.mock.instances[0].toJSON).toHaveBeenCalledOnce();
-      expect(util.inspect).toHaveBeenCalledWith(undefined, { showHidden: false, depth: null });
-      expect(consoleLogSpy).toHaveBeenCalledWith(undefined);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(error);
-      expect(processExitSpy).toHaveBeenCalledWith(1);
+      try {
+        await game.loop(mockScreen);
+        throw new Error("Should have thrown");
+      } catch (err) {
+        expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
+        expect(mockScreen.run).toHaveBeenCalledOnce();
+        expect(loopSpy).toHaveBeenCalledOnce();
+        expect(MockGameState.mock.instances[0].toJSON).toHaveBeenCalledOnce();
+        expect(util.inspect).toHaveBeenCalledWith(undefined, { showHidden: false, depth: null });
+        expect(consoleLogSpy).toHaveBeenCalledWith(undefined);
+        expect(err.message).toBe("Something went wrong");
+      }
     });
   });
 });

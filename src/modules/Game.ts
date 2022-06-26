@@ -1,7 +1,7 @@
 import util from "util";
 import { IConfig } from "../types";
 import GameState from "./GameState";
-import BasePrompter from "../prompters/BasePrompter";
+import BasePrompter from "./prompters/BasePrompter";
 import Statistics from "./Statistics";
 import BaseGameScreen from "../gameScreens/BaseGameScreen";
 
@@ -38,11 +38,10 @@ export default class Game {
             { showHidden: false, depth: null },
           )
         );
-        console.error(err);
+        throw err;
       } else {
         console.error("Something went wrong :(");
       }
-      return process.exit(1);
     }
   }
 }

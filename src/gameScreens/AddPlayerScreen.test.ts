@@ -1,5 +1,5 @@
 import clear from "clear";
-import MockPrompter from "../prompters/MockPrompter";
+import MockPrompter from "../modules/prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
 import AddPlayerScreen from "./AddPlayerScreen";

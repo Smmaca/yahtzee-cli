@@ -1,4 +1,4 @@
-import { IChoice } from "../prompters/BasePrompter";
+import { IChoice } from "../modules/prompters/BasePrompter";
 
 export function constructChoice<T extends string>(
   choice: T,
