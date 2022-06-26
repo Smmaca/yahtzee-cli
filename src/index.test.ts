@@ -16,9 +16,9 @@ describe("main", () => {
     MockMainMenuScreen.mockClear();
   });
   
-  test("inits and loops the game", () => {
+  test("inits and loops the game", async () => {
     const mockPrompter = new MockPrompter();
-    main(mockConfig, mockPrompter);
+    await main(mockConfig, mockPrompter);
     
     expect(MockGame).toHaveBeenCalledWith(mockConfig, mockPrompter);
     expect(MockGame.mock.instances[0].init).toHaveBeenCalled();
