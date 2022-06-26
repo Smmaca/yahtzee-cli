@@ -1,23 +1,8 @@
 import clear from "clear";
 import GameState from "../modules/GameState";
 import { IPrompter } from "../modules/prompters/BasePrompter";
-import { IConfig } from "../types";
+import { IConfig, Screen } from "../types";
 import { drawTitle } from "../utils/draw";
-
-export enum Screen {
-  MAIN_MENU = "mainMenu",
-  NEW_GAME = "newGameMenu",
-  QUIT_CONFIRM = "quitConfirm",
-  STATISTICS = "statistics",
-  NEW_MULTIPLAYER_GAME = "newMultiplayerGame",
-  ADD_PLAYER = "addPlayer",
-  GAME_ACTION = "gameAction",
-  SCORESHEET = "scoresheet",
-  LOCK_DICE = "lockDice",
-  SCORE_DICE = "scoreDice",
-  GAME_OVER_SINGLE_PLAYER = "gameOverSinglePlayer",
-  GAME_OVER_MULTIPLAYER = "gameOverMultiplayer",
-}
 
 export interface IRunParams {
   config: IConfig;

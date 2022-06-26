@@ -3,9 +3,9 @@ import MockPrompter from "../modules/prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
 import AddPlayerScreen from "./AddPlayerScreen";
-import { Screen } from "./BaseGameScreen";
 import NewMultiplayerGameScreen from "./NewMultiplayerGameScreen";
 import * as drawUtils from "../utils/draw";
+import { Screen } from "../types";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

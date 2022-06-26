@@ -2,7 +2,6 @@ import clear from "clear";
 import MockPrompter from "../modules/prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
-import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
 import DiceScorer from "../modules/DiceScorer";
 import GameActionScreen, { GameActionScreenInput, choiceLabels } from "./GameActionScreen";
@@ -12,6 +11,7 @@ import ScoresheetScreen from "./ScoresheetScreen";
 import ScoreDiceScreen from "./ScoreDiceScreen";
 import QuitConfirmScreen from "./QuitConfirmScreen";
 import { constructChoice } from "../utils/screen";
+import { Screen } from "../types";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

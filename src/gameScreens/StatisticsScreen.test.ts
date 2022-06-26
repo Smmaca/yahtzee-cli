@@ -2,12 +2,12 @@ import clear from "clear";
 import MockPrompter from "../modules/prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
-import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
 import { constructChoice } from "../utils/screen";
 import StatisticsScreen, { choiceLabels, StatisticsScreenInput } from "./StatisticsScreen";
 import MainMenuScreen from "./MainMenuScreen";
 import Statistics from "../modules/Statistics";
+import { Screen } from "../types";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

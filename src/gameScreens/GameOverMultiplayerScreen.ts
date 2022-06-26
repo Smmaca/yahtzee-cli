@@ -1,8 +1,8 @@
 import GameState from "../modules/GameState";
 import { IPrompter } from "../modules/prompters/BasePrompter";
-import { IConfig } from "../types";
+import { IConfig, Screen } from "../types";
 import { constructChoice } from "../utils/screen";
-import BaseGameScreen, { Screen } from "./BaseGameScreen";
+import BaseGameScreen from "./BaseGameScreen";
 import GameActionScreen from "./GameActionScreen";
 import QuitConfirmScreen from "./QuitConfirmScreen";
 

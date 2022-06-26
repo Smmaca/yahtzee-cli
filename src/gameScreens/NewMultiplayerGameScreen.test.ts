@@ -2,7 +2,6 @@ import clear from "clear";
 import MockPrompter from "../modules/prompters/MockPrompter";
 import mockConfig from "../testUtils/MockConfig";
 import mockGameState from "../testUtils/MockGameState";
-import { Screen } from "./BaseGameScreen";
 import * as drawUtils from "../utils/draw";
 import { constructChoice } from "../utils/screen";
 import NewMultiplayerGameScreen, { choiceLabels, NewMultiplayerGameScreenInput } from "./NewMultiplayerGameScreen";
@@ -10,6 +9,7 @@ import GameActionScreen from "./GameActionScreen";
 import NewGameScreen from "./NewGameScreen";
 import AddPlayerScreen from "./AddPlayerScreen";
 import mockPlayer from "../testUtils/MockPlayer";
+import { Screen } from "../types";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

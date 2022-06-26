@@ -1,18 +1,17 @@
 
-export enum GameMode {
-  MAIN_MENU = "MAIN_MENU",
-  STATISTICS = "STATISTICS",
-  NEW_GAME = "NEW_GAME",
-  NEW_MULTIPLAYER_GAME = "NEW_MULTIPLAYER_GAME",
-  ADD_PLAYER = "ADD_PLAYER",
-  ROLL = "ROLL",
-  DICE_LOCKER = "DICE_LOCKER",
-  VIEW_SCORE = "VIEW_SCORE",
-  EDIT_SCORE = "EDIT_SCORE",
-  EDIT_SCORE_JOKER = "EDIT_SCORE_JOKER",
-  GAME_OVER = "GAME_OVER",
-  QUIT_CONFIRM = "QUIT_CONFIRM",
-  QUIT_TO_MAIN_MENU_CONFIRM = "QUIT_TO_MAIN_MENU_CONFIRM",
+export enum Screen {
+  MAIN_MENU = "mainMenu",
+  NEW_GAME = "newGameMenu",
+  QUIT_CONFIRM = "quitConfirm",
+  STATISTICS = "statistics",
+  NEW_MULTIPLAYER_GAME = "newMultiplayerGame",
+  ADD_PLAYER = "addPlayer",
+  GAME_ACTION = "gameAction",
+  SCORESHEET = "scoresheet",
+  LOCK_DICE = "lockDice",
+  SCORE_DICE = "scoreDice",
+  GAME_OVER_SINGLE_PLAYER = "gameOverSinglePlayer",
+  GAME_OVER_MULTIPLAYER = "gameOverMultiplayer",
 }
 
 export enum YahtzeeScoreCategory {
@@ -35,24 +34,13 @@ export enum YahtzeeScoreCategory {
 export type YahtzeeScore = Record<YahtzeeScoreCategory, number>;
 
 export interface IGame {
-  mode: GameMode;
-  modeHistory: GameMode[];
+  screenHistory: Screen[];
   turn: number;
   diceRoll: number[];
   diceLock: boolean[];
   rollNumber: number;
   score: YahtzeeScore;
 };
-
-export enum RollModeChoice {
-  ROLL_DICE = "Roll dice",
-  ROLL_AGAIN = "Roll again",
-  LOCK_DICE = "Lock dice",
-  SCORE_DICE = "Score dice",
-  SEE_SCORESHEET = "See scoresheet",
-  QUIT_TO_MAIN_MENU = "Quit to main menu",
-  QUIT = "Quit",
-}
 
 export interface IConfig {
   debug?: boolean;

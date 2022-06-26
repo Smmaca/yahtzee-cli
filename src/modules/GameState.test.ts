@@ -1,11 +1,10 @@
 import config from "../config";
-import Dice from "./Dice";
+import { Screen } from "../types";
+import Dice from "./dice/Dice";
 import GameState from "./GameState";
 import Player from "./Player";
-import { GameMode } from "../types";
-import { Screen } from "../gameScreens/BaseGameScreen";
 
-jest.mock("./Dice");
+jest.mock("./dice/Dice");
 jest.mock("./Player");
 
 const MockDice = Dice as jest.MockedClass<typeof Dice>;

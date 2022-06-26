@@ -1,8 +1,7 @@
 import Table from "cli-table";
-import Dice from "./Dice";
+import Dice from "./dice/Dice";
 import Player from "./Player";
-import { GameMode, IConfig } from "../types";
-import { Screen } from "../gameScreens/BaseGameScreen";
+import { IConfig, Screen } from "../types";
 
 export default class GameState {
   config: IConfig;

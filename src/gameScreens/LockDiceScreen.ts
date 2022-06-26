@@ -1,9 +1,9 @@
 import DiceScorer from "../modules/DiceScorer";
 import GameState from "../modules/GameState";
 import { IChoice, IPrompter } from "../modules/prompters/BasePrompter";
-import { IConfig } from "../types";
+import { IConfig, Screen } from "../types";
 import { drawDiceValues, drawTurnStats } from "../utils/draw";
-import BaseGameScreen, { Screen } from "./BaseGameScreen";
+import BaseGameScreen from "./BaseGameScreen";
 import GameActionScreen from "./GameActionScreen";
 
 
