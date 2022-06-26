@@ -2,6 +2,7 @@ import Table from "cli-table";
 import Dice from "./Dice";
 import Player from "./Player";
 import { GameMode, IConfig } from "../types";
+import { Screen } from "../gameScreens/BaseGameScreen";
 
 export default class GameState {
   config: IConfig;
@@ -9,8 +10,7 @@ export default class GameState {
   turn: number;
   currentPlayerIndex: number;
   rollNumber: number;
-  mode: GameMode;
-  modeHistory: GameMode[];
+  screenHistory: Screen[];
 
   players: Player[];
   dice: Dice;
@@ -21,8 +21,7 @@ export default class GameState {
     this.turn = 0;
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
-    this.mode = GameMode.MAIN_MENU;
-    this.modeHistory = [];
+    this.screenHistory = [];
     this.players = [];
 
     this.dice = new Dice();
@@ -44,25 +43,24 @@ export default class GameState {
     this.players.push(new Player(name));
   }
 
-  nextPlayer() {
+  nextPlayer(): boolean {
+    let gameOver = false;
     if (this.currentPlayerIndex === this.players.length - 1) {
       if (this.turn === this.config.turns - 1) {
         // Last turn for last player
         this.setCurrentPlayer(null);
-        this.setMode(GameMode.GAME_OVER);
+        gameOver = true;
       } else {
         // Last player for this turn
         this.setCurrentPlayer(0);
         this.incrementTurn();
-        this.setMode(GameMode.VIEW_SCORE);
       }
     } else {
       this.incrementPlayer();
-      this.setMode(GameMode.VIEW_SCORE);
     }
     this.dice.reset();
     this.setRollNumber(0);
-    return this.mode;
+    return gameOver;
   }
 
   incrementTurn() {
@@ -88,20 +86,12 @@ export default class GameState {
   setRollNumber(rollNumber: number) {
     this.rollNumber = rollNumber;
   }
-
-  setMode(mode: GameMode) {
-    this.modeHistory.unshift(this.mode);
-    this.mode = mode;
-  }
-
-  revertMode() {
-    const currentMode = this.mode;
-    this.mode = this.modeHistory[0];
-    this.modeHistory.unshift(currentMode);
+  
+  addScreenToHistory(screen: Screen) {
+    this.screenHistory.push(screen);
   }
 
   resetGame() {
-    this.modeHistory = [];
     this.turn = 0;
     this.currentPlayerIndex = 0;
     this.rollNumber = 0;
@@ -140,8 +130,7 @@ export default class GameState {
       turn: this.turn,
       currentPlayerIndex: this.currentPlayerIndex,
       rollNumber: this.rollNumber,
-      mode: this.mode,
-      modeHistory: this.modeHistory,
+      screenHistory: this.screenHistory,
       players: this.players.map(player => player.toJSON()),
       dice: this.dice.toJSON(),
     };

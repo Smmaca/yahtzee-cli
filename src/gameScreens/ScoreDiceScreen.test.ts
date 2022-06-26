@@ -457,9 +457,9 @@ describe("ScoreDiceScreen", () => {
       setJokerModeSpy.mockRestore();
     });
 
-    test("handles selecting any category except yahtzee bonus when next screen should be game over", () => {
+    test("handles selecting any category except yahtzee bonus when game is over", () => {
       MockDiceScorer.prototype.scoreCategory.mockImplementationOnce(() => 1);
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.GAME_OVER);
+      mockGameState.nextPlayer.mockImplementationOnce(() => true);
       const screen = new ScoreDiceScreen();
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.Ones, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).toHaveBeenCalledWith(YahtzeeScoreCategory.Ones);
@@ -469,9 +469,9 @@ describe("ScoreDiceScreen", () => {
       expect(nextScreen).toBeNull();
     });
 
-    test("handles selecting any category except yahtzee bonus when next screen should be scoresheet", () => {
+    test("handles selecting any category except yahtzee bonus when game is not over", () => {
       MockDiceScorer.prototype.scoreCategory.mockImplementationOnce(() => 2);
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.VIEW_SCORE);
+      mockGameState.nextPlayer.mockImplementationOnce(() => false);
       const screen = new ScoreDiceScreen();
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.Twos, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).toHaveBeenCalledWith(YahtzeeScoreCategory.Twos);
@@ -492,8 +492,8 @@ describe("ScoreDiceScreen", () => {
       expect(nextScreen).toBe(screen);
     });
 
-    test("handles selecting full house and straights when next screen should be game over in joker mode", () => {
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.GAME_OVER);
+    test("handles selecting full house and straights when game is over in joker mode", () => {
+      mockGameState.nextPlayer.mockImplementationOnce(() => true);
       const screen = new ScoreDiceScreen({ jokerMode: true });
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.FullHouse, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).not.toHaveBeenCalledWith(YahtzeeScoreCategory.FullHouse);
@@ -503,8 +503,8 @@ describe("ScoreDiceScreen", () => {
       expect(nextScreen).toBeNull();
     });
 
-    test("handles selecting full house and straights when next screen should be scoresheet in joker mode", () => {
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.VIEW_SCORE);
+    test("handles selecting full house and straights when game is not over in joker mode", () => {
+      mockGameState.nextPlayer.mockImplementationOnce(() => false);
       const screen = new ScoreDiceScreen({ jokerMode: true });
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.SmallStraight, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).not.toHaveBeenCalledWith(YahtzeeScoreCategory.SmallStraight);
@@ -515,20 +515,9 @@ describe("ScoreDiceScreen", () => {
       expect(nextScreen).toBe(MockScoresheetScreen.mock.instances[0]);
     });
 
-    test("handles selecting full house and straights when next screen is invalid in joker mode", () => {
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.STATISTICS);
-      const screen = new ScoreDiceScreen({ jokerMode: true });
-      const nextScreen = screen.handleInput(YahtzeeScoreCategory.LargeStraight, mockGameState, mockConfig);
-      expect(MockDiceScorer.mock.instances[0].scoreCategory).not.toHaveBeenCalledWith(YahtzeeScoreCategory.LargeStraight);
-      expect(mockPlayer.setScore).toHaveBeenCalledWith(YahtzeeScoreCategory.LargeStraight, 40);
-      expect(mockGameState.nextPlayer).toHaveBeenCalledOnce();
-      expect(getGameOverScreenSpy).not.toHaveBeenCalledOnce();
-      expect(nextScreen).toBe(screen);
-    });
-
-    test("handles selecting any other category when next screen should be game over in joker mode", () => {
+    test("handles selecting any other category wwhen game is over in joker mode", () => {
       MockDiceScorer.prototype.scoreCategory.mockImplementationOnce(() => 1);
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.GAME_OVER);
+      mockGameState.nextPlayer.mockImplementationOnce(() => true);
       const screen = new ScoreDiceScreen({ jokerMode: true });
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.Ones, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).toHaveBeenCalledWith(YahtzeeScoreCategory.Ones);
@@ -538,9 +527,9 @@ describe("ScoreDiceScreen", () => {
       expect(nextScreen).toBeNull();
     });
 
-    test("handles selecting any other category when next screen should be scoresheet in joker mode", () => {
+    test("handles selecting any other category when game is not over in joker mode", () => {
       MockDiceScorer.prototype.scoreCategory.mockImplementationOnce(() => 2);
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.VIEW_SCORE);
+      mockGameState.nextPlayer.mockImplementationOnce(() => false);
       const screen = new ScoreDiceScreen({ jokerMode: true });
       const nextScreen = screen.handleInput(YahtzeeScoreCategory.Twos, mockGameState, mockConfig);
       expect(MockDiceScorer.mock.instances[0].scoreCategory).toHaveBeenCalledWith(YahtzeeScoreCategory.Twos);
@@ -549,18 +538,6 @@ describe("ScoreDiceScreen", () => {
       expect(getGameOverScreenSpy).not.toHaveBeenCalledOnce();
       expect(MockScoresheetScreen).toHaveBeenCalledOnce();
       expect(nextScreen).toBe(MockScoresheetScreen.mock.instances[0]);
-    });
-
-    test("handles selecting any other category when next screen is invalid in joker mode", () => {
-      MockDiceScorer.prototype.scoreCategory.mockImplementationOnce(() => 3);
-      mockGameState.nextPlayer.mockImplementationOnce(() => GameMode.STATISTICS);
-      const screen = new ScoreDiceScreen({ jokerMode: true });
-      const nextScreen = screen.handleInput(YahtzeeScoreCategory.Threes, mockGameState, mockConfig);
-      expect(MockDiceScorer.mock.instances[0].scoreCategory).toHaveBeenCalledWith(YahtzeeScoreCategory.Threes);
-      expect(mockPlayer.setScore).toHaveBeenCalledWith(YahtzeeScoreCategory.Threes, 3);
-      expect(mockGameState.nextPlayer).toHaveBeenCalledOnce();
-      expect(getGameOverScreenSpy).not.toHaveBeenCalledOnce();
-      expect(nextScreen).toBe(screen);
     });
 
     test("handles selecting option: Cancel", () => {

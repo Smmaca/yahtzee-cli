@@ -56,7 +56,8 @@ describe("Game", () => {
     test("runs screen successfully", async () => {
       const game = new Game(mockConfig, new MockPrompter());
       const mockScreen = new MockMainMenuScreen();
-       await game.loop(mockScreen);
+      await game.loop(mockScreen);
+      expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
       expect(mockScreen.run).toHaveBeenCalledOnce();
       expect(loopSpy).toHaveBeenCalledOnce();
     });
@@ -66,6 +67,7 @@ describe("Game", () => {
       const game = new Game(mockConfig, new MockPrompter());
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
+      expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
       expect(mockScreen.run).toHaveBeenCalledOnce();
       expect(loopSpy).toHaveBeenCalledTimes(2);
     });
@@ -78,6 +80,7 @@ describe("Game", () => {
       const game = new Game(mockConfig, new MockPrompter());
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
+      expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
       expect(mockScreen.run).toHaveBeenCalledOnce();
       expect(loopSpy).toHaveBeenCalledOnce();
       expect(consoleErrorSpy).toHaveBeenCalledWith("Something went wrong :(");
@@ -93,6 +96,7 @@ describe("Game", () => {
       const game = new Game(config, new MockPrompter());
       const mockScreen = new MockMainMenuScreen();
       await game.loop(mockScreen);
+      expect(MockGameState.mock.instances[0].addScreenToHistory).toHaveBeenCalledWith(mockScreen.name);
       expect(mockScreen.run).toHaveBeenCalledOnce();
       expect(loopSpy).toHaveBeenCalledOnce();
       expect(MockGameState.mock.instances[0].toJSON).toHaveBeenCalledOnce();

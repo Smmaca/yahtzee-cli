@@ -3,6 +3,7 @@ import Dice from "./Dice";
 import GameState from "./GameState";
 import Player from "./Player";
 import { GameMode } from "../types";
+import { Screen } from "../gameScreens/BaseGameScreen";
 
 jest.mock("./Dice");
 jest.mock("./Player");
@@ -29,8 +30,7 @@ describe("GameState", () => {
     expect(gameState.turn).toBe(0);
     expect(gameState.currentPlayerIndex).toBe(0);
     expect(gameState.rollNumber).toBe(0);
-    expect(gameState.mode).toBe(GameMode.MAIN_MENU);
-    expect(gameState.modeHistory).toEqual([]);
+    expect(gameState.screenHistory).toEqual([]);
     expect(gameState.players).toEqual([]);
     expect(gameState.dice).toBeInstanceOf(MockDice);
   });
@@ -44,7 +44,7 @@ describe("GameState", () => {
       const gameState = new GameState(fakeConfig);
       gameState.addPlayer("Player 1");
 
-      expect(MockPlayer).toHaveBeenCalledTimes(1);
+      expect(MockPlayer).toHaveBeenCalledOnce();
       expect(MockPlayer).toHaveBeenCalledWith("Player 1");
       expect(gameState.players).toHaveLength(1);
       expect(gameState.players[0]).toBeInstanceOf(MockPlayer);
@@ -171,41 +171,14 @@ describe("GameState", () => {
     });
   });
 
-  describe("setMode", () => {
-    test("sets the mode and adds previous mode to history when history is empty", () => {
+  describe("addScreenToHistory", () => {
+    test("adds screen to end of screen history array", () => {
       const gameState = new GameState(fakeConfig);
 
-      gameState.mode = GameMode.MAIN_MENU;
+      gameState.addScreenToHistory(Screen.GAME_ACTION);
+      gameState.addScreenToHistory(Screen.NEW_GAME);
 
-      gameState.setMode(GameMode.NEW_GAME);
-
-      expect(gameState.mode).toBe(GameMode.NEW_GAME);
-      expect(gameState.modeHistory).toEqual([GameMode.MAIN_MENU]);
-    });
-
-    test("sets the mode and adds previous mode to history when history has entries", () => {
-      const gameState = new GameState(fakeConfig);
-
-      gameState.mode = GameMode.MAIN_MENU;
-      gameState.modeHistory = [GameMode.ROLL, GameMode.VIEW_SCORE];
-
-      gameState.setMode(GameMode.NEW_GAME);
-
-      expect(gameState.modeHistory).toEqual([GameMode.MAIN_MENU, GameMode.ROLL, GameMode.VIEW_SCORE]);
-    });
-  });
-
-  describe("revertMode", () => {
-    test("sets the mode to the first history entry and adds previous mode to history", () => {
-      const gameState = new GameState(fakeConfig);
-
-      gameState.mode = GameMode.MAIN_MENU;
-      gameState.modeHistory = [GameMode.ROLL, GameMode.VIEW_SCORE];
-
-      gameState.revertMode();
-
-      expect(gameState.mode).toBe(GameMode.ROLL);
-      expect(gameState.modeHistory).toEqual([GameMode.MAIN_MENU, GameMode.ROLL, GameMode.VIEW_SCORE]);
+      expect(gameState.screenHistory).toEqual([Screen.GAME_ACTION, Screen.NEW_GAME]);
     });
   });
 
@@ -216,8 +189,6 @@ describe("GameState", () => {
       // Change the initial game state
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
-      gameState.setMode(GameMode.NEW_GAME);
-      gameState.setMode(GameMode.EDIT_SCORE_JOKER);
       gameState.setTurn(4);
       gameState.setRollNumber(2);
       gameState.setCurrentPlayer(1);
@@ -225,16 +196,16 @@ describe("GameState", () => {
       gameState.resetGame();
 
       expect(gameState.players).toHaveLength(2);
-      expect(gameState.modeHistory).toEqual([]);
+      expect(gameState.screenHistory).toEqual([]);
       expect(gameState.turn).toBe(0);
       expect(gameState.rollNumber).toBe(0);
       expect(gameState.currentPlayerIndex).toBe(0);
       
       const mockDiceInstance = MockDice.mock.instances[0];
-      expect(mockDiceInstance.reset).toHaveBeenCalledTimes(1);
+      expect(mockDiceInstance.reset).toHaveBeenCalledOnce();
 
       gameState.players.forEach(player => {
-        expect(player.resetScore).toHaveBeenCalledTimes(1);
+        expect(player.resetScore).toHaveBeenCalledOnce();
       });
     });
   });
@@ -246,8 +217,6 @@ describe("GameState", () => {
       // Change the initial game state
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
-      gameState.setMode(GameMode.NEW_GAME);
-      gameState.setMode(GameMode.EDIT_SCORE_JOKER);
       gameState.setTurn(4);
       gameState.setRollNumber(2);
       gameState.setCurrentPlayer(1);
@@ -255,13 +224,13 @@ describe("GameState", () => {
       gameState.newGame();
 
       expect(gameState.players).toHaveLength(0);
-      expect(gameState.modeHistory).toEqual([]);
+      expect(gameState.screenHistory).toEqual([]);
       expect(gameState.turn).toBe(0);
       expect(gameState.rollNumber).toBe(0);
       expect(gameState.currentPlayerIndex).toBe(0);
       
       const mockDiceInstance = MockDice.mock.instances[0];
-      expect(mockDiceInstance.reset).toHaveBeenCalledTimes(1);
+      expect(mockDiceInstance.reset).toHaveBeenCalledOnce();
     });
   });
 
@@ -337,8 +306,6 @@ describe("GameState", () => {
       // Change the initial game state
       gameState.addPlayer("Player 1");
       gameState.addPlayer("Player 2");
-      gameState.setMode(GameMode.NEW_GAME);
-      gameState.setMode(GameMode.EDIT_SCORE_JOKER);
       gameState.setTurn(4);
       gameState.setRollNumber(2);
       gameState.setCurrentPlayer(1);
@@ -349,8 +316,7 @@ describe("GameState", () => {
         turn: 4,
         rollNumber: 2,
         currentPlayerIndex: 1,
-        mode: GameMode.EDIT_SCORE_JOKER,
-        modeHistory: [GameMode.NEW_GAME, GameMode.MAIN_MENU],
+        screenHistory: [],
         players: [undefined, undefined],
         dice: undefined,
       });
@@ -358,9 +324,9 @@ describe("GameState", () => {
       const [mockPlayer1, mockPlayer2] = MockPlayer.mock.instances;
       const dice = MockDice.mock.instances[0];
 
-      expect(mockPlayer1.toJSON).toHaveBeenCalledTimes(1);
-      expect(mockPlayer2.toJSON).toHaveBeenCalledTimes(1);
-      expect(dice.toJSON).toHaveBeenCalledTimes(1);
+      expect(mockPlayer1.toJSON).toHaveBeenCalledOnce();
+      expect(mockPlayer2.toJSON).toHaveBeenCalledOnce();
+      expect(dice.toJSON).toHaveBeenCalledOnce();
     });
   });
 
@@ -373,15 +339,15 @@ describe("GameState", () => {
       gameState.setRollNumber(1);
       gameState.setTurn(2);
 
-      gameState.nextPlayer();
+      const gameOver = gameState.nextPlayer();
 
       const dice = MockDice.mock.instances[0];
 
       expect(gameState.currentPlayerIndex).toBe(1);
-      expect(gameState.mode).toBe(GameMode.VIEW_SCORE);
+      expect(gameOver).toBeFalse();
       expect(gameState.turn).toBe(2);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledTimes(1);
+      expect(dice.reset).toHaveBeenCalledOnce();
     });
 
     test("sets the current player to the first player and increments the turn if the last player has rolled", () => {
@@ -393,15 +359,15 @@ describe("GameState", () => {
       gameState.setTurn(2);
       gameState.setCurrentPlayer(1);
 
-      gameState.nextPlayer();
+      const gameOver = gameState.nextPlayer();
 
       const dice = MockDice.mock.instances[0];
 
       expect(gameState.currentPlayerIndex).toBe(0);
-      expect(gameState.mode).toBe(GameMode.VIEW_SCORE);
+      expect(gameOver).toBeFalse();
       expect(gameState.turn).toBe(3);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledTimes(1);
+      expect(dice.reset).toHaveBeenCalledOnce();
     });
 
     test("sets the current player to null and the mode to game over if the last player has rolled for the last turn", () => {
@@ -413,15 +379,15 @@ describe("GameState", () => {
       gameState.setTurn(14);
       gameState.setCurrentPlayer(1);
 
-      gameState.nextPlayer();
+      const gameOver = gameState.nextPlayer();
 
       const dice = MockDice.mock.instances[0];
 
       expect(gameState.currentPlayerIndex).toBe(null);
-      expect(gameState.mode).toBe(GameMode.GAME_OVER);
+      expect(gameOver).toBeTrue();
       expect(gameState.turn).toBe(14);
       expect(gameState.rollNumber).toBe(0);
-      expect(dice.reset).toHaveBeenCalledTimes(1);
+      expect(dice.reset).toHaveBeenCalledOnce();
     });
   });
 });

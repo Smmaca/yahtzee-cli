@@ -240,15 +240,10 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
       }
     }
 
-    // TODO: fix this way of getting next screen
-    const nextScreen = state.nextPlayer(); 
+    const gameOver = state.nextPlayer(); 
 
-    if (nextScreen === GameMode.GAME_OVER) {
-      return this.getGameOverScreen(state, config);
-    } else if (nextScreen === GameMode.VIEW_SCORE) {
-      return new ScoresheetScreen();
-    }
-
-    return this;
+    return gameOver
+      ? this.getGameOverScreen(state, config)
+      : new ScoresheetScreen();
   }
 }

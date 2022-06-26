@@ -23,6 +23,7 @@ export default class Game {
 
   async loop(screen: BaseGameScreen<any>) {
     try {
+      this.state.addScreenToHistory(screen.name);
       const nextScreen = await screen.run({
         config: this.config,
         state: this.state,
