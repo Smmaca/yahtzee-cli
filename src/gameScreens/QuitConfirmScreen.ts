@@ -1,6 +1,6 @@
 
 import GameState from "../modules/GameState";
-import { IPrompter } from "../modules/prompters/BasePrompter";
+import { IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import MainMenuScreen from "./MainMenuScreen";

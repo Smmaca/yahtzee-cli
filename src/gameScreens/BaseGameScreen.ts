@@ -1,6 +1,6 @@
 import clear from "clear";
 import GameState from "../modules/GameState";
-import { IPrompter } from "../modules/prompters/BasePrompter";
+import { IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
 import { drawTitle } from "../utils/draw";
 
