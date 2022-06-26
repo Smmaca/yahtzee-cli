@@ -37,6 +37,8 @@ export interface IScoreDiceOptions {
 }
 
 export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInputs> {
+  name = Screen.SCORE_DICE;
+
   constructor(private options: IScoreDiceOptions = {}) {
     super();
   }
@@ -191,16 +193,15 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
   }
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig) {
-    return this.options?.jokerMode 
-      ? prompter.getInputFromSelect<ScoreDiceScreenInput>({
-        name: Screen.SCORE_JOKER,
-        message: config.messages.scoreJokerPrompt,
-        choices: this.getScoreJokerChoices(state, config),
-      }) : prompter.getInputFromSelect<ScoreDiceScreenInput>({
-        name: Screen.SCORE_DICE,
-        message: config.messages.scoreDicePrompt,
-        choices: this.getScoreDiceChoices(state, config),
-      });
+    return prompter.getInputFromSelect<ScoreDiceScreenInput>({
+      name: this.name,
+      message: this.options.jokerMode
+        ? config.messages.scoreJokerPrompt
+        : config.messages.scoreDicePrompt,
+      choices: this.options.jokerMode
+        ? this.getScoreJokerChoices(state, config)
+        : this.getScoreDiceChoices(state, config),
+    });
   }
 
   handleInput(input: any, state: GameState, config: IConfig) {

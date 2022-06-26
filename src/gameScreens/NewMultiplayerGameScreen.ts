@@ -20,6 +20,7 @@ export const choiceLabels: Record<NewMultiplayerGameScreenInput, string> = {
 };
 
 export default class NewMultiplayerGameScreen extends BaseGameScreen<NewMultiplayerGameScreenInput> {
+  name = Screen.NEW_MULTIPLAYER_GAME;
 
   draw(state: GameState) {
     if (state.players.length) {
@@ -46,7 +47,7 @@ export default class NewMultiplayerGameScreen extends BaseGameScreen<NewMultipla
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig) {
     return prompter.getInputFromSelect<NewMultiplayerGameScreenInput>({
-      name: Screen.NEW_MULTIPLAYER_GAME,
+      name: this.name,
       message: config.messages.newMultiplayerGamePrompt,
       choices: this.getChoices(state, config),
     });

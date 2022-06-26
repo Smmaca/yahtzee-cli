@@ -15,7 +15,6 @@ export enum Screen {
   SCORESHEET = "scoresheet",
   LOCK_DICE = "lockDice",
   SCORE_DICE = "scoreDice",
-  SCORE_JOKER = "scoreJoker",
   GAME_OVER_SINGLE_PLAYER = "gameOverSinglePlayer",
   GAME_OVER_MULTIPLAYER = "gameOverMultiplayer",
 }
@@ -27,6 +26,8 @@ export interface IRunParams {
 }
 
 export default abstract class BaseGameScreen<T> {
+  abstract name: Screen;
+
   drawScreenStart() {
     clear();
     drawTitle();

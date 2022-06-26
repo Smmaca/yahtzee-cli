@@ -23,6 +23,8 @@ export const choiceLabels: Record<GameOverMultiplayerScreenInput, string> = {
 export type GameOverMultiplayerScreenInputs = GameOverMultiplayerScreenInput | string;
 
 export default class GameOverMultiplayerScreen extends BaseGameScreen<GameOverMultiplayerScreenInputs> {
+  name = Screen.GAME_OVER_MULTIPLAYER;
+
   draw(state: GameState) {
     if (state.currentPlayerIndex !== null) {
       state.getCurrentPlayer().renderScoresheet();
@@ -56,7 +58,7 @@ export default class GameOverMultiplayerScreen extends BaseGameScreen<GameOverMu
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<GameOverMultiplayerScreenInputs> {
     return prompter.getInputFromSelect<GameOverMultiplayerScreenInputs>({
-      name: Screen.GAME_OVER_MULTIPLAYER,
+      name: this.name,
       message: config.messages.gameOverPrompt,
       choices: this.getChoices(state),
     });

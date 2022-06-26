@@ -8,6 +8,8 @@ import GameActionScreen from "./GameActionScreen";
 
 
 export default class LockDiceScreen extends BaseGameScreen<Record<string, number>> {
+  name = Screen.LOCK_DICE;
+
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
     drawTurnStats(
@@ -31,7 +33,7 @@ export default class LockDiceScreen extends BaseGameScreen<Record<string, number
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<Record<string, number>> {
     const choices = this.getChoices(state);
     return prompter.getInputFromMultiselect({
-      name: Screen.LOCK_DICE,
+      name: this.name,
       message: config.messages.diceLockPrompt,
       limit: 5,
       choices,

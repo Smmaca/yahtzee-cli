@@ -7,6 +7,8 @@ import MainMenuScreen from "./MainMenuScreen";
 
 
 export default class GameOverSinglePlayerScreen extends BaseGameScreen<boolean> {
+  name = Screen.GAME_OVER_SINGLE_PLAYER;
+
   draw(state: GameState) {
     const player = state.players[0];
 
@@ -16,7 +18,7 @@ export default class GameOverSinglePlayerScreen extends BaseGameScreen<boolean> 
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<boolean> {
     return prompter.getInputFromConfirm({
-      name: Screen.GAME_OVER_SINGLE_PLAYER,
+      name: this.name,
       message: config.messages.playAgainPrompt,
     });
   }

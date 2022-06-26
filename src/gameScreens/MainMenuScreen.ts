@@ -22,6 +22,8 @@ export const choiceLabels: Record<MainMenuScreenInput, string> = {
 }
 
 export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> {
+  name = Screen.MAIN_MENU;
+
   draw() {}
 
   getChoices(): IChoice<MainMenuScreenInput, MainMenuScreenInput>[] {
@@ -35,7 +37,7 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<MainMenuScreenInput> {
     return prompter.getInputFromSelect<MainMenuScreenInput>({
-      name: Screen.MAIN_MENU,
+      name: this.name,
       message: config.messages.mainMenuPrompt,
       choices: this.getChoices(),
     });

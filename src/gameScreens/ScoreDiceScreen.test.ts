@@ -422,7 +422,7 @@ describe("ScoreDiceScreen", () => {
     test("gets select input from player in joker mode", async () => {
       const screen = new ScoreDiceScreen({ jokerMode: true });
       const mockPrompter = new MockPrompter([{
-        promptName: Screen.SCORE_JOKER,
+        promptName: Screen.SCORE_DICE,
         answer: YahtzeeScoreCategory.Ones,
       }]);
       const input = await screen.getInput(mockPrompter, mockGameState, mockConfig);

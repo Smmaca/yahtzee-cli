@@ -17,6 +17,8 @@ export const choiceLabels: Record<StatisticsScreenInput, string> = {
 };
 
 export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInput> {
+  name = Screen.STATISTICS;
+
   draw(state: GameState, config: IConfig) {
     const statsModule = new Statistics(config);
     const stats = statsModule.getGameStatistics();
@@ -36,7 +38,7 @@ export default class StatisticsScreen extends BaseGameScreen<StatisticsScreenInp
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<StatisticsScreenInput> {
     return prompter.getInputFromSelect<StatisticsScreenInput>({
-      name: Screen.STATISTICS,
+      name: this.name,
       message: config.messages.statisticsPrompt,
       choices: this.getChoices(),
     });

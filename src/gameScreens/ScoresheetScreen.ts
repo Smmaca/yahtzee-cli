@@ -16,6 +16,7 @@ export const choiceLabels: Record<ScoresheetScreenInput, string> = {
 };
 
 export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInput> {
+  name = Screen.SCORESHEET;
 
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
@@ -38,7 +39,7 @@ export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInp
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig) {
     return prompter.getInputFromSelect<ScoresheetScreenInput>({
-      name: Screen.SCORESHEET,
+      name: this.name,
       message: config.messages.scoresheetPrompt,
       choices: this.getChoices(),
     });

@@ -20,6 +20,8 @@ export const choiceLabels: Record<NewGameScreenInput, string> = {
 }
 
 export default class NewGameScreen extends BaseGameScreen<NewGameScreenInput> {
+  name = Screen.NEW_GAME;
+
   draw() {}
 
   getChoices(): IChoice<NewGameScreenInput, NewGameScreenInput>[] {
@@ -32,7 +34,7 @@ export default class NewGameScreen extends BaseGameScreen<NewGameScreenInput> {
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<NewGameScreenInput> {
     return prompter.getInputFromSelect<NewGameScreenInput>({
-      name: Screen.NEW_GAME,
+      name: this.name,
       message: config.messages.newGamePrompt,
       choices: this.getChoices(),
     });

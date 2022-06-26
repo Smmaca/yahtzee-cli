@@ -31,6 +31,7 @@ export const choiceLabels: Record<GameActionScreenInput, string> = {
 };
 
 export default class GameActionScreen extends BaseGameScreen<GameActionScreenInput> {
+  name = Screen.GAME_ACTION;
 
   draw(state: GameState, config: IConfig) {
     const diceScorer = new DiceScorer(state.dice.values, config);
@@ -66,7 +67,7 @@ export default class GameActionScreen extends BaseGameScreen<GameActionScreenInp
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig) {
     return prompter.getInputFromSelect<GameActionScreenInput>({
-      name: Screen.GAME_ACTION,
+      name: this.name,
       message: config.messages.gameActionPrompt,
       choices: this.getChoices(state, config),
     });

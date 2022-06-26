@@ -11,6 +11,8 @@ export interface IQuitConfirmOptions {
 }
 
 export default class QuitConfirmScreen extends BaseGameScreen<boolean> {
+  name = Screen.QUIT_CONFIRM;
+
   constructor(private options: IQuitConfirmOptions) {
     super();
   }
@@ -19,7 +21,7 @@ export default class QuitConfirmScreen extends BaseGameScreen<boolean> {
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<boolean> {
     return prompter.getInputFromConfirm({
-      name: Screen.QUIT_CONFIRM,
+      name: this.name,
       message: this.options.softQuit
         ? config.messages.quitToMainMenuConfirmPrompt
         : config.messages.quitConfirmPrompt,

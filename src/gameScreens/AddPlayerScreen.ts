@@ -6,11 +6,13 @@ import NewMultiplayerGameScreen from "./NewMultiplayerGameScreen";
 
 
 export default class AddPlayerScreen extends BaseGameScreen<string> {
+  name = Screen.ADD_PLAYER;
+
   draw() {}
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig): Promise<string> {
     return prompter.getInput({
-      name: Screen.ADD_PLAYER,
+      name: this.name,
       message: config.messages.addPlayerPrompt,
       initial: `Player ${state.players.length + 1}`,
     });
