@@ -2,7 +2,7 @@ import { IConfig, YahtzeeScoreCategory } from "../types";
 
 const mockConfig: IConfig = {
   rollsPerTurn: 3,
-  turns: 14,
+  turns: 13,
   maxPlayers: 4,
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: 25,

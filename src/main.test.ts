@@ -1,5 +1,5 @@
 import Game from "./modules/Game";
-import { main } from "./index";
+import main from "./main";
 import MainMenuScreen from "./gameScreens/MainMenuScreen";
 import mockConfig from "./testUtils/MockConfig";
 import MockPrompter from "./prompters/MockPrompter";

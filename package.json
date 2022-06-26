@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "coverage-badges": "jest-coverage-badges --output ./badges",
-    "test": "jest && npm run coverage-badges"
+    "test": "jest && npm run coverage-badges",
+    "e2e": "jest --config e2e/jest.config.json"
   },
   "author": "Shavaun MacArthur <shavaunmac@gmail.com>",
   "license": "ISC",

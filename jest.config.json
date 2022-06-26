@@ -1,7 +1,6 @@
 {
   "verbose": true,
   "testMatch": [
-    "**/__tests__/**/*.[jt]s?(x)",
     "**/?(*.)+(spec|test).[jt]s?(x)"
   ],
   "testPathIgnorePatterns": [
@@ -19,7 +18,8 @@
     "src/**/*.ts"
   ],
   "coveragePathIgnorePatterns": [
-    "/src/testUtils/"
+    "/src/testUtils/",
+    "src/index.ts"
   ],
   "coverageReporters": [
     "json-summary",
