@@ -7,12 +7,11 @@ export function getRandomIntInclusive(min: number, max: number) {
 };
 
 export default class Dice implements IDice{
-  diceCount: number;
+  diceCount: 5 = 5;
   values: number[];
   lock: boolean[];
 
   constructor() {
-    this.diceCount = 5; // Cannot change this without changing the dice scoring logic
     this.reset();
   }
 

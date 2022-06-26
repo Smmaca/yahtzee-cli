@@ -1,6 +1,6 @@
 
 export interface IDice {
-  diceCount: number;
+  diceCount: 5;
   values: number[];
   lock: boolean[];
   roll(): void;
