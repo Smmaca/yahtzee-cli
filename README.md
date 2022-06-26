@@ -52,6 +52,10 @@ Run `npm test`
   - [ ] Play an entire game without rerolling
 - [X] 100% unit test coverage
 - [ ] E2E tests using MockPrompter
+  - [ ] Full game - single player
+  - [ ] Full game - multiplayer
+  - [ ] Look at game stats
+  - [ ] Quit game
 - [ ] Fix turn stats being incremented before showing the scoresheet at end of turn
 
 ## Related links

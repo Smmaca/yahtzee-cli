@@ -1,29 +1,26 @@
-import config from "./config";
 import Game from "./modules/Game";
 import { main } from "./index";
-import CLIPrompter from "./prompters/CLIPrompter";
 import MainMenuScreen from "./gameScreens/MainMenuScreen";
+import mockConfig from "./testUtils/MockConfig";
+import MockPrompter from "./prompters/MockPrompter";
 
 jest.mock("./modules/Game");
-jest.mock("./prompters/CLIPrompter");
 jest.mock("./gameScreens/MainMenuScreen");
 
 const MockGame = Game as jest.MockedClass<typeof Game>;
-const MockedPrompter = CLIPrompter as jest.MockedClass<typeof CLIPrompter>;
 const MockMainMenuScreen = MainMenuScreen as jest.MockedClass<typeof MainMenuScreen>;
 
 describe("main", () => {
   beforeEach(() => {
-    MockedPrompter.mockClear();
     MockGame.mockClear();
     MockMainMenuScreen.mockClear();
   });
   
   test("inits and loops the game", () => {
-    main();
+    const mockPrompter = new MockPrompter();
+    main(mockConfig, mockPrompter);
     
-    expect(MockedPrompter).toHaveBeenCalledOnce();
-    expect(MockGame).toHaveBeenCalledWith(config, MockedPrompter.mock.instances[0]);
+    expect(MockGame).toHaveBeenCalledWith(mockConfig, mockPrompter);
     expect(MockGame.mock.instances[0].init).toHaveBeenCalled();
     expect(MockMainMenuScreen).toHaveBeenCalledOnce();
     expect(MockGame.mock.instances[0].loop).toHaveBeenCalledWith(MockMainMenuScreen.mock.instances[0]);

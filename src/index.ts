@@ -2,10 +2,11 @@ import Game from "./modules/Game";
 import config from "./config";
 import CLIPrompter from "./prompters/CLIPrompter";
 import MainMenuScreen from "./gameScreens/MainMenuScreen";
+import { IConfig } from "./types";
+import BasePrompter from "./prompters/BasePrompter";
 
-export function main() {
-  const prompter = new CLIPrompter();
-  const game = new Game(config, prompter);
+export function main(_config: IConfig, _prompter: BasePrompter) {
+  const game = new Game(_config, _prompter);
 
   game.init();
   
@@ -13,4 +14,5 @@ export function main() {
   game.loop(firstScreen);
 }
 
-main();
+const prompter = new CLIPrompter();
+main(config, prompter);
