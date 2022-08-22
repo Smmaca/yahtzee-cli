@@ -3,6 +3,7 @@ import {
   IConfirmParams,
   IInputParams,
   IMultiselectParams,
+  IPreviewSelectParams,
   IPrompter,
   ISelectParams,
 } from "./types"
@@ -61,6 +62,10 @@ export default class MockPrompter implements IPrompter {
       throw new Error(`Expected one of [${choices.map(choice => choice.name).join(", ")}], got ${mockAnswer.answer}`);
     }
     return mockAnswer.answer;
+  }
+
+  async getInputFromPreviewSelect<K extends string, V = any>(params: IPreviewSelectParams<K, V>): Promise<K> {
+    return this.getInputFromSelect(params);
   }
 
   async getInputFromMultiselect<K extends string, V = any>(

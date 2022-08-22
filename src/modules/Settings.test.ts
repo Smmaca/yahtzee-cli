@@ -1,5 +1,5 @@
 import mockConfig from "../testUtils/MockConfig";
-import Settings, { defaultSettingsData, DiceType } from "./Settings";
+import Settings, { defaultSettingsData, DiceDesign } from "./Settings";
 import DataLoader from "./DataLoader";
 
 jest.mock("./DataLoader");
@@ -28,23 +28,23 @@ describe("Settings", () => {
 
   test("returns settings", () => {
     MockDataLoader.prototype.getData.mockImplementation(() => ({
-      diceType: DiceType.PIPS,
+      diceDesign: DiceDesign.CLASSIC,
     }));
     const settingsModule = new Settings(mockConfig);
     const settings = settingsModule.getSettings();
     expect(settings).toEqual({
-      diceType: DiceType.PIPS,
+      diceDesign: DiceDesign.CLASSIC,
     });
   });
 
   test("saves settings", () => {
     MockDataLoader.prototype.getData.mockImplementation(() => ({
-      diceType: DiceType.PIPS,
+      diceDesign: DiceDesign.CLASSIC,
     }));
     const settingsModule = new Settings(mockConfig);
-    settingsModule.saveSettings({ diceType: null });
+    settingsModule.saveSettings({ diceDesign: null });
     expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith({
-      diceType: null,
+      diceDesign: null,
     });
   });
 

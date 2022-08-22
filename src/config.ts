@@ -20,6 +20,7 @@ const config: IConfig = {
     quitConfirmPrompt: "Are you sure you want to quit?",
     quitToMainMenuConfirmPrompt: "Are you sure you want to quit to main menu?",
     gameOverPrompt: "Game over!",
+    diceDesignerPrompt: "Choose a dice design",
   },
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: 25,

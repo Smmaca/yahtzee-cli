@@ -5,6 +5,7 @@ import Statistics from "./Statistics";
 import BaseGameScreen from "../gameScreens/BaseGameScreen";
 import { IPrompter } from "./prompters/types";
 import { IDice } from "./dice/types";
+import Settings from "./Settings";
 
 export default class Game {
   config: IConfig;
@@ -20,6 +21,10 @@ export default class Game {
   init() {
     const statsModules = new Statistics(this.config);
     statsModules.setup();
+
+    const settingsModule = new Settings(this.config);
+    settingsModule.setup();
+    settingsModule.loadSettings(this.state);
   }
 
   async loop(screen: BaseGameScreen<any>) {

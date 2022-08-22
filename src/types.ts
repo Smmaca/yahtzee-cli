@@ -62,6 +62,7 @@ export interface IConfig {
     quitConfirmPrompt: string;
     quitToMainMenuConfirmPrompt: string;
     gameOverPrompt: string;
+    diceDesignerPrompt: string;
   };
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: number;

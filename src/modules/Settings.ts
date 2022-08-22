@@ -1,16 +1,18 @@
 import { IConfig } from "../types";
 import DataLoader from "./DataLoader";
+import GameState from "./GameState";
 
-export enum DiceType {
-  PIPS = "pips",
+export enum DiceDesign {
+  CLASSIC = "classic",
+  DIGITS = "digits",
 }
 
 export interface ISettingsData {
-  diceType: DiceType;
+  diceDesign: DiceDesign;
 }
 
 export const defaultSettingsData: ISettingsData = {
-  diceType: DiceType.PIPS,
+  diceDesign: DiceDesign.CLASSIC,
 }
 
 export default class Settings {
@@ -35,5 +37,10 @@ export default class Settings {
 
   clearSettings() {
     this.loader.setData(defaultSettingsData);
+  }
+
+  loadSettings(gameState: GameState) {
+    const settings = this.getSettings();
+    gameState.diceDesign = settings.diceDesign;
   }
 }
