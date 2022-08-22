@@ -4,6 +4,7 @@ export enum Screen {
   NEW_GAME = "newGameMenu",
   QUIT_CONFIRM = "quitConfirm",
   STATISTICS = "statistics",
+  SETTINGS = "settings",
   NEW_MULTIPLAYER_GAME = "newMultiplayerGame",
   ADD_PLAYER = "addPlayer",
   GAME_ACTION = "gameAction",
@@ -63,6 +64,7 @@ export interface IConfig {
     quitToMainMenuConfirmPrompt: string;
     gameOverPrompt: string;
     diceDesignerPrompt: string;
+    settingsPrompt: string;
   };
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: number;

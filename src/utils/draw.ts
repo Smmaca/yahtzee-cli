@@ -1,5 +1,4 @@
 import figlet from "figlet";
-import { DiceDesign } from "../modules/Settings";
 
 export function drawTitle() {
   console.log(figlet.textSync("Yahtzee!", { horizontalLayout: "default" }));
@@ -9,7 +8,7 @@ export function drawTurnStats(player: string, turn: number, rollsLeft: number, i
   console.log(`Player: ${player}     Turn: ${turn + 1}     Rolls left: ${rollsLeft}     ${isYahtzee ? "Yahtzee!" : ""}`);
 }
 
-export function drawDiceValues(diceRoll: number[], diceLock: boolean[], style: DiceDesign = DiceDesign.CLASSIC) {
+export function drawDiceValues(diceRoll: number[], diceLock: boolean[]) {
   if (!diceRoll.length || !diceRoll.filter(d => d).length) {
     console.log("\n");
     return;

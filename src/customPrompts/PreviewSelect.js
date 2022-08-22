@@ -1,10 +1,11 @@
-import SelectPrompt from "enquirer/lib/prompts/select";
-import utils from "enquirer/lib/utils";
+const SelectPrompt = require("enquirer/lib/prompts/select");
 
-export default class PreviewSelectPrompt extends SelectPrompt {
+class PreviewSelectPrompt extends SelectPrompt {
   async header() {
     let choice = this.visible[this.index];
     let preview = await this.resolve(choice.preview, this.state, choice, this.index);
     return preview;
   }
 }
+
+module.exports = PreviewSelectPrompt;

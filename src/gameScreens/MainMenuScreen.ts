@@ -5,6 +5,7 @@ import { constructChoice } from "../utils/screen";
 import BaseGameScreen from "./BaseGameScreen";
 import NewGameScreen from "./NewGameScreen";
 import QuitConfirmScreen from "./QuitConfirmScreen";
+import SettingsScreen from "./SettingsScreen";
 import StatisticsScreen from "./StatisticsScreen";
 
 export enum MainMenuScreenInput {
@@ -30,7 +31,7 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
     return [
       constructChoice(MainMenuScreenInput.NEW_GAME, choiceLabels),
       constructChoice(MainMenuScreenInput.STATISTICS, choiceLabels),
-      // constructChoice(MainMenuScreenInput.SETTINGS, choiceLabels),
+      constructChoice(MainMenuScreenInput.SETTINGS, choiceLabels),
       constructChoice(MainMenuScreenInput.QUIT, choiceLabels),
     ];
   }
@@ -49,6 +50,8 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
         return new NewGameScreen();
       case MainMenuScreenInput.STATISTICS:
         return new StatisticsScreen();
+      case MainMenuScreenInput.SETTINGS:
+        return new SettingsScreen();
       case MainMenuScreenInput.QUIT:
         return new QuitConfirmScreen({ previousScreen: this });
       default:

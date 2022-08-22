@@ -1,11 +1,7 @@
 import { IConfig } from "../types";
+import { DiceDesign } from "../utils/diceDesigns";
 import DataLoader from "./DataLoader";
 import GameState from "./GameState";
-
-export enum DiceDesign {
-  CLASSIC = "classic",
-  DIGITS = "digits",
-}
 
 export interface ISettingsData {
   diceDesign: DiceDesign;

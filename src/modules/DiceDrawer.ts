@@ -1,81 +1,125 @@
-import { DiceDesign } from "./Settings";
+import { DiceDesign, getDiceDesign } from "../utils/diceDesigns";
 
 export default class DiceDrawer {
   diceDesign: DiceDesign;
   diceValues: number[];
   diceLock: boolean[];
 
+  diceLockSymbol = "L";
+  diceTop = " ______ ";
+  diceSide = "|";
+  diceContents: string[][];
+
   constructor(diceDesign: DiceDesign, diceValues: number[], diceLock: boolean[]) {
     this.diceDesign = diceDesign;
     this.diceValues = diceValues;
     this.diceLock = diceLock;
+    this.diceContents = getDiceDesign(this.diceDesign);
   }
 
-  drawDiceLock(index) {
-    return this.diceLock[index] ? "    L    " : "         ";
+  setDiceDesign(diceDesign: DiceDesign) {
+    this.diceDesign = diceDesign;
+    this.diceContents = getDiceDesign(this.diceDesign);
   }
 
-  drawDice() {
+  drawDiceLock(index): string {
+    return `    ${this.diceLock[index] ? this.diceLockSymbol : " "}    `;
+  }
+
+  drawDice(): string {
     if (!this.diceValues.length || !this.diceValues.filter(d => d).length) {
-      console.log("\n");
-      return;
+      return "\n";
     }
 
-    const rows = ["", "", "", "", "", ""];
-    const len = this.diceValues.length;
+    let drawing = "";
 
-    for (let i = 0; i < len; i += 1) {
-      switch(this.diceValues[i]) {
-        case 1:
-          rows[0] += " ______  ";
-          rows[1] += "|      | ";
-          rows[2] += "|   0  | ";
-          rows[3] += "|______| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-        case 2:
-          rows[0] += " ______  ";
-          rows[1] += "|    0 | ";
-          rows[2] += "|      | ";
-          rows[3] += "|_0____| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-        case 3:
-          rows[0] += " ______  ";
-          rows[1] += "|    0 | ";
-          rows[2] += "|   0  | ";
-          rows[3] += "|_0____| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-        case 4:
-          rows[0] += " ______  ";
-          rows[1] += "| 0  0 | ";
-          rows[2] += "|      | ";
-          rows[3] += "|_0__0_| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-        case 5:
-          rows[0] += " ______  ";
-          rows[1] += "| 0  0 | ";
-          rows[2] += "|   0  | ";
-          rows[3] += "|_0__0_| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-        case 6:
-          rows[0] += " ______  ";
-          rows[1] += "| 0  0 | ";
-          rows[2] += "| 0  0 | ";
-          rows[3] += "|_0__0_| ";
-          rows[5] += this.drawDiceLock(i);
-          break;
-
-        default:
-          rows[0] += "";
-          rows[1] += "";
-          rows[2] += "";
-          rows[3] += "";
-          rows[5] += "";
+    for (let i = 0; i < 6; i++) {
+      for (let j = 0; j < this.diceValues.length; j++) {
+        if (i === 0) {
+          drawing += this.diceTop + " ";
+        }
+        if (i > 0 && i < 4) {
+          drawing += this.diceSide + this.diceContents[this.diceValues[j] - 1][i - 1] + this.diceSide + " ";
+        }
+        if (i === 5) {
+          drawing += this.drawDiceLock(j);
+        }
+      }
+      if (i < 5) {
+        drawing += "\n";
       }
     }
+
+    return drawing;
   }
 }
+
+/* Classic
+ ______   ______   ______   ______   ______   ______
+|      | |    0 | |    0 | | 0  0 | | 0  0 | | 0  0 |
+|   0  | |      | |   0  | |      | |   0  | | 0  0 |
+|______| |_0____| |_0____| |_0__0_| |_0__0_| |_0__0_|
+*/
+
+/* Digits
+ ______   ______   ______   ______   ______   ______
+|      | |      | |      | |      | |      | |      |
+|   1  | |   2  | |   3  | |   4  | |   5  | |   6  |
+|______| |______| |______| |______| |______| |______|
+*/
+
+/* Palms
+ ______   ______   ______   ______   ______   ______
+|      | |    * | |    * | | *  * | | *  * | | *  * |
+|   *  | |      | |   *  | |      | |   *  | | *  * |
+|______| |_*____| |_*____| |_*__*_| |_*__*_| |_*__*_|
+*/
+
+/* Void
+ ______   ______   ______   ______   ______   ______
+|      | |    O | |    O | | O  O | | O  O | | O  O |
+|   O  | |      | |   O  | |      | |   O  | | O  O |
+|______| |_O____| |_O____| |_O__O_| |_O__O_| |_O__O_|
+*/
+
+/* Roman
+ ______   ______   ______   ______   ______   ______
+|      | |      | |      | |      | |      | |      |
+|   I  | |  II  | |  III | |  IV  | |   V  | |  VI  |
+|______| |______| |______| |______| |______| |______|
+*/
+
+/* Twinkle
+ ______   ______   ______   ______   ______   ______
+|      | |    + | |    + | | +  + | | +  + | | +  + |
+|   +  | |      | |   +  | |      | |   +  | | +  + |
+|______| |_+____| |_+____| |_+__+_| |_+__+_| |_+__+_|
+*/
+
+/* Moneymaker
+ ______   ______   ______   ______   ______   ______
+|      | |    $ | |    $ | | $  $ | | $  $ | | $  $ |
+|   $  | |      | |   $  | |      | |   $  | | $  $ |
+|______| |_$____| |_$____| |_$__$_| |_$__$_| |_$__$_|
+*/
+
+/* Riddler
+ ______   ______   ______   ______   ______   ______
+|      | |    ? | |    ? | | ?  ? | | ?  ? | | ?  ? |
+|   ?  | |      | |   ?  | |      | |   ?  | | ?  ? |
+|______| |_?____| |_?____| |_?__?_| |_?__?_| |_?__?_|
+*/
+
+/* Wordy
+ ______   ______   ______   ______   ______   ______
+|      | |      | |      | |      | |      | |      |
+|  ONE | | TWO  | |THREE | | FOUR | | FIVE | |  SIX |
+|______| |______| |______| |______| |______| |______|
+*/
+
+/* @#$%&!
+ ______   ______   ______   ______   ______   ______
+|      | |      | |      | |      | |      | |      |
+|   !  | |   @  | |   #  | |   $  | |   %  | |   &  |
+|______| |______| |______| |______| |______| |______|
+*/

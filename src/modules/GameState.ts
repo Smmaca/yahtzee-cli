@@ -2,6 +2,7 @@ import Table from "cli-table";
 import Player from "./Player";
 import { IConfig, Screen } from "../types";
 import { IDice } from "./dice/types";
+import { DiceDesign } from "../utils/diceDesigns";
 
 export default class GameState {
   config: IConfig;
@@ -13,6 +14,8 @@ export default class GameState {
 
   players: Player[];
   dice: IDice;
+
+  diceDesign: DiceDesign;
 
   constructor(config: IConfig, dice: IDice) {
     this.config = config;

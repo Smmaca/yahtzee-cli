@@ -1,14 +1,13 @@
 import GameState from "../modules/GameState";
-import { IPrompter } from "../modules/prompters/types";
+import { IChoicePreview, IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import { drawDiceValues } from "../utils/draw";
-import QuitConfirmScreen from "./QuitConfirmScreen";
-import ScoresheetScreen from "./ScoresheetScreen";
-import LockDiceScreen from "./LockDiceScreen";
-import ScoreDiceScreen from "./ScoreDiceScreen";
-import { DiceDesign } from "../modules/Settings";
+import SettingsScreen from "./SettingsScreen";
+import DiceDrawer from "../modules/DiceDrawer";
+import { DiceDesign } from "../utils/diceDesigns";
+import Settings from "../modules/Settings";
 
 export enum DiceDesignerScreenInput {
   BACK = "back",
@@ -25,53 +24,53 @@ export const choiceLabels: Record<DiceDesignerScreenInputs, string> = {
 export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScreenInputs> {
   name = Screen.GAME_ACTION;
 
-  draw() {
-    drawDiceValues([1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
-  }
+  preview: DiceDesign;
 
-  getChoices(state: GameState, config: IConfig) {
+  draw() {}
+
+  getChoices(state: GameState) {
     const choices = [];
+
+    const diceDrawer = new DiceDrawer(state.diceDesign, [1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
+    const backChoice: IChoicePreview<DiceDesignerScreenInputs> = constructChoice(DiceDesignerScreenInput.BACK, choiceLabels);
+    backChoice.preview = diceDrawer.drawDice();
+
+    choices.push(backChoice);
     
     [
       DiceDesign.CLASSIC,
+      DiceDesign.DIGITS,
     ].forEach(diceDesign => {
-      const choice = constructChoice(diceDesign, choiceLabels);
+      const choice: IChoicePreview<DiceDesignerScreenInputs> = constructChoice(diceDesign, choiceLabels);
+      diceDrawer.setDiceDesign(diceDesign);
+      choice.preview = diceDrawer.drawDice();
       if (state.diceDesign === diceDesign) {
-        choice.hint = "[Current]"
+        choice.hint = "[Current]";
       }
+      choices.push(choice);
     });
-
-    choices.push(constructChoice(DiceDesignerScreenInput.BACK, choiceLabels));
+    
     return choices;
   }
 
   getInput(prompter: IPrompter, state: GameState, config: IConfig) {
-    return prompter.getInputFromSelect<DiceDesignerScreenInputs>({
+    return prompter.getInputFromPreviewSelect<DiceDesignerScreenInputs>({
       name: this.name,
       message: config.messages.diceDesignerPrompt,
-      choices: this.getChoices(state, config),
+      choices: this.getChoices(state),
     });
   }
 
-  handleInput(input: any, state: GameState) {
-    switch(input) {
-      case DiceDesignerScreenInput.ROLL_DICE:
-      case DiceDesignerScreenInput.ROLL_AGAIN:
-        state.dice.roll();
-        state.incrementRollNumber();
-        return this;
-      case DiceDesignerScreenInput.LOCK_DICE:
-        return new LockDiceScreen();
-      case DiceDesignerScreenInput.SEE_SCORESHEET:
-        return new ScoresheetScreen();
-      case DiceDesignerScreenInput.SCORE_DICE:
-        return new ScoreDiceScreen();
-      case DiceDesignerScreenInput.QUIT_TO_MAIN_MENU:
-        return new QuitConfirmScreen({ previousScreen: this, softQuit: true });
-      case DiceDesignerScreenInput.QUIT:
-        return new QuitConfirmScreen({ previousScreen: this });
-      default:
-        return this;
+  handleInput(input: DiceDesignerScreenInputs, state: GameState, config: IConfig) {
+    if (input === DiceDesignerScreenInput.BACK) {
+      return new SettingsScreen();
     }
+
+    // Set new dice design
+    const settingsModule = new Settings(config);
+    state.diceDesign = input;
+    settingsModule.saveSettings({ diceDesign: input });
+
+    return this;
   }
 }

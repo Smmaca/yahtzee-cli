@@ -21,6 +21,7 @@ const config: IConfig = {
     quitToMainMenuConfirmPrompt: "Are you sure you want to quit to main menu?",
     gameOverPrompt: "Game over!",
     diceDesignerPrompt: "Choose a dice design",
+    settingsPrompt: "Settings",
   },
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: 25,
