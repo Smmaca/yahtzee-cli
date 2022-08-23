@@ -70,6 +70,6 @@ export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScree
     state.diceDesign = input;
     settingsModule.saveSettings({ diceDesign: input });
 
-    return this;
+    return new SettingsScreen();
   }
 }
