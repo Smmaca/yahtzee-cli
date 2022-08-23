@@ -17,6 +17,14 @@ type DiceDesignerScreenInputs = DiceDesign | DiceDesignerScreenInput;
 export const choiceLabels: Record<DiceDesignerScreenInputs, string> = {
   [DiceDesign.CLASSIC]: "Classic",
   [DiceDesign.DIGITS]: "Digits",
+  [DiceDesign.PALMS]: "Palms",
+  [DiceDesign.WORDY]: "Wordy",
+  [DiceDesign.VOID]: "Void",
+  [DiceDesign.ROMAN]: "Roman",
+  [DiceDesign.TWINKLE]: "Twinkle",
+  [DiceDesign.MONEYMAKER]: "Moneymaker",
+  [DiceDesign.RIDDLER]: "Riddler",
+  [DiceDesign.SYMBOLS]: "@#$%&!",
   [DiceDesignerScreenInput.BACK]: "Back",
 };
 
