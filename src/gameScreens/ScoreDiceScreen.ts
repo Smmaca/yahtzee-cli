@@ -4,13 +4,14 @@ import { IConfig, Screen, YahtzeeScoreCategory } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import DiceScorer from "../modules/DiceScorer";
-import { drawDiceValues, drawTurnStats } from "../utils/draw";
+import { drawTurnStats } from "../utils/draw";
 import ScoresheetScreen from "./ScoresheetScreen";
 import { scoreLabels } from "../modules/Scoresheet";
 import GameActionScreen from "./GameActionScreen";
 import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 import Statistics from "../modules/Statistics";
+import DiceDrawer from "../modules/DiceDrawer";
 
 export enum ScoreDiceScreenInput {
   CANCEL = "cancel",
@@ -69,7 +70,8 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    drawDiceValues(state.dice.values, state.dice.lock);
+    const diceDrawer = new DiceDrawer(state.diceDesign, state.dice.values, state.dice.lock);
+    diceDrawer.renderDice();
   }
 
   getScoreDiceChoices(state: GameState, config: IConfig) {

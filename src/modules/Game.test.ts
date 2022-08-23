@@ -6,15 +6,18 @@ import GameState from "./GameState";
 import Statistics from "./Statistics";
 import MainMenuScreen from "../gameScreens/MainMenuScreen";
 import mockDice from "../testUtils/MockDice";
+import Settings from "./Settings";
 
 jest.mock("util");
 jest.mock("./GameState");
 jest.mock("./Statistics");
+jest.mock("./Settings");
 jest.mock("../gameScreens/MainMenuScreen");
 
 const mockUtil = util as jest.Mocked<typeof util>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;
 const MockStatistics = Statistics as jest.MockedClass<typeof Statistics>;
+const MockSettings = Settings as jest.MockedClass<typeof Settings>;
 const MockMainMenuScreen = MainMenuScreen as jest.MockedClass<typeof MainMenuScreen>;
 
 describe("Game", () => {
@@ -28,14 +31,20 @@ describe("Game", () => {
   describe("init", () => {
     beforeEach(() => {
       MockGameState.mockClear();
+      MockStatistics.mockClear();
+      MockSettings.mockClear();
     });
 
-    test("sets up the stats module", async () => {
+    test("sets up the stats and settings modules", async () => {
       const game = new Game(mockConfig, new MockPrompter(), mockDice);
       game.init();
       expect(MockStatistics).toHaveBeenCalledOnce();
       const mockstatistics = MockStatistics.mock.instances[0];
       expect(mockstatistics.setup).toHaveBeenCalledOnce();
+      expect(MockSettings).toHaveBeenCalledOnce();
+      const mockSettings = MockSettings.mock.instances[0];
+      expect(mockSettings.setup).toHaveBeenCalledOnce();
+      expect(mockSettings.loadSettings).toHaveBeenCalledWith(MockGameState.mock.instances[0]);
     });
   });
 

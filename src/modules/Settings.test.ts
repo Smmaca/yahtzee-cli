@@ -1,6 +1,7 @@
 import mockConfig from "../testUtils/MockConfig";
-import Settings, { defaultSettingsData, DiceDesign } from "./Settings";
+import Settings, { defaultSettingsData } from "./Settings";
 import DataLoader from "./DataLoader";
+import { DiceDesign } from "../utils/diceDesigns";
 
 jest.mock("./DataLoader");
 

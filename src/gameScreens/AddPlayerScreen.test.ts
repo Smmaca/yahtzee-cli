@@ -22,7 +22,6 @@ describe("AddPlayerScreen", () => {
     mockClear.mockClear();
     mockDrawUtils.drawTitle.mockClear();
     mockDrawUtils.drawTurnStats.mockClear();
-    mockDrawUtils.drawDiceValues.mockClear();
     mockGameState.addPlayer.mockClear();
     MockNewMultiplayerGameScreen.mockClear();
   });

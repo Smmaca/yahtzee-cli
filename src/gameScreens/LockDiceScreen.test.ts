@@ -8,15 +8,18 @@ import GameActionScreen from "./GameActionScreen";
 import DiceScorer from "../modules/DiceScorer";
 import mockDice from "../testUtils/MockDice";
 import { Screen } from "../types";
+import DiceDrawer from "../modules/DiceDrawer";
 
 jest.mock("clear");
 jest.mock("../utils/draw");
 jest.mock("../modules/DiceScorer");
+jest.mock("../modules/DiceDrawer");
 jest.mock("./GameActionScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockDiceScorer = DiceScorer as jest.MockedClass<typeof DiceScorer>;
+const MockDiceDrawer = DiceDrawer as jest.MockedClass<typeof DiceDrawer>;
 const MockGameActionScreen = GameActionScreen as jest.MockedClass<typeof GameActionScreen>;
 
 describe("LockDiceScreen", () => {
@@ -74,16 +77,17 @@ describe("LockDiceScreen", () => {
   describe("draw", () => {
     beforeEach(() => {
       MockDiceScorer.mockClear();
+      MockDiceDrawer.mockClear();
       mockDrawUtils.drawTurnStats.mockClear();
-      mockDrawUtils.drawDiceValues.mockClear();
     });
 
     test("draws turn stats and dice", () => {
       const screen = new LockDiceScreen();
       screen.draw(mockGameState, mockConfig);
       expect(MockDiceScorer).toHaveBeenCalledWith(mockGameState.dice.values, mockConfig);
+      expect(MockDiceDrawer).toHaveBeenCalledWith(mockGameState.diceDesign, mockGameState.dice.values, mockGameState.dice.lock);
       expect(drawUtils.drawTurnStats).toHaveBeenCalledTimes(1);
-      expect(drawUtils.drawDiceValues).toHaveBeenCalledTimes(1);
+      expect(MockDiceDrawer.mock.instances[0].renderDice).toHaveBeenCalledTimes(1);
     });
   });
 

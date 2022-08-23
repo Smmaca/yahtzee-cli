@@ -96,6 +96,7 @@ describe("MainMenuScreen", () => {
       expect(choices).toEqual([
         constructChoice(MainMenuScreenInput.NEW_GAME, choiceLabels),
         constructChoice(MainMenuScreenInput.STATISTICS, choiceLabels),
+        constructChoice(MainMenuScreenInput.SETTINGS, choiceLabels),
         constructChoice(MainMenuScreenInput.QUIT, choiceLabels),
       ]);
     });

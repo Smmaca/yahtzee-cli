@@ -52,6 +52,10 @@ export default class DiceDrawer {
 
     return drawing;
   }
+
+  renderDice(): void {
+    console.log(this.drawDice());
+  }
 }
 
 /* Classic

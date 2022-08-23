@@ -3,7 +3,6 @@ import { IChoicePreview, IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
-import { drawDiceValues } from "../utils/draw";
 import SettingsScreen from "./SettingsScreen";
 import DiceDrawer from "../modules/DiceDrawer";
 import { DiceDesign } from "../utils/diceDesigns";
