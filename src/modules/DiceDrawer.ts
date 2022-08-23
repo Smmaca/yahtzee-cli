@@ -45,9 +45,7 @@ export default class DiceDrawer {
           drawing += this.drawDiceLock(j);
         }
       }
-      if (i < 5) {
-        drawing += "\n";
-      }
+      drawing += "\n";
     }
 
     return drawing;
