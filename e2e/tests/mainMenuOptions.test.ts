@@ -8,6 +8,8 @@ import { NewGameScreenInput } from "../../src/gameScreens/NewGameScreen";
 import { Screen } from "../../src/types";
 import { DiceDesign } from "../../src/utils/diceDesigns";
 import { SettingsScreenInput } from "../../src/gameScreens/SettingsScreen";
+import Statistics from "../../src/modules/Statistics";
+import Settings from "../../src/modules/Settings";
 
 describe("Main menu options", () => {
   test("quit, cancel, then actually quit from main menu", async () => {
@@ -70,6 +72,10 @@ describe("Main menu options", () => {
       Screen.MAIN_MENU,
       Screen.QUIT_CONFIRM,
     ]);
+
+    const statsModule = new Statistics(testConfig);
+    const stats = statsModule.getGameStatistics();
+    expect(stats.gamesPlayed).toBe(0);
   });
 
   test("go to settings and change dice design", async () => {
@@ -96,6 +102,10 @@ describe("Main menu options", () => {
     ]);
 
     expect(endGameState.diceDesign).toBe(DiceDesign.DIGITS);
+
+    const settingsModule = new Settings(testConfig);
+    const settings = settingsModule.getSettings();
+    expect(settings.diceDesign).toBe(DiceDesign.DIGITS);
   });
 
   test("start a new game and then cancel", async () => {
