@@ -2,17 +2,20 @@ import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import Confirm from "enquirer/lib/prompts/Confirm";
 import Select from "enquirer/lib/prompts/Select";
 import Input from "enquirer/lib/prompts/Input";
+import PreviewSelect from "../../../customPrompts/PreviewSelect";
 import CLIPrompter from "../CLIPrompter";
 
 jest.mock("enquirer/lib/prompts/MultiSelect");
 jest.mock("enquirer/lib/prompts/Confirm");
 jest.mock("enquirer/lib/prompts/Select");
 jest.mock("enquirer/lib/prompts/Input");
+jest.mock("../../../customPrompts/PreviewSelect");
 
 const MockMultiSelect = MultiSelect as jest.MockedClass<MultiSelect>;
 const MockConfirm = Confirm as jest.MockedClass<Confirm>;
 const MockSelect = Select as jest.MockedClass<Select>;
 const MockInput = Input as jest.MockedClass<Input>;
+const MockPreviewSelect = PreviewSelect as jest.MockedClass<PreviewSelect>;
 
 describe("CLIPrompter", () => {
   beforeEach(() => {
@@ -71,6 +74,26 @@ describe("CLIPrompter", () => {
       choices: [],
     });
     expect(MockSelect.mock.instances[0].run).toHaveBeenCalledTimes(1);
+    expect(result).toBe("answer");
+  });
+
+  test("gets preview select input", async () => {
+    const prompter = new CLIPrompter();
+
+    MockPreviewSelect.prototype.run.mockImplementation(() => "answer");
+
+    const result = await prompter.getInputFromPreviewSelect({
+      name: "input",
+      message: "message",
+      choices: [],
+    });
+
+    expect(MockPreviewSelect).toHaveBeenCalledWith({
+      name: "input",
+      message: "message",
+      choices: [],
+    });
+    expect(MockPreviewSelect.mock.instances[0].run).toHaveBeenCalledTimes(1);
     expect(result).toBe("answer");
   });
 
