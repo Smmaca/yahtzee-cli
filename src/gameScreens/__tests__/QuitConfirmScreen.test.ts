@@ -54,8 +54,8 @@ describe("QuitConfirmScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new QuitConfirmScreen({ previousScreen: new GameActionScreen() });
-      await addPlayerScreen.run({
+      const screen = new QuitConfirmScreen({ previousScreen: new GameActionScreen() });
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

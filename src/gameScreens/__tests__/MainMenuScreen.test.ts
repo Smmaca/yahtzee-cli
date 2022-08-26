@@ -60,8 +60,8 @@ describe("MainMenuScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new MainMenuScreen();
-      await addPlayerScreen.run({
+      const screen = new MainMenuScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

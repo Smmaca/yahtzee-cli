@@ -60,8 +60,8 @@ describe("LockDiceScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new LockDiceScreen();
-      await addPlayerScreen.run({
+      const screen = new LockDiceScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

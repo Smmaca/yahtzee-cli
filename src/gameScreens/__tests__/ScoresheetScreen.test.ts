@@ -61,8 +61,8 @@ describe("ScoresheetScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new ScoresheetScreen();
-      await addPlayerScreen.run({
+      const screen = new ScoresheetScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

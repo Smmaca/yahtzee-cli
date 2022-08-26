@@ -58,8 +58,8 @@ describe("GameOverMultiplayerScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new GameOverMultiplayerScreen();
-      await addPlayerScreen.run({
+      const screen = new GameOverMultiplayerScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

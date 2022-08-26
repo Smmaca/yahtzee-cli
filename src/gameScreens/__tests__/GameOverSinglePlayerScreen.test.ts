@@ -57,8 +57,8 @@ describe("GameOverSinglePlayerScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new GameOverSinglePlayerScreen();
-      await addPlayerScreen.run({
+      const screen = new GameOverSinglePlayerScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

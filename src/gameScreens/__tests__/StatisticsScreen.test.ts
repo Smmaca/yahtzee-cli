@@ -57,8 +57,8 @@ describe("StatisticsScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new StatisticsScreen();
-      await addPlayerScreen.run({
+      const screen = new StatisticsScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

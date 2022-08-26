@@ -75,8 +75,8 @@ describe("ScoreDiceScreen", () => {
     test("runs correctly", async () => {
       const mockPrompter = new MockPrompter();
 
-      const addPlayerScreen = new ScoreDiceScreen();
-      await addPlayerScreen.run({
+      const screen = new ScoreDiceScreen();
+      await screen.run({
         config: mockConfig,
         prompter: mockPrompter,
         state: mockGameState,

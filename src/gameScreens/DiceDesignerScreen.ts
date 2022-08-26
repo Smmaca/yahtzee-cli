@@ -69,6 +69,10 @@ export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScree
   }
 
   handleInput(input: DiceDesignerScreenInputs, state: GameState, config: IConfig) {
+    if (!input) {
+      return this;
+    }
+    
     if (input === DiceDesignerScreenInput.BACK) {
       return new SettingsScreen();
     }
