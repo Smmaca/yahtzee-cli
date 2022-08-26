@@ -12,10 +12,10 @@ import mockPlayer from "../../testUtils/MockPlayer";
 import { Screen } from "../../types";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("./AddPlayerScreen");
-jest.mock("./GameActionScreen");
-jest.mock("./NewGameScreen");
+jest.mock("../../utils/draw");
+jest.mock("../AddPlayerScreen");
+jest.mock("../GameActionScreen");
+jest.mock("../NewGameScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

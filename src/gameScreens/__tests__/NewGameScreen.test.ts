@@ -11,10 +11,10 @@ import MainMenuScreen from "../MainMenuScreen";
 import { Screen } from "../../types";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("./GameActionScreen");
-jest.mock("./NewMultiplayerGameScreen");
-jest.mock("./MainMenuScreen");
+jest.mock("../../utils/draw");
+jest.mock("../GameActionScreen");
+jest.mock("../NewMultiplayerGameScreen");
+jest.mock("../MainMenuScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

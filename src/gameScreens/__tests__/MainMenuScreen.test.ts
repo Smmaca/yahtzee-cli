@@ -11,10 +11,10 @@ import QuitConfirmScreen from "../QuitConfirmScreen";
 import { Screen } from "../../types";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("./NewGameScreen");
-jest.mock("./StatisticsScreen");
-jest.mock("./QuitConfirmScreen");
+jest.mock("../../utils/draw");
+jest.mock("../NewGameScreen");
+jest.mock("../StatisticsScreen");
+jest.mock("../QuitConfirmScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

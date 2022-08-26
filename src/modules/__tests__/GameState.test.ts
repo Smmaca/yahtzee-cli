@@ -4,7 +4,7 @@ import { Screen } from "../../types";
 import GameState from "../GameState";
 import Player from "../Player";
 
-jest.mock("./Player");
+jest.mock("../Player");
 
 const MockPlayer = Player as jest.MockedClass<typeof Player>;
 

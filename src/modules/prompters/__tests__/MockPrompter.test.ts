@@ -1,4 +1,4 @@
-import MockPrompter from "./MockPrompter";
+import MockPrompter from "../MockPrompter";
 
 describe("MockPrompter", () => {
   test("gets input - no mock answer", async () => {

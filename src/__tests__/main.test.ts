@@ -5,8 +5,8 @@ import mockConfig from "../testUtils/MockConfig";
 import MockPrompter from "../modules/prompters/MockPrompter";
 import mockDice from "../testUtils/MockDice";
 
-jest.mock("./modules/Game");
-jest.mock("./gameScreens/MainMenuScreen");
+jest.mock("../modules/Game");
+jest.mock("../gameScreens/MainMenuScreen");
 
 const MockGame = Game as jest.MockedClass<typeof Game>;
 const MockMainMenuScreen = MainMenuScreen as jest.MockedClass<typeof MainMenuScreen>;

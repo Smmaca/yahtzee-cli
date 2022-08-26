@@ -11,9 +11,9 @@ import GameActionScreen from "../GameActionScreen";
 import { Screen } from "../../types";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("./GameActionScreen");
-jest.mock("./QuitConfirmScreen");
+jest.mock("../../utils/draw");
+jest.mock("../GameActionScreen");
+jest.mock("../QuitConfirmScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

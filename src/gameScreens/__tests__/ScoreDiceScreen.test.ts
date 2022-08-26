@@ -18,14 +18,14 @@ import Statistics from "../../modules/Statistics";
 import DiceDrawer from "../../modules/DiceDrawer";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("../modules/DiceScorer");
-jest.mock("../modules/DiceDrawer");
-jest.mock("../modules/Statistics");
-jest.mock("./GameActionScreen");
-jest.mock("./ScoresheetScreen");
-jest.mock("./GameOverSinglePlayerScreen");
-jest.mock("./GameOverMultiplayerScreen");
+jest.mock("../../utils/draw");
+jest.mock("../../modules/DiceScorer");
+jest.mock("../../modules/DiceDrawer");
+jest.mock("../../modules/Statistics");
+jest.mock("../GameActionScreen");
+jest.mock("../ScoresheetScreen");
+jest.mock("../GameOverSinglePlayerScreen");
+jest.mock("../GameOverMultiplayerScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

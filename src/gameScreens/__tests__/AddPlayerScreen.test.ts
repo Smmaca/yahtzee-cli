@@ -8,8 +8,8 @@ import * as drawUtils from "../../utils/draw";
 import { Screen } from "../../types";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("./NewMultiplayerGameScreen");
+jest.mock("../../utils/draw");
+jest.mock("../NewMultiplayerGameScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

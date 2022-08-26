@@ -15,13 +15,13 @@ import { Screen } from "../../types";
 import DiceDrawer from "../../modules/DiceDrawer";
 
 jest.mock("clear");
-jest.mock("../utils/draw");
-jest.mock("../modules/DiceScorer");
-jest.mock("../modules/DiceDrawer");
-jest.mock("./LockDiceScreen");
-jest.mock("./ScoresheetScreen");
-jest.mock("./ScoreDiceScreen");
-jest.mock("./QuitConfirmScreen");
+jest.mock("../../utils/draw");
+jest.mock("../../modules/DiceScorer");
+jest.mock("../../modules/DiceDrawer");
+jest.mock("../LockDiceScreen");
+jest.mock("../ScoresheetScreen");
+jest.mock("../ScoreDiceScreen");
+jest.mock("../QuitConfirmScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;

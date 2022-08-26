@@ -9,10 +9,10 @@ import mockDice from "../../testUtils/MockDice";
 import Settings from "../Settings";
 
 jest.mock("util");
-jest.mock("./GameState");
-jest.mock("./Statistics");
-jest.mock("./Settings");
-jest.mock("../gameScreens/MainMenuScreen");
+jest.mock("../GameState");
+jest.mock("../Statistics");
+jest.mock("../Settings");
+jest.mock("../../gameScreens/MainMenuScreen");
 
 const mockUtil = util as jest.Mocked<typeof util>;
 const MockGameState = GameState as jest.MockedClass<typeof GameState>;

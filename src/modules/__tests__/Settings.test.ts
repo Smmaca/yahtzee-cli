@@ -3,7 +3,7 @@ import Settings, { defaultSettingsData } from "../Settings";
 import DataLoader from "../DataLoader";
 import { DiceDesign } from "../../utils/diceDesigns";
 
-jest.mock("./DataLoader");
+jest.mock("../DataLoader");
 
 const MockDataLoader = DataLoader as jest.MockedClass<typeof DataLoader>;
 

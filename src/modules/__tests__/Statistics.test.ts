@@ -2,7 +2,7 @@ import mockConfig from "../../testUtils/MockConfig";
 import Statistics, { defaultStatsData } from "../Statistics";
 import DataLoader from "../DataLoader";
 
-jest.mock("./DataLoader");
+jest.mock("../DataLoader");
 
 const MockDataLoader = DataLoader as jest.MockedClass<typeof DataLoader>;
 
