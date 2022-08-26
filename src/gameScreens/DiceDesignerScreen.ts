@@ -38,9 +38,9 @@ export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScree
   getChoices(state: GameState) {
     const choices = [];
 
-    const diceDrawer = new DiceDrawer(state.diceDesign, [1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
+    const diceDrawer = new DiceDrawer([1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
     const backChoice: IChoicePreview<DiceDesignerScreenInputs> = constructChoice(DiceDesignerScreenInput.BACK, choiceLabels);
-    backChoice.preview = diceDrawer.drawDice();
+    backChoice.preview = diceDrawer.drawDice(state.diceDesign);
 
     choices.push(backChoice);
     
@@ -49,8 +49,7 @@ export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScree
       DiceDesign.DIGITS,
     ].forEach(diceDesign => {
       const choice: IChoicePreview<DiceDesignerScreenInputs> = constructChoice(diceDesign, choiceLabels);
-      diceDrawer.setDiceDesign(diceDesign);
-      choice.preview = diceDrawer.drawDice();
+      choice.preview = diceDrawer.drawDice(diceDesign);
       if (state.diceDesign === diceDesign) {
         choice.hint = "[Current]";
       }

@@ -70,8 +70,8 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    const diceDrawer = new DiceDrawer(state.diceDesign, state.dice.values, state.dice.lock);
-    diceDrawer.renderDice();
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
   }
 
   getScoreDiceChoices(state: GameState, config: IConfig) {

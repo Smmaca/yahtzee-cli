@@ -85,9 +85,9 @@ describe("LockDiceScreen", () => {
       const screen = new LockDiceScreen();
       screen.draw(mockGameState, mockConfig);
       expect(MockDiceScorer).toHaveBeenCalledWith(mockGameState.dice.values, mockConfig);
-      expect(MockDiceDrawer).toHaveBeenCalledWith(mockGameState.diceDesign, mockGameState.dice.values, mockGameState.dice.lock);
+      expect(MockDiceDrawer).toHaveBeenCalledWith(mockGameState.dice.values, mockGameState.dice.lock);
       expect(drawUtils.drawTurnStats).toHaveBeenCalledTimes(1);
-      expect(MockDiceDrawer.mock.instances[0].renderDice).toHaveBeenCalledTimes(1);
+      expect(MockDiceDrawer.mock.instances[0].renderDice).toHaveBeenCalledWith(mockGameState.diceDesign);
     });
   });
 

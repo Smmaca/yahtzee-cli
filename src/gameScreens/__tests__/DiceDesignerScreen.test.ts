@@ -92,13 +92,12 @@ describe("DiceDesignerScreen", () => {
       const screen = new DiceDesignerScreen();
       const choices = screen.getChoices(mockGameState);
 
-      const diceDrawerClassic = new DiceDrawer(DiceDesign.CLASSIC, [1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
-      const diceDrawerDigits = new DiceDrawer(DiceDesign.DIGITS, [1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
+      const diceDrawer = new DiceDrawer([1, 2, 3, 4, 5, 6], [false, false, false, false, false, false]);
 
       expect(choices).toEqual([
-        { ...constructChoice(DiceDesignerScreenInput.BACK, choiceLabels), preview: diceDrawerClassic.drawDice() },
-        { ...constructChoice(DiceDesign.CLASSIC, choiceLabels), preview: diceDrawerClassic.drawDice(), hint: "[Current]" },
-        { ...constructChoice(DiceDesign.DIGITS, choiceLabels), preview: diceDrawerDigits.drawDice() },
+        { ...constructChoice(DiceDesignerScreenInput.BACK, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.CLASSIC) },
+        { ...constructChoice(DiceDesign.CLASSIC, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.CLASSIC), hint: "[Current]" },
+        { ...constructChoice(DiceDesign.DIGITS, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.DIGITS) },
       ]);
     });
   });

@@ -19,8 +19,8 @@ export default class LockDiceScreen extends BaseGameScreen<Record<string, number
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    const diceDrawer = new DiceDrawer(state.diceDesign, state.dice.values, state.dice.lock);
-    diceDrawer.renderDice();
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
   }
 
   getChoices(state: GameState): IChoice<string, number>[] {

@@ -28,8 +28,8 @@ export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInp
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    const diceDrawer = new DiceDrawer(state.diceDesign, state.dice.values, state.dice.lock);
-    diceDrawer.renderDice();
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
     player.renderScoresheet();
   }
 

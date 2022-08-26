@@ -5,11 +5,19 @@ jest.mock("figlet");
 
 const mockFiglet = figlet as jest.Mocked<typeof figlet>;
 
-const log = jest.spyOn(console, "log").mockImplementation(() => {});
-
 describe("drawTitle", () => {
+  let logSpy: jest.SpiedFunction<typeof console.log>;
+
+  beforeAll(() => {
+    logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+  });
+
   beforeEach(() => {
-    log.mockClear();
+    logSpy.mockClear();
+  });
+
+  afterAll(() => {
+    logSpy.mockRestore();
   });
 
   test("draws the title", () => {
@@ -17,24 +25,34 @@ describe("drawTitle", () => {
 
     drawTitle();
 
-    expect(log).toHaveBeenCalledWith("Yahtzee!");
+    expect(logSpy).toHaveBeenCalledWith("Yahtzee!");
   });
 });
 
 describe("drawTurnStats", () => {
+  let logSpy: jest.SpiedFunction<typeof console.log>;
+
+  beforeAll(() => {
+    logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+  });
+
   beforeEach(() => {
-    log.mockClear();
+    logSpy.mockClear();
+  });
+
+  afterAll(() => {
+    logSpy.mockRestore();
   });
 
   test("draws turn stats", () => {
     drawTurnStats("player", 1, 3);
 
-    expect(log).toHaveBeenCalledWith("Player: player     Turn: 2     Rolls left: 3     ");
+    expect(logSpy).toHaveBeenCalledWith("Player: player     Turn: 2     Rolls left: 3     ");
   });
 
   test("draws turn stats with yahtzee", () => {
     drawTurnStats("player", 1, 3, true);
 
-    expect(log).toHaveBeenCalledWith("Player: player     Turn: 2     Rolls left: 3     Yahtzee!");
+    expect(logSpy).toHaveBeenCalledWith("Player: player     Turn: 2     Rolls left: 3     Yahtzee!");
   });
 });
