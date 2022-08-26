@@ -9,17 +9,20 @@ import NewGameScreen from "../NewGameScreen";
 import StatisticsScreen from "../StatisticsScreen";
 import QuitConfirmScreen from "../QuitConfirmScreen";
 import { Screen } from "../../types";
+import SettingsScreen from "../SettingsScreen";
 
 jest.mock("clear");
 jest.mock("../../utils/draw");
 jest.mock("../NewGameScreen");
 jest.mock("../StatisticsScreen");
+jest.mock("../SettingsScreen");
 jest.mock("../QuitConfirmScreen");
 
 const mockClear = clear as jest.MockedFunction<typeof clear>;
 const mockDrawUtils = drawUtils as jest.Mocked<typeof drawUtils>;
 const MockNewGameScreen = NewGameScreen as jest.MockedClass<typeof NewGameScreen>;
 const MockStatisticsScreen = StatisticsScreen as jest.MockedClass<typeof StatisticsScreen>;
+const MockSettingsScreen = SettingsScreen as jest.MockedClass<typeof SettingsScreen>;
 const MockQuitConfirmScreen = QuitConfirmScreen as jest.MockedClass<typeof QuitConfirmScreen>;
 
 describe("MainMenuScreen", () => {
@@ -131,6 +134,7 @@ describe("MainMenuScreen", () => {
     beforeEach(() => {
       MockNewGameScreen.mockClear();
       MockStatisticsScreen.mockClear();
+      MockSettingsScreen.mockClear();
       MockQuitConfirmScreen.mockClear();
     });
 
@@ -146,6 +150,13 @@ describe("MainMenuScreen", () => {
       const nextScreen = screen.handleInput(MainMenuScreenInput.STATISTICS);
       expect(MockStatisticsScreen).toHaveBeenCalledTimes(1);
       expect(nextScreen).toBe(MockStatisticsScreen.mock.instances[0]);
+    });
+
+    test("handles selecting option: Settings", () => {
+      const screen = new MainMenuScreen();
+      const nextScreen = screen.handleInput(MainMenuScreenInput.SETTINGS);
+      expect(MockSettingsScreen).toHaveBeenCalledTimes(1);
+      expect(nextScreen).toBe(MockSettingsScreen.mock.instances[0]);
     });
 
     test("handles selecting option: Quit", () => {
