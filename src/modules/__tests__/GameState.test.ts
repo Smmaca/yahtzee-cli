@@ -1,8 +1,8 @@
-import config from "../config";
-import mockDice from "../testUtils/MockDice";
-import { Screen } from "../types";
-import GameState from "./GameState";
-import Player from "./Player";
+import config from "../../config";
+import mockDice from "../../testUtils/MockDice";
+import { Screen } from "../../types";
+import GameState from "../GameState";
+import Player from "../Player";
 
 jest.mock("./Player");
 

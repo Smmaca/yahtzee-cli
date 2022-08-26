@@ -1,14 +1,14 @@
 import clear from "clear";
-import MockPrompter from "../modules/prompters/MockPrompter";
-import mockConfig from "../testUtils/MockConfig";
-import mockGameState from "../testUtils/MockGameState";
-import * as drawUtils from "../utils/draw";
-import LockDiceScreen from "./LockDiceScreen";
-import GameActionScreen from "./GameActionScreen";
-import DiceScorer from "../modules/DiceScorer";
-import mockDice from "../testUtils/MockDice";
-import { Screen } from "../types";
-import DiceDrawer from "../modules/DiceDrawer";
+import MockPrompter from "../../modules/prompters/MockPrompter";
+import mockConfig from "../../testUtils/MockConfig";
+import mockGameState from "../../testUtils/MockGameState";
+import * as drawUtils from "../../utils/draw";
+import LockDiceScreen from "../LockDiceScreen";
+import GameActionScreen from "../GameActionScreen";
+import DiceScorer from "../../modules/DiceScorer";
+import mockDice from "../../testUtils/MockDice";
+import { Screen } from "../../types";
+import DiceDrawer from "../../modules/DiceDrawer";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

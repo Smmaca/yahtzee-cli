@@ -1,4 +1,4 @@
-import { roundToDP } from "./number";
+import { roundToDP } from "../number";
 
 describe("roundToDP", () => {
   test("it rounds to the specified decimal places", () => {

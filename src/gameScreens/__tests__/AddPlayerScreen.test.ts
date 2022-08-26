@@ -1,11 +1,11 @@
 import clear from "clear";
-import MockPrompter from "../modules/prompters/MockPrompter";
-import mockConfig from "../testUtils/MockConfig";
-import mockGameState from "../testUtils/MockGameState";
-import AddPlayerScreen from "./AddPlayerScreen";
-import NewMultiplayerGameScreen from "./NewMultiplayerGameScreen";
-import * as drawUtils from "../utils/draw";
-import { Screen } from "../types";
+import MockPrompter from "../../modules/prompters/MockPrompter";
+import mockConfig from "../../testUtils/MockConfig";
+import mockGameState from "../../testUtils/MockGameState";
+import AddPlayerScreen from "../AddPlayerScreen";
+import NewMultiplayerGameScreen from "../NewMultiplayerGameScreen";
+import * as drawUtils from "../../utils/draw";
+import { Screen } from "../../types";
 
 jest.mock("clear");
 jest.mock("../utils/draw");

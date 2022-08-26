@@ -1,9 +1,9 @@
-import Game from "./modules/Game";
-import main from "./main";
-import MainMenuScreen from "./gameScreens/MainMenuScreen";
-import mockConfig from "./testUtils/MockConfig";
-import MockPrompter from "./modules/prompters/MockPrompter";
-import mockDice from "./testUtils/MockDice";
+import Game from "../modules/Game";
+import main from "../main";
+import MainMenuScreen from "../gameScreens/MainMenuScreen";
+import mockConfig from "../testUtils/MockConfig";
+import MockPrompter from "../modules/prompters/MockPrompter";
+import mockDice from "../testUtils/MockDice";
 
 jest.mock("./modules/Game");
 jest.mock("./gameScreens/MainMenuScreen");

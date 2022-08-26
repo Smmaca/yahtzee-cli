@@ -1,4 +1,4 @@
-import Dice, { getRandomIntInclusive } from "./Dice";
+import Dice, { getRandomIntInclusive } from "../Dice";
 
 describe("getRandomIntInclusive", () => {
   test("returns random integers between 1 and 6", () => {

@@ -1,6 +1,6 @@
-import DiceScorer from "./DiceScorer";
-import config from "../config";
-import { YahtzeeScoreCategory } from "../types";
+import DiceScorer from "../DiceScorer";
+import config from "../../config";
+import { YahtzeeScoreCategory } from "../../types";
 
 const fakeConfig = {
   ...config,

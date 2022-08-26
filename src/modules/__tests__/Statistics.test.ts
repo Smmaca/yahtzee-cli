@@ -1,6 +1,6 @@
-import mockConfig from "../testUtils/MockConfig";
-import Statistics, { defaultStatsData } from "./Statistics";
-import DataLoader from "./DataLoader";
+import mockConfig from "../../testUtils/MockConfig";
+import Statistics, { defaultStatsData } from "../Statistics";
+import DataLoader from "../DataLoader";
 
 jest.mock("./DataLoader");
 

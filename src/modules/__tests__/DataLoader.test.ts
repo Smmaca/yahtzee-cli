@@ -1,5 +1,5 @@
 import fs from "fs";
-import DataLoader from "./DataLoader";
+import DataLoader from "../DataLoader";
 
 jest.mock("fs");
 

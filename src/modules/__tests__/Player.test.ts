@@ -1,6 +1,6 @@
-import Player from "./Player";
-import { YahtzeeScoreCategory } from "../types";
-import Scoresheet from "./Scoresheet";
+import Player from "../Player";
+import { YahtzeeScoreCategory } from "../../types";
+import Scoresheet from "../Scoresheet";
 
 jest.mock("./Scoresheet");
 

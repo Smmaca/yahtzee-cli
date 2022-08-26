@@ -1,4 +1,4 @@
-import { constructChoice } from "./screen";
+import { constructChoice } from "../screen";
 
 describe("constructChoice", () => {
   test("it constructs a choice", () => {

@@ -1,5 +1,5 @@
 import figlet from "figlet";
-import { drawTitle, drawTurnStats } from "./draw";
+import { drawTitle, drawTurnStats } from "../draw";
 
 jest.mock("figlet");
 

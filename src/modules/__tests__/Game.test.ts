@@ -1,12 +1,12 @@
 import util from "util";
-import Game from "./Game";
-import mockConfig from "../testUtils/MockConfig"
-import MockPrompter from "./prompters/MockPrompter";
-import GameState from "./GameState";
-import Statistics from "./Statistics";
-import MainMenuScreen from "../gameScreens/MainMenuScreen";
-import mockDice from "../testUtils/MockDice";
-import Settings from "./Settings";
+import Game from "../Game";
+import mockConfig from "../../testUtils/MockConfig"
+import MockPrompter from "../prompters/MockPrompter";
+import GameState from "../GameState";
+import Statistics from "../Statistics";
+import MainMenuScreen from "../../gameScreens/MainMenuScreen";
+import mockDice from "../../testUtils/MockDice";
+import Settings from "../Settings";
 
 jest.mock("util");
 jest.mock("./GameState");

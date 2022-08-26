@@ -1,5 +1,5 @@
-import Scoresheet from "./Scoresheet";
-import { YahtzeeScore } from "../types";
+import Scoresheet from "../Scoresheet";
+import { YahtzeeScore } from "../../types";
 
 describe("Scoresheet", () => {
   test("instantiates with score", () => {

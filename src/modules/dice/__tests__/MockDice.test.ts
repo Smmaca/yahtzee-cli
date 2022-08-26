@@ -1,4 +1,4 @@
-import MockDice from "./MockDice";
+import MockDice from "../MockDice";
 
 describe("MockDice", () => {
   test("takes the next preset roll from the list when rolling", () => {
