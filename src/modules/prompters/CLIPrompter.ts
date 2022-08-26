@@ -2,10 +2,12 @@ import MultiSelect from "enquirer/lib/prompts/MultiSelect";
 import Confirm from "enquirer/lib/prompts/Confirm";
 import Select from "enquirer/lib/prompts/Select";
 import Input from "enquirer/lib/prompts/Input";
+import PreviewSelect from "../../customPrompts/PreviewSelect";
 import {
   IConfirmParams,
   IInputParams,
   IMultiselectParams,
+  IPreviewSelectParams,
   IPrompter,
   ISelectParams,
 } from "./types";
@@ -14,20 +16,23 @@ import {
  * Prompter child class that uses enquirer to prompt the user for certain kinds of input.
  */
 export default class CLIPrompter implements IPrompter {
-  async getInput({ name, message, initial }: IInputParams): Promise<string> {
-    const prompt = new Input({ name, message, initial });
+  async getInput(params: IInputParams): Promise<string> {
+    const prompt = new Input(params);
     return prompt.run();
   }
 
-  async getInputFromConfirm({ name, message }: IConfirmParams): Promise<boolean> {
-    const prompt = new Confirm({ name, message });
+  async getInputFromConfirm(params: IConfirmParams): Promise<boolean> {
+    const prompt = new Confirm(params);
     return prompt.run();
   }
 
-  async getInputFromSelect<K extends string>(
-    { name, message, choices }: ISelectParams<K>,
-  ): Promise<K> {
-    const prompt = new Select({ name, message, choices });
+  async getInputFromSelect<K extends string>(params: ISelectParams<K>): Promise<K> {
+    const prompt = new Select(params);
+    return prompt.run();
+  }
+
+  async getInputFromPreviewSelect<K extends string, V = any>(params: IPreviewSelectParams<K, V>): Promise<K> {
+    const prompt = new PreviewSelect(params);
     return prompt.run();
   }
 

@@ -1,8 +1,9 @@
+import DiceDrawer from "../modules/DiceDrawer";
 import DiceScorer from "../modules/DiceScorer";
 import GameState from "../modules/GameState";
 import { IChoice, IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
-import { drawDiceValues, drawTurnStats } from "../utils/draw";
+import { drawTurnStats } from "../utils/draw";
 import BaseGameScreen from "./BaseGameScreen";
 import GameActionScreen from "./GameActionScreen";
 
@@ -18,7 +19,8 @@ export default class LockDiceScreen extends BaseGameScreen<Record<string, number
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    drawDiceValues(state.dice.values, state.dice.lock);
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
   }
 
   getChoices(state: GameState): IChoice<string, number>[] {

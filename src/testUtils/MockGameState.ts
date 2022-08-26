@@ -1,4 +1,5 @@
 import GameState from "../modules/GameState";
+import { DiceDesign } from "../utils/diceDesigns";
 import mockConfig from "./MockConfig";
 import mockDice from "./MockDice";
 import mockPlayer from "./MockPlayer";
@@ -11,6 +12,7 @@ const mockGameState: GameState = {
   screenHistory: [],
   players: [mockPlayer],
   dice: mockDice,
+  diceDesign: DiceDesign.CLASSIC,
   getDiceRollsLeft: jest.fn(),
   getCurrentPlayer: jest.fn(),
   initSinglePlayer: jest.fn(),

@@ -5,7 +5,8 @@ import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import GameActionScreen from "./GameActionScreen";
 import DiceScorer from "../modules/DiceScorer";
-import { drawDiceValues, drawTurnStats } from "../utils/draw";
+import { drawTurnStats } from "../utils/draw";
+import DiceDrawer from "../modules/DiceDrawer";
 
 export enum ScoresheetScreenInput {
   CONTINUE = "continue",
@@ -27,7 +28,8 @@ export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInp
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    drawDiceValues(state.dice.values, state.dice.lock);
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
     player.renderScoresheet();
   }
 

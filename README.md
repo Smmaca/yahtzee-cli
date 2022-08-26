@@ -38,7 +38,8 @@ Run `npm test`
 - [ ] User profile to save player's name and player's play history over sessions
 - [ ] Print scoresheet to file
 - [X] Settings
-  - [ ] Change dice style between pips and digits
+  - [X] Change dice design between pips and digits
+  - [ ] Unlock further dice designs
 - [ ] Achievements
   - [ ] Get the lowest possible score (5)
   - [ ] Get a yahtzee

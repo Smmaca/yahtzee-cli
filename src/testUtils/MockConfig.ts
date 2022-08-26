@@ -26,6 +26,8 @@ const mockConfig: IConfig = {
     playAgainPrompt: "play again prompt",
     quitConfirmPrompt: "quit confirm prompt",
     quitToMainMenuConfirmPrompt: "quit to main menu confirm prompt",
+    diceDesignerPrompt: "dice designer prompt",
+    settingsPrompt: "settings prompt",
   },
   dataFolder: "",
   statsFilename: "",

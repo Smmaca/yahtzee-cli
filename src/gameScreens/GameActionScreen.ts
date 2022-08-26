@@ -4,11 +4,12 @@ import { IConfig, Screen } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import DiceScorer from "../modules/DiceScorer";
-import { drawDiceValues, drawTurnStats } from "../utils/draw";
+import { drawTurnStats } from "../utils/draw";
 import QuitConfirmScreen from "./QuitConfirmScreen";
 import ScoresheetScreen from "./ScoresheetScreen";
 import LockDiceScreen from "./LockDiceScreen";
 import ScoreDiceScreen from "./ScoreDiceScreen";
+import DiceDrawer from "../modules/DiceDrawer";
 
 export enum GameActionScreenInput {
   ROLL_DICE = "rollDice",
@@ -41,7 +42,8 @@ export default class GameActionScreen extends BaseGameScreen<GameActionScreenInp
       state.getDiceRollsLeft(),
       diceScorer.scoreYahtzee() > 0,
     );
-    drawDiceValues(state.dice.values, state.dice.lock);
+    const diceDrawer = new DiceDrawer(state.dice.values, state.dice.lock);
+    diceDrawer.renderDice(state.diceDesign);
   }
 
   getChoices(state: GameState, config: IConfig) {
