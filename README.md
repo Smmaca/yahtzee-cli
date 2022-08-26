@@ -19,9 +19,10 @@ A game of Yahtzee that runs in the command line. The object of the game is to sc
 
 Run `npm i` then `npm start`
 
-## Run unit tests
+## Run tests
 
-Run `npm test`
+- Unit tests: `npm test`
+- End to end tests: `npm run e2e`
 
 ## To Do
 
