@@ -2,6 +2,7 @@ import mockConfig from "../../testUtils/MockConfig";
 import Settings, { defaultSettingsData } from "../Settings";
 import DataLoader from "../DataLoader";
 import { DiceDesign } from "../../utils/diceDesigns";
+import mockGameState from "../../testUtils/MockGameState";
 
 jest.mock("../DataLoader");
 
@@ -53,5 +54,15 @@ describe("Settings", () => {
     const settingsModule = new Settings(mockConfig);
     settingsModule.clearSettings();
     expect(MockDataLoader.prototype.setData).toHaveBeenCalledWith(defaultSettingsData);
+  });
+
+  test("loads settings", () => {
+    const settingsModule = new Settings(mockConfig);
+    const getSettingsSpy = jest.spyOn(settingsModule, "getSettings").mockImplementation(() => ({ diceDesign: DiceDesign.TWINKLE }));
+    const gameState = { ...mockGameState };
+    gameState.diceDesign = DiceDesign.CLASSIC;
+    settingsModule.loadSettings(gameState);
+    expect(getSettingsSpy).toHaveBeenCalledOnce();
+    expect(gameState.diceDesign).toBe(DiceDesign.TWINKLE);
   });
 });
