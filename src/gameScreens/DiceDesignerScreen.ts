@@ -29,7 +29,7 @@ export const choiceLabels: Record<DiceDesignerScreenInputs, string> = {
 };
 
 export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScreenInputs> {
-  name = Screen.GAME_ACTION;
+  name = Screen.DICE_DESIGNER;
 
   preview: DiceDesign;
 

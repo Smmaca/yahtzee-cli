@@ -13,6 +13,7 @@ export enum Screen {
   SCORE_DICE = "scoreDice",
   GAME_OVER_SINGLE_PLAYER = "gameOverSinglePlayer",
   GAME_OVER_MULTIPLAYER = "gameOverMultiplayer",
+  DICE_DESIGNER = "diceDesigner",
 }
 
 export enum YahtzeeScoreCategory {
