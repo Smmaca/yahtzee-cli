@@ -98,6 +98,14 @@ describe("DiceDesignerScreen", () => {
         { ...constructChoice(DiceDesignerScreenInput.BACK, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.CLASSIC) },
         { ...constructChoice(DiceDesign.CLASSIC, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.CLASSIC), hint: "[Current]" },
         { ...constructChoice(DiceDesign.DIGITS, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.DIGITS) },
+        { ...constructChoice(DiceDesign.PALMS, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.PALMS) },
+        { ...constructChoice(DiceDesign.WORDY, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.WORDY) },
+        { ...constructChoice(DiceDesign.VOID, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.VOID) },
+        { ...constructChoice(DiceDesign.ROMAN, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.ROMAN) },
+        { ...constructChoice(DiceDesign.TWINKLE, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.TWINKLE) },
+        { ...constructChoice(DiceDesign.MONEYMAKER, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.MONEYMAKER) },
+        { ...constructChoice(DiceDesign.RIDDLER, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.RIDDLER) },
+        { ...constructChoice(DiceDesign.SYMBOLS, choiceLabels), preview: diceDrawer.drawDice(DiceDesign.SYMBOLS) },
       ]);
     });
   });

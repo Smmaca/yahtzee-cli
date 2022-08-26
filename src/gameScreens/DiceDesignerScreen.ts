@@ -47,6 +47,14 @@ export default class DiceDesignerScreen extends BaseGameScreen<DiceDesignerScree
     [
       DiceDesign.CLASSIC,
       DiceDesign.DIGITS,
+      DiceDesign.PALMS,
+      DiceDesign.WORDY,
+      DiceDesign.VOID,
+      DiceDesign.ROMAN,
+      DiceDesign.TWINKLE,
+      DiceDesign.MONEYMAKER,
+      DiceDesign.RIDDLER,
+      DiceDesign.SYMBOLS,
     ].forEach(diceDesign => {
       const choice: IChoicePreview<DiceDesignerScreenInputs> = constructChoice(diceDesign, choiceLabels);
       choice.preview = diceDrawer.drawDice(diceDesign);
