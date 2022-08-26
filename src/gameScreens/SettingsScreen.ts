@@ -1,6 +1,5 @@
 import GameState from "../modules/GameState";
 import { IChoice, IPrompter } from "../modules/prompters/types";
-import Settings from "../modules/Settings";
 import { IConfig, Screen } from "../types";
 import { constructChoice } from "../utils/screen";
 import BaseGameScreen from "./BaseGameScreen";
@@ -23,11 +22,12 @@ export default class SettingsScreen extends BaseGameScreen<SettingsScreenInput> 
   draw() {}
 
   getChoices(state: GameState): IChoice<SettingsScreenInput, SettingsScreenInput>[] {
-    const choices = [];
+    const choices = [constructChoice(SettingsScreenInput.BACK, choiceLabels)];
+
     const diceDesignChoice = constructChoice(SettingsScreenInput.DICE_DESIGN, choiceLabels);
     diceDesignChoice.hint = `[${state.diceDesign}]`
     choices.push(diceDesignChoice);
-    choices.push(constructChoice(SettingsScreenInput.BACK, choiceLabels));
+    
     return choices;
   }
 
