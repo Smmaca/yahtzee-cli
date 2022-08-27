@@ -1,4 +1,4 @@
-import { IConfig, YahtzeeScoreCategory } from "./types";
+import { Achievement, IConfig, YahtzeeScoreCategory } from "./types";
 
 const config: IConfig = {
   debug: true,
@@ -22,6 +22,64 @@ const config: IConfig = {
     gameOverPrompt: "Game over!",
     diceDesignerPrompt: "Choose a dice design",
     settingsPrompt: "Settings",
+  },
+  achievements: {
+    [Achievement.UNDER_ACHIEVER]: {
+      label: "Under-Achiever",
+      description: "Get the lowest possible score",
+    },
+    [Achievement.YAHTZEE]: {
+      label: "Yahtzee!",
+      description: "Get a yahtzee",
+    },
+    [Achievement.JOKER]: {
+      label: "Joker",
+      description: "Get two yahtzees in a single game",
+    },
+    [Achievement.TRIPLE_THREAT]: {
+      label: "Triple Threat",
+      description: "Get three yahtzees in a single game",
+    },
+    [Achievement.ON_TOP]: {
+      label: "On Top",
+      description: "Get the upper section bonus",
+    },
+    [Achievement.BRONZE]: {
+      label: "Bronze",
+      description: "Get a score over 250",
+    },
+    [Achievement.SILVER]: {
+      label: "Silver",
+      description: "Get a score over 300",
+    },
+    [Achievement.GOLD]: {
+      label: "Gold",
+      description: "Get a score over 400",
+    },
+    [Achievement.PLATINUM]: {
+      label: "Platinum",
+      description: "Get a score over 500",
+    },
+    [Achievement.DIAMOND]: {
+      label: "Diamond",
+      description: "Get a score over 600",
+    },
+    [Achievement.MASTER]: {
+      label: "Master",
+      description: "Get a score over 700",
+    },
+    [Achievement.CONFIDENT]: {
+      label: "Confident",
+      description: "Get a score over 250 without rerolling",
+    },
+    [Achievement.LUCKY]: {
+      label: "Lucky",
+      description: "Score 30 points in chance",
+    },
+    [Achievement.ROLLERCOASTER]: {
+      label: "Rollercoaster",
+      description: "Score a 0 for a joker",
+    }
   },
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: 25,

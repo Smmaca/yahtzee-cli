@@ -47,10 +47,10 @@ Run `npm i` then `npm start`
   - [ ] Get two yahtzees in a single game
   - [ ] Get three yahtzees in a single game
   - [ ] Get the upper section bonus
-  - [ ] Get four of each number in the upper section
-  - [ ] Get a final score over 200
+  - [ ] Get a final score over 250
   - [ ] Get a final score over 300
   - [ ] Get a final score over 400
+  - [ ] Get a final score over 500
   - [ ] Play an entire game without rerolling
 - [X] 100% unit test coverage
 - [X] E2E tests using MockPrompter

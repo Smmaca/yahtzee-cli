@@ -67,6 +67,9 @@ export interface IConfig {
     diceDesignerPrompt: string;
     settingsPrompt: string;
   };
+  achievements: {
+    [key in Achievement]: { label: string; description: string };
+  },
   scoreValues: {
     [YahtzeeScoreCategory.FullHouse]: number;
     [YahtzeeScoreCategory.SmallStraight]: number;
@@ -77,4 +80,21 @@ export interface IConfig {
   dataFolder: string;
   statsFilename: string;
   settingsFilename: string;
+}
+
+export enum Achievement {
+  UNDER_ACHIEVER = "underAchiever", // get score of 5
+  YAHTZEE = "yahtzee", // get a yahtzee
+  JOKER = "joker", // get two yahtzees in a single game
+  TRIPLE_THREAT = "tripleThreat", // get three yahtzees in a single game
+  ON_TOP = "onTop", // get the upper section bonus
+  BRONZE = "bronze", // get a score over 250
+  SILVER = "silver", // get a score over 300
+  GOLD = "gold", // get a score over 400
+  PLATINUM = "platinum", // get a score over 500
+  DIAMOND = "diamond", // get a score over 600
+  MASTER = "master", // get a score over 700
+  CONFIDENT = "confident", // get a score over 250 without rerolling
+  LUCKY = "lucky", // score 30 points in chance
+  ROLLERCOASTER = "rollercoaster", // score a 0 for a joker
 }
