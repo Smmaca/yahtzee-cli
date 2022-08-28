@@ -2,6 +2,7 @@ import GameState from "../modules/GameState";
 import { IChoice, IPrompter } from "../modules/prompters/types";
 import { IConfig, Screen } from "../types";
 import { constructChoice } from "../utils/screen";
+import AchievementsScreen from "./AchievementsScreen";
 import BaseGameScreen from "./BaseGameScreen";
 import NewGameScreen from "./NewGameScreen";
 import QuitConfirmScreen from "./QuitConfirmScreen";
@@ -11,6 +12,7 @@ import StatisticsScreen from "./StatisticsScreen";
 export enum MainMenuScreenInput {
   NEW_GAME = "newGame",
   STATISTICS = "statistics",
+  ACHIEVEMENTS = "achievements",
   SETTINGS = "settings",
   QUIT = "quit",
 }
@@ -18,6 +20,7 @@ export enum MainMenuScreenInput {
 export const choiceLabels: Record<MainMenuScreenInput, string> = {
   [MainMenuScreenInput.NEW_GAME]: "New Game",
   [MainMenuScreenInput.STATISTICS]: "Statistics",
+  [MainMenuScreenInput.ACHIEVEMENTS]: "Achievements",
   [MainMenuScreenInput.SETTINGS]: "Settings",
   [MainMenuScreenInput.QUIT]: "Quit",
 }
@@ -31,6 +34,7 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
     return [
       constructChoice(MainMenuScreenInput.NEW_GAME, choiceLabels),
       constructChoice(MainMenuScreenInput.STATISTICS, choiceLabels),
+      constructChoice(MainMenuScreenInput.ACHIEVEMENTS, choiceLabels),
       constructChoice(MainMenuScreenInput.SETTINGS, choiceLabels),
       constructChoice(MainMenuScreenInput.QUIT, choiceLabels),
     ];
@@ -50,6 +54,8 @@ export default class MainMenuScreen extends BaseGameScreen<MainMenuScreenInput> 
         return new NewGameScreen();
       case MainMenuScreenInput.STATISTICS:
         return new StatisticsScreen();
+      case MainMenuScreenInput.ACHIEVEMENTS:
+        return new AchievementsScreen();
       case MainMenuScreenInput.SETTINGS:
         return new SettingsScreen();
       case MainMenuScreenInput.QUIT:

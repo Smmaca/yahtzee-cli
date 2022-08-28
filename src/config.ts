@@ -22,6 +22,7 @@ const config: IConfig = {
     gameOverPrompt: "Game over!",
     diceDesignerPrompt: "Choose a dice design",
     settingsPrompt: "Settings",
+    achievementsPrompt: "Achievements",
   },
   achievements: {
     [Achievement.UNDER_ACHIEVER]: {

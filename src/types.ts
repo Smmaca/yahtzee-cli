@@ -4,6 +4,7 @@ export enum Screen {
   NEW_GAME = "newGameMenu",
   QUIT_CONFIRM = "quitConfirm",
   STATISTICS = "statistics",
+  ACHIEVEMENTS = "achievements",
   SETTINGS = "settings",
   NEW_MULTIPLAYER_GAME = "newMultiplayerGame",
   ADD_PLAYER = "addPlayer",
@@ -66,6 +67,7 @@ export interface IConfig {
     gameOverPrompt: string;
     diceDesignerPrompt: string;
     settingsPrompt: string;
+    achievementsPrompt: string;
   };
   achievements: {
     [key in Achievement]: { label: string; description: string };
