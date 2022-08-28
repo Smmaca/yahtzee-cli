@@ -76,10 +76,13 @@ export interface IConfig {
     [YahtzeeScoreCategory.LargeStraight]: number;
     [YahtzeeScoreCategory.Yahtzee]: number;
     [YahtzeeScoreCategory.YahtzeeBonus]: number;
+    topSectionBonusThreshold: number;
+    topSectionBonus: number;
   };
   dataFolder: string;
   statsFilename: string;
   settingsFilename: string;
+  achievementsFilename: string;
 }
 
 export enum Achievement {
@@ -95,6 +98,6 @@ export enum Achievement {
   DIAMOND = "diamond", // get a score over 600
   MASTER = "master", // get a score over 700
   CONFIDENT = "confident", // get a score over 250 without rerolling
-  LUCKY = "lucky", // score 30 points in chance
+  FORTUNE = "fortune", // score 30 points in chance
   ROLLERCOASTER = "rollercoaster", // score a 0 for a joker
 }

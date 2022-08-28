@@ -1,6 +1,7 @@
 import Player from "../Player";
 import { YahtzeeScoreCategory } from "../../types";
 import Scoresheet from "../Scoresheet";
+import mockConfig from "../../testUtils/MockConfig";
 
 jest.mock("../Scoresheet");
 
@@ -12,7 +13,7 @@ describe("Player", () => {
   });
 
   test("creates player with name and empty score on instantiation", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Expect player to have name and empty score
     expect(player.name).toBe("test player");
@@ -35,7 +36,7 @@ describe("Player", () => {
   });
 
   test("returns json of its state", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Expect the json to be correct
     expect(player.toJSON()).toMatchObject({
@@ -60,7 +61,7 @@ describe("Player", () => {
   });
 
   test("sets score for a category", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Set the score for a category
     player.setScore(YahtzeeScoreCategory.Ones, 1);
@@ -85,7 +86,7 @@ describe("Player", () => {
   });
 
   test("resets score correctly", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Set the score for some categories
     player.setScore(YahtzeeScoreCategory.Yahtzee, 50);
@@ -117,7 +118,7 @@ describe("Player", () => {
   });
 
   test("gets total score from scoresheet", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Set the score for some categories
     player.setScore(YahtzeeScoreCategory.Yahtzee, 50);
@@ -156,7 +157,7 @@ describe("Player", () => {
   });
 
   test("is able to render a scoresheet", () => {
-    const player = new Player("test player");
+    const player = new Player(mockConfig, "test player");
 
     // Render scoresheet
     player.renderScoresheet();

@@ -1,6 +1,6 @@
 import GameState from "../modules/GameState";
 import { IPrompter } from "../modules/prompters/types";
-import { IConfig, Screen, YahtzeeScoreCategory } from "../types";
+import { Achievement, IConfig, Screen, YahtzeeScoreCategory } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import DiceScorer from "../modules/DiceScorer";
@@ -12,6 +12,7 @@ import GameOverSinglePlayerScreen from "./GameOverSinglePlayerScreen";
 import GameOverMultiplayerScreen from "./GameOverMultiplayerScreen";
 import Statistics from "../modules/Statistics";
 import DiceDrawer from "../modules/DiceDrawer";
+import Achievements from "../modules/Achievements";
 
 export enum ScoreDiceScreenInput {
   CANCEL = "cancel",
@@ -35,26 +36,29 @@ const numberCategories = [
 
 export interface IScoreDiceOptions {
   jokerMode?: boolean;
+  earnedAchievements: Achievement[];
 }
 
 export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInputs> {
   name = Screen.SCORE_DICE;
 
-  constructor(private options: IScoreDiceOptions = {}) {
+  constructor(private options: IScoreDiceOptions = { earnedAchievements: [] }) {
     super();
   }
 
-  setJokerMode(jokerMode: boolean) {
-    this.options.jokerMode = jokerMode;
-  }
-
-  getGameOverScreen(state: GameState, config: IConfig): BaseGameScreen<any> {
+  getGameOverScreen(state: GameState, config: IConfig, earnedScoreAchievements: Achievement[]): BaseGameScreen<any> {
     if (state.players.length === 1) {
       state.setCurrentPlayer(0);
       const player = state.getCurrentPlayer();
+
       const statsModule = new Statistics(config);
       statsModule.saveGameStatistics({ score: player.totalScore });
-      return new GameOverSinglePlayerScreen();
+
+      const achievements = new Achievements(config);
+      const earnedAchievements = [...earnedScoreAchievements]
+        .concat(achievements.validateEndGameAchievements(state, player.score));
+
+      return new GameOverSinglePlayerScreen({ earnedAchievements });
     } else if (state.players.length > 1) {
       return new GameOverMultiplayerScreen();
     } else {
@@ -63,6 +67,11 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
   }
 
   draw(state: GameState, config: IConfig) {
+    const achievements = new Achievements(config);
+    this.options.earnedAchievements.forEach(achievement => {
+      achievements.renderAchievement(achievement);
+    });
+
     const diceScorer = new DiceScorer(state.dice.values, config);
     drawTurnStats(
       state.getCurrentPlayer()?.name,
@@ -214,6 +223,8 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
     const category = input as YahtzeeScoreCategory;
     const player = state.getCurrentPlayer();
     const diceScorer = new DiceScorer(state.dice.values, config);
+    const achievements = new Achievements(config);
+    const earnedAchievements: Achievement[] = [];
 
     if (this.options?.jokerMode) {
       if ([
@@ -222,8 +233,25 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
         YahtzeeScoreCategory.LargeStraight,
       ].includes(category)) {
         player.setScore(category, config.scoreValues[category]);
+      } else if (numberCategories.includes(category)) {
+        const score = diceScorer.scoreCategory(category);
+        player.setScore(category, score);
+
+        // Check for rollercoaster achievement (score 0 for a joker)
+        if (score === 0 && achievements.validateAchievement(Achievement.ROLLERCOASTER, state, player.score)) {
+          earnedAchievements.push(Achievement.ROLLERCOASTER);
+          achievements.saveAchievements({ [Achievement.ROLLERCOASTER]: true });
+        }
       } else if (Object.keys(scoreLabels).includes(category)) {
         player.setScore(category, diceScorer.scoreCategory(category));
+
+        // Check for fortune achievement (score 30 in chance)
+        if (category === YahtzeeScoreCategory.Chance
+          && achievements.validateAchievement(Achievement.ROLLERCOASTER, state, player.score)
+        ) {
+          earnedAchievements.push(Achievement.FORTUNE);
+          achievements.saveAchievements({ [Achievement.FORTUNE]: true });
+        }
       } else {
         return this;
       }
@@ -233,10 +261,26 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
           YahtzeeScoreCategory.YahtzeeBonus,
           player.score[YahtzeeScoreCategory.YahtzeeBonus] += diceScorer.scoreYahtzeeBonus(),
         );
-        this.setJokerMode(true);
-        return this;
+
+        // Check for joker and triple threat achievements
+        earnedAchievements.push(...achievements.validateAchievements([
+          Achievement.JOKER,
+          Achievement.TRIPLE_THREAT,
+        ], state, player.score));
+
+        return new ScoreDiceScreen({ jokerMode: true, earnedAchievements });
       } else if (Object.keys(scoreLabels).includes(category)) {
         player.setScore(category, diceScorer.scoreCategory(category));
+
+        // Check for fortune achievement (score 30 in chance)
+        if (category === YahtzeeScoreCategory.Chance) {
+          earnedAchievements.push(...achievements.validateAchievements([Achievement.FORTUNE], state, player.score));
+        }
+
+        // Check for yahtzee achievement (score yahtzee)
+        if (category === YahtzeeScoreCategory.Yahtzee) {
+          earnedAchievements.push(...achievements.validateAchievements([Achievement.YAHTZEE], state, player.score));
+        }
       } else {
         return this;
       }
@@ -245,7 +289,7 @@ export default class ScoreDiceScreen extends BaseGameScreen<ScoreDiceScreenInput
     const gameOver = state.nextPlayer(); 
 
     return gameOver
-      ? this.getGameOverScreen(state, config)
-      : new ScoresheetScreen();
+      ? this.getGameOverScreen(state, config, earnedAchievements)
+      : new ScoresheetScreen({ earnedAchievements });
   }
 }

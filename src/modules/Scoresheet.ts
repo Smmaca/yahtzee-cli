@@ -1,5 +1,5 @@
 import Table from "cli-table";
-import { YahtzeeScore, YahtzeeScoreCategory } from "../types";
+import { IConfig, YahtzeeScore, YahtzeeScoreCategory } from "../types";
 
 export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
   [YahtzeeScoreCategory.Ones]: "Aces",
@@ -19,9 +19,11 @@ export const scoreLabels: Record<YahtzeeScoreCategory, string> = {
 };
 
 export default class Scoresheet {
+  config: IConfig;
   score: YahtzeeScore;
 
-  constructor(score: YahtzeeScore) {
+  constructor(config: IConfig, score: YahtzeeScore) {
+    this.config = config;
     this.score = score;
   }
 
@@ -35,7 +37,8 @@ export default class Scoresheet {
   }
 
   scoreTopSectionBonus(topSectionScore: number) {
-    return topSectionScore >= 63 ? 35 : 0;
+    return topSectionScore >= this.config.scoreValues.topSectionBonusThreshold
+      ? this.config.scoreValues.topSectionBonus : 0;
   }
 
   scoreBottomSection() {

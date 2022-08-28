@@ -6,6 +6,7 @@ import BaseGameScreen from "../gameScreens/BaseGameScreen";
 import { IPrompter } from "./prompters/types";
 import { IDice } from "./dice/types";
 import Settings from "./Settings";
+import Achievements from "./Achievements";
 
 export default class Game {
   config: IConfig;
@@ -19,12 +20,15 @@ export default class Game {
   }
 
   init() {
-    const statsModules = new Statistics(this.config);
-    statsModules.setup();
+    const statsModule = new Statistics(this.config);
+    statsModule.setup();
 
     const settingsModule = new Settings(this.config);
     settingsModule.setup();
     settingsModule.loadSettings(this.state);
+
+    const achievementsModule = new Achievements(this.config);
+    achievementsModule.setup();
   }
 
   async loop(screen: BaseGameScreen<any>) {

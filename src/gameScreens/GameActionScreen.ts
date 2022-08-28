@@ -81,6 +81,7 @@ export default class GameActionScreen extends BaseGameScreen<GameActionScreenInp
       case GameActionScreenInput.ROLL_AGAIN:
         state.dice.roll();
         state.incrementRollNumber();
+        state.hasRerolled = true;
         return this;
       case GameActionScreenInput.LOCK_DICE:
         return new LockDiceScreen();

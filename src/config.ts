@@ -30,15 +30,15 @@ const config: IConfig = {
     },
     [Achievement.YAHTZEE]: {
       label: "Yahtzee!",
-      description: "Get a yahtzee",
+      description: "Score a yahtzee",
     },
     [Achievement.JOKER]: {
       label: "Joker",
-      description: "Get two yahtzees in a single game",
+      description: "Score two yahtzees in a single game",
     },
     [Achievement.TRIPLE_THREAT]: {
       label: "Triple Threat",
-      description: "Get three yahtzees in a single game",
+      description: "Score three yahtzees in a single game",
     },
     [Achievement.ON_TOP]: {
       label: "On Top",
@@ -72,8 +72,8 @@ const config: IConfig = {
       label: "Confident",
       description: "Get a score over 250 without rerolling",
     },
-    [Achievement.LUCKY]: {
-      label: "Lucky",
+    [Achievement.FORTUNE]: {
+      label: "Fortune",
       description: "Score 30 points in chance",
     },
     [Achievement.ROLLERCOASTER]: {
@@ -87,10 +87,13 @@ const config: IConfig = {
     [YahtzeeScoreCategory.LargeStraight]: 40,
     [YahtzeeScoreCategory.Yahtzee]: 50,
     [YahtzeeScoreCategory.YahtzeeBonus]: 100,
+    topSectionBonusThreshold: 63,
+    topSectionBonus: 35,
   },
   dataFolder: "data",
   statsFilename: "stats.json",
   settingsFilename: "settings.json",
+  achievementsFilename: "achievements.json",
 };
 
 export default config;

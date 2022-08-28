@@ -15,6 +15,8 @@ export default class GameState {
   players: Player[];
   dice: IDice;
 
+  hasRerolled: boolean;
+
   diceDesign: DiceDesign;
 
   constructor(config: IConfig, dice: IDice) {
@@ -42,7 +44,7 @@ export default class GameState {
   }
 
   addPlayer(name: string) {
-    this.players.push(new Player(name));
+    this.players.push(new Player(this.config, name));
   }
 
   nextPlayer(): boolean {
@@ -135,6 +137,8 @@ export default class GameState {
       screenHistory: this.screenHistory,
       players: this.players.map(player => player.toJSON()),
       dice: this.dice.toJSON(),
+      diceDesign: this.diceDesign,
+      hasRerolled: this.hasRerolled,
     };
   }
 }

@@ -7,6 +7,7 @@ const mockConfig: IConfig = {
   dataFolder: "",
   statsFilename: "",
   settingsFilename: "",
+  achievementsFilename: "",
 };
 
 export default mockConfig as jest.Mocked<typeof mockConfig>;

@@ -1,12 +1,17 @@
 import GameState from "../modules/GameState";
 import { IPrompter } from "../modules/prompters/types";
-import { IConfig, Screen } from "../types";
+import { Achievement, IConfig, Screen } from "../types";
 import BaseGameScreen from "./BaseGameScreen";
 import { constructChoice } from "../utils/screen";
 import GameActionScreen from "./GameActionScreen";
 import DiceScorer from "../modules/DiceScorer";
 import { drawTurnStats } from "../utils/draw";
 import DiceDrawer from "../modules/DiceDrawer";
+import Achievements from "../modules/Achievements";
+
+export interface IScoresheetScreenOptions {
+  earnedAchievements: Achievement[];
+}
 
 export enum ScoresheetScreenInput {
   CONTINUE = "continue",
@@ -19,7 +24,16 @@ export const choiceLabels: Record<ScoresheetScreenInput, string> = {
 export default class ScoresheetScreen extends BaseGameScreen<ScoresheetScreenInput> {
   name = Screen.SCORESHEET;
 
+  constructor(private options: IScoresheetScreenOptions = { earnedAchievements: [] }) {
+    super();
+  }
+
   draw(state: GameState, config: IConfig) {
+    const achievements = new Achievements(config);
+    this.options.earnedAchievements.forEach(achievement => {
+      achievements.renderAchievement(achievement);
+    });
+
     const diceScorer = new DiceScorer(state.dice.values, config);
     const player = state.getCurrentPlayer();
     drawTurnStats(

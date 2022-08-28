@@ -1,4 +1,4 @@
-import { YahtzeeScore, YahtzeeScoreCategory } from "../types";
+import { IConfig, YahtzeeScore, YahtzeeScoreCategory } from "../types";
 import Scoresheet from "./Scoresheet";
 
 export const defaultScore = {
@@ -19,16 +19,18 @@ export const defaultScore = {
 };
 
 export default class Player {
+  config: IConfig;
   name: string;
   score: YahtzeeScore;
 
-  constructor(name: string) {
+  constructor(config: IConfig, name: string) {
+    this.config = config;
     this.name = name;
     this.resetScore();
   }
 
   get totalScore(): number {
-    const scoresheet = new Scoresheet(this.score);
+    const scoresheet = new Scoresheet(this.config, this.score);
     return scoresheet.scoreTotal();
   }
 
@@ -41,7 +43,7 @@ export default class Player {
   }
 
   renderScoresheet() {
-    const scoresheet = new Scoresheet(this.score);
+    const scoresheet = new Scoresheet(this.config, this.score);
     scoresheet.render();
   }
 
